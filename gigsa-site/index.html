@@ -459,6 +459,12 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
  overflow-x:auto;white-space:pre;margin:0 0 10px;color:var(--ink)}
 .qztime{font-weight:800;color:var(--bad);font-variant-numeric:tabular-nums}
 .qzb.warnb{background:var(--chip);border-color:var(--ac);color:var(--ac)}
+.qzprog{margin:14px 0;border-top:1px dashed var(--line);padding-top:12px}
+.qzpr{display:flex;align-items:center;gap:9px;margin:6px 0;font-size:12px}
+.qzpr span{width:118px;flex-shrink:0;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qzpr .qzptr{flex:1;height:8px;background:var(--chip2);border-radius:99px;overflow:hidden}
+.qzpr .qzptr i{display:block;height:100%;background:var(--ac);border-radius:99px}
+.qzpr em{width:150px;flex-shrink:0;font-style:normal;color:var(--dim2);font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
 
 /* ═══ 실습(인터랙티브 데모) 뷰 ═══ */
 #demoview{display:block;padding:18px max(14px,var(--safeL)) 60px}
@@ -602,6 +608,7 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
 <script src="demos.js"></script>
 <script src="quiz-data.js"></script>
 <script src="quiz-code-data.js"></script>
+<script src="newtech-data.js"></script>
 <script src="mindmap.js"></script>
 <script src="app.js"></script>
 <script src="quiz.js"></script>

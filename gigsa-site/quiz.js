@@ -144,8 +144,30 @@ function renderHome(){
   const due=dueCards().length, unseenL=unseenListCards().length;
   const nList=CARDS.filter(c=>c.k==="l").length, nCode=CARDS.filter(c=>c.k==="c").length;
   const lv=[0,0,0,0];
-  CARDS.forEach(c=>{ const r=ST[c.id]; if(r&&r.seen>0) lv[Math.min(r.lv,3)]++; });
+  /* 과목별 진행도·유형별 정답률 집계 */
+  const agg={},kagg={t:{o:0,n:0},l:{o:0,n:0},c:{o:0,n:0}};
+  CARDS.forEach(c=>{ const r=ST[c.id];
+    const a=agg[c.s]=agg[c.s]||{t:0,seen:0,ok:0,ng:0}; a.t++;
+    if(r&&r.seen>0){ lv[Math.min(r.lv,3)]++; a.seen++; a.ok+=r.ok; a.ng+=r.ng; kagg[c.k].o+=r.ok; kagg[c.k].n+=r.ng; }
+  });
   const seen=lv[0]+lv[1]+lv[2]+lv[3];
+  /* 연속 학습일 */
+  let streak=0;
+  if(ST.__days){
+    const d=new Date();
+    if(!ST.__days[dayStr(d)]) d.setDate(d.getDate()-1);
+    while(ST.__days[dayStr(d)]){ streak++; d.setDate(d.getDate()-1); }
+  }
+  const subjRows=[1,2,3,4,5].map(s=>{
+    const a=agg[s]||{t:0,seen:0,ok:0,ng:0};
+    const pct=a.t?Math.round(a.seen/a.t*100):0;
+    const acc=(a.ok+a.ng)?Math.round(a.ok/(a.ok+a.ng)*100):-1;
+    return '<div class="qzpr"><span>'+s+'과목 '+(SUBJ&&SUBJ[s]?SUBJ[s]:"")+'</span>'+
+      '<div class="qzptr"><i style="width:'+pct+'%"></i></div>'+
+      '<em>'+a.seen+'/'+a.t+(acc>=0?' · 정답률 '+acc+'%':'')+'</em></div>';
+  }).join("");
+  const kacc=(k,label)=>{ const a=kagg[k], tot=a.o+a.n; return tot? label+' '+Math.round(a.o/tot*100)+'%':null; };
+  const kline=[kacc("t","단답"),kacc("l","나열형"),kacc("c","코드·SQL")].filter(Boolean).join(' · ');
   $("qzhome").innerHTML =
     '<div class="qzstats">'+
     '<div class="qzs"><b>'+due+'</b>오늘 복습</div>'+
@@ -170,6 +192,9 @@ function renderHome(){
     [1,2,3,4,5].map(i=>'<button type="button" class="pill'+(Q.subj===i?' on':'')+'" data-s="'+i+'" data-qs="'+i+'">'+i+'과목</button>').join("")+
     '</div>'+
     (seen?'<div class="qzmemo">학습 진행: 모름 '+lv[0]+' · 복습중(1일) '+lv[1]+' · 암기중(3일) '+lv[2]+' · 완전암기(7일) '+lv[3]+'</div>':'')+
+    (seen?'<div class="qzprog">'+subjRows+
+      (kline?'<div class="qzmemo" style="margin-top:6px">유형별 정답률 — '+kline+'</div>':'')+
+      (streak?'<div class="qzmemo">🔥 '+streak+'일 연속 학습</div>':'')+'</div>':'')+
     '<div class="qzmemo">답은 쉼표·줄바꿈으로 구분해 쓰면 됩니다. 나열형은 순서 표시(①②③)가 있으면 순서대로 써야 합니다. 영문은 한글과 함께 정답으로 인정됩니다.</div>';
 }
 
@@ -248,8 +273,12 @@ function grade(){
   mark(c,correct,false,raw,detail);
 }
 
+function dayStr(d){ const x=d?new Date(d):new Date();
+  return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0"); }
+
 function mark(c,correct,skipped,raw,detail){
   const r=rec(c.id); const now=Date.now();
+  (ST.__days=ST.__days||{})[dayStr()]=1;
   r.seen++; if(correct) r.ok++; else r.ng++;
   if(correct){ r.lv=Math.min(r.lv+1,3); r.due=now+INT[r.lv]; }
   else{ r.lv=0; r.due=now; Q.wrong.push(c.id); Q.missed.add(c.id); }
