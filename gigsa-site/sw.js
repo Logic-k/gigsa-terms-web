@@ -1,5 +1,5 @@
 /* 오프라인 캐시 — 파일을 수정해 재배포하면 CACHE 버전을 올리세요 */
-const CACHE = "gigsa-v11";
+const CACHE = "gigsa-v12";
 const ASSETS = [
   "./", "./index.html", "./app.js", "./data.js", "./diagram.js", "./mindmap.js", "./demos.js",
   "./quiz.js", "./quiz-data.js",

@@ -219,6 +219,9 @@ function mark(c,correct,skipped,raw,detail){
   else{ r.lv=0; r.due=now; Q.wrong.push(c.id); Q.missed.add(c.id); }
   save();
   if(correct) Q.ok++; else Q.ng++;
+  const okEl=document.querySelector("#quizview .qzok"), noEl=document.querySelector("#quizview .qzno");
+  if(okEl) okEl.textContent="정답 "+Q.ok;
+  if(noEl) noEl.textContent="오답 "+Q.ng;
   Q.locked=true;
   ["qzans","qzgo","qzskip"].forEach(id=>{ const b=$(id); if(b) b.disabled=true; });
 
@@ -290,6 +293,6 @@ function start(mode){
   renderCard();
 }
 
-window.Quiz={ show(){ $("qzhome").hidden=false; renderHome(); }, hide(){} };
+window.Quiz={ show(){ if(Q.live){ $("qzhome").hidden=true; } else { $("qzhome").hidden=false; renderHome(); } }, hide(){} };
 renderHome();
 })();
