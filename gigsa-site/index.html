@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15161a" media="(prefers-color-scheme: dark)">
-<meta name="description" content="정보처리기사 필기 5과목 용어사전 — 1008개 용어, 1008개 실무 예시, 464개 도식, 혼동 용어 양방향 연결">
+<meta name="description" content="정보처리기사 용어사전 + 실기 필답 훈련 — 1008개 용어·예시·도식, 단답 회상·나열형·코드 출력값 채점, 간격반복 복습, 모의고사">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="정처기 용어">
@@ -454,6 +454,11 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
 .qzscore{font-size:26px;font-weight:800;letter-spacing:-.5px}
 .qzscore span{display:block;font-size:13px;color:var(--dim);font-weight:600;margin-top:5px}
 .qzdone .qzact{margin-top:18px;max-width:340px;margin-left:auto;margin-right:auto}
+.qzcode{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 13px;
+ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.55;
+ overflow-x:auto;white-space:pre;margin:0 0 10px;color:var(--ink)}
+.qztime{font-weight:800;color:var(--bad);font-variant-numeric:tabular-nums}
+.qzb.warnb{background:var(--chip);border-color:var(--ac);color:var(--ac)}
 
 /* ═══ 실습(인터랙티브 데모) 뷰 ═══ */
 #demoview{display:block;padding:18px max(14px,var(--safeL)) 60px}
@@ -509,7 +514,7 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
 <header class="top" id="topbar">
   <div class="r1">
     <button class="ib dictonly" id="menuBtn" aria-label="목차 열기">☰</button>
-    <div class="brand">정보처리기사 용어사전<small id="bsub">필기 5과목 · 출제기준 기반</small></div>
+    <div class="brand">정보처리기사 용어사전<small id="bsub">필기 5과목 · 실기 필답 훈련</small></div>
     <button class="ib dictonly" id="bIdx" aria-label="색인">가</button>
     <button class="ib" id="bTheme" aria-label="테마 전환">◐</button>
   </div>
@@ -596,6 +601,7 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
 <script src="ex-data-5.js"></script>
 <script src="demos.js"></script>
 <script src="quiz-data.js"></script>
+<script src="quiz-code-data.js"></script>
 <script src="mindmap.js"></script>
 <script src="app.js"></script>
 <script src="quiz.js"></script>

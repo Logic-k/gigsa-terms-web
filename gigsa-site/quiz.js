@@ -70,6 +70,10 @@ DICT.forEach((ch,ci)=>ch.T.forEach((t,ti)=>{
   CARDS.push({k:"l", id:"ql_"+i, s:L.s, name:L.t, title:L.t, ordered:!!L.o,
     items:L.a, alias:L.alias||[], hint:L.h||"", note:L.note||""});
 });
+(window.QCODE||[]).forEach((P,i)=>{
+  CARDS.push({k:"c", id:"qc_"+i, s:P.s, name:P.tag||P.lang, lang:P.lang,
+    code:P.code, q:P.q, note:P.note||"", a0:P.a[0]||"", ans:new Set(P.a.map(norm))});
+});
 const BYID=new Map(CARDS.map(c=>[c.id,c]));
 
 /* ── SRS 저장소 ── */
@@ -102,6 +106,7 @@ function buildQueue(mode,subj){
   if(mode==="due") pool=dueCards();
   else if(mode==="new") pool=newCards();
   else if(mode==="list") pool=CARDS.filter(c=>c.k==="l");
+  else if(mode==="code") pool=CARDS.filter(c=>c.k==="c");
   else if(mode==="all") pool=dueCards().concat(newCards());
   if(subj) pool=pool.filter(c=>c.s===subj);
   /* 복습은 기한 오래 지난 순, 새 카드는 사전 순서 섞기 */
@@ -117,9 +122,27 @@ function buildQueue(mode,subj){
 /* ── 화면 ── */
 function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
+/* 모의고사: 단답4+나열형3+코드3 믹스, 45분 타이머 */
+function mockQueue(){
+  const pick=k=>shuffle(CARDS.filter(c=>c.k===k));
+  const terms=pick("t").slice(0,4), lists=pick("l").slice(0,3), codes=pick("c").slice(0,3);
+  return shuffle(terms.concat(lists,codes));
+}
+function fmtLeft(ms){
+  ms=Math.max(0,ms); const s=Math.floor(ms/1000);
+  return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+}
+function tick(){
+  const el=$("qztime");
+  if(!Q.live||!Q.mockEnd){ if(Q.timer){clearInterval(Q.timer);Q.timer=null;} return; }
+  const left=Q.mockEnd-Date.now();
+  if(el) el.textContent=fmtLeft(left);
+  if(left<=0){ clearInterval(Q.timer); Q.timer=null; renderDone(); }
+}
+
 function renderHome(){
   const due=dueCards().length, unseenL=unseenListCards().length;
-  const nList=CARDS.filter(c=>c.k==="l").length;
+  const nList=CARDS.filter(c=>c.k==="l").length, nCode=CARDS.filter(c=>c.k==="c").length;
   const lv=[0,0,0,0];
   CARDS.forEach(c=>{ const r=ST[c.id]; if(r&&r.seen>0) lv[Math.min(r.lv,3)]++; });
   const seen=lv[0]+lv[1]+lv[2]+lv[3];
@@ -135,6 +158,10 @@ function renderHome(){
     '<div class="qzrow">'+
     '<button class="qzb" data-qmode="new">새 카드 학습</button>'+
     '<button class="qzb" data-qmode="list">나열형·두음만'+(unseenL?' ('+unseenL+'개 새 목록)':'')+'</button>'+
+    '<button class="qzb" data-qmode="code">코드·SQL만 ('+nCode+'문제)</button>'+
+    '</div>'+
+    '<div class="qzrow">'+
+    '<button class="qzb warnb" data-qmode="mock">⏱ 모의고사 10문제 · 45분</button>'+
     '<button class="qzb" data-qmode="all">전체 랜덤</button>'+
     '</div></div>'+
     '<div class="qzsub">과목 좁히기 — 시작 전 아래에서 선택</div>'+
@@ -157,6 +184,12 @@ function renderCard(){
       '<details class="qzh"><summary>상세 설명 힌트</summary><p>'+esc(c.detail)+'</p></details>'+
       '<label class="qzl">이 용어의 이름을 쓰시오. <span class="qzm">(한글·영문·약어 모두 정답)</span></label>'+
       '<input id="qzans" class="qzinp" autocomplete="off" autocapitalize="none" enterkeyhint="done" placeholder="답 입력">';
+  }else if(c.k==="c"){
+    body='<div class="qztag">'+(c.lang==="sql"?"SQL":c.lang.toUpperCase())+' · '+c.s+'과목 · '+esc(c.name)+'</div>'+
+      '<pre class="qzcode">'+esc(c.code)+'</pre>'+
+      '<div class="qzp">'+esc(c.q)+'</div>'+
+      '<label class="qzl">결과를 쓰시오. <span class="qzm">(대소문자·공백·기호 무관)</span></label>'+
+      '<textarea id="qzans" class="qzinp" rows="2" autocomplete="off" autocapitalize="none" placeholder="출력 또는 빈칸 답"></textarea>';
   }else{
     const seq=c.ordered?'<span class="qzseq">① 순서대로</span>':'<span class="qzseq">개수만큼 정확히</span>';
     body='<div class="qztag">나열형 · '+c.s+'과목</div>'+
@@ -166,7 +199,7 @@ function renderCard(){
       '<textarea id="qzans" class="qzinp" rows="3" autocomplete="off" autocapitalize="none" placeholder="예) 항목1, 항목2, ..."></textarea>';
   }
   $("qzcard").innerHTML =
-    '<div class="qzbar"><span>'+n+' / '+total+'</span><span class="qzok">정답 '+Q.ok+'</span><span class="qzno">오답 '+Q.ng+'</span></div>'+
+    '<div class="qzbar"><span>'+n+' / '+total+'</span>'+(Q.mockEnd?'<span class="qztime" id="qztime"></span>':'')+'<span class="qzok">정답 '+Q.ok+'</span><span class="qzno">오답 '+Q.ng+'</span></div>'+
     '<div class="qzpanel">'+body+'</div>'+
     '<div class="qzact"><button class="qzb primary" id="qzgo">제출 (Enter)</button><button class="qzb ghost" id="qzskip">모름 (건너뛰기)</button></div>'+
     '<div id="qzfb"></div>';
@@ -188,6 +221,9 @@ function grade(){
   if(c.k==="t"){
     correct=c.ans.has(norm(raw))||c.ans.has(normKeepParen(raw)||"");
     detail='정답: <b>'+esc(c.name)+'</b>'+(c.en?' <span class="qzen">'+esc(c.en)+'</span>':'');
+  }else if(c.k==="c"){
+    correct=c.ans.has(norm(raw));
+    detail='정답: <b>'+esc(c.a0||"")+'</b>'+(c.note?'<p class="qznote">'+esc(c.note)+'</p>':'');
   }else{
     const toks=splitAns(raw,c.items.length).map(x=>({raw:x,n:norm(x)}));
     const want=c.items.map((x,i)=>[x,...(c.alias[i]||[])]);
@@ -255,6 +291,7 @@ function next(){
 }
 
 function renderDone(){
+  if(Q.timer){ clearInterval(Q.timer); Q.timer=null; }
   const tot=Q.ok+Q.ng;
   const acc=tot?Math.round(Q.ok/tot*100):0;
   /* 이 세션에서 틀렸고 아직 lv0(자동 재출제에서도 못 맞춘)인 카드만 다시 풀기 */
@@ -283,16 +320,22 @@ $("qzhome").addEventListener("click",e=>{
   if(s){ Q.subj=+s.dataset.qs; renderHome(); }
 });
 function start(mode){
-  const list=buildQueue(mode,Q.subj);
+  const list=(mode==="mock")?mockQueue():buildQueue(mode,Q.subj);
   if(!list.length){
     $("qzcard").innerHTML='<div class="empty">풀 카드가 없습니다.<br>복습할 카드가 도착하거나 새 카드 모드를 이용해 보세요.</div>';
     return;
   }
+  if(Q.timer){ clearInterval(Q.timer); Q.timer=null; }
   Q={list,i:0,ok:0,ng:0,wrong:[],missed:new Set(),locked:false,mode,subj:Q.subj,live:true};
+  if(mode==="mock"){ Q.mockEnd=Date.now()+45*60*1000; Q.timer=setInterval(tick,1000); }
   $("qzhome").hidden=true;
   renderCard();
 }
 
-window.Quiz={ show(){ if(Q.live){ $("qzhome").hidden=true; } else { $("qzhome").hidden=false; renderHome(); } }, hide(){} };
+window.Quiz={ show(){
+    if(Q.live){ $("qzhome").hidden=true; if(Q.mockEnd&&!Q.timer) Q.timer=setInterval(tick,1000); }
+    else { $("qzhome").hidden=false; renderHome(); }
+  },
+  hide(){ if(Q.timer){ clearInterval(Q.timer); Q.timer=null; } } };
 renderHome();
 })();
