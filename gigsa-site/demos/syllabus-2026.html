@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>정보처리기사 필기 출제기준 완전 요약노트 (2026)</title>
+<style>
+:root{--navy:#1d2c56;--blue:#2f5fd0;--blue-bg:#eef3fe;--amber:#b47409;--amber-bg:#fdf5e4;--red:#c9403f;--red-bg:#fdeeee;--line:#d9dfeb;--sub:#5b6478}
+*{box-sizing:border-box;margin:0;padding:0}
+@page{size:A4;margin:14mm 12mm}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1c2333;font-size:10.5pt;line-height:1.5}
+.cover{text-align:center;padding:40mm 0 10mm;page-break-after:always}
+.cover h1{font-size:26pt;color:var(--navy);margin-bottom:8mm}
+.cover .sub{font-size:12pt;color:var(--sub)}
+.cover .box{display:inline-block;border:2px solid var(--navy);border-radius:10px;padding:6mm 10mm;margin-top:12mm;text-align:left;font-size:10.5pt}
+.subj{page-break-before:always}
+.subj-head{background:var(--navy);color:#fff;padding:4mm 5mm;border-radius:3mm;font-size:15pt;font-weight:800;margin-bottom:2mm}
+.subj-head .n{opacity:.8;font-size:10pt;font-weight:600;margin-left:3mm}
+h2{background:var(--blue-bg);border-left:4mm solid var(--blue);color:var(--navy);font-size:12pt;padding:2mm 3mm;margin:5mm 0 2mm;page-break-after:avoid}
+h3{font-size:10.5pt;color:var(--blue);margin:3mm 0 1mm;page-break-after:avoid}
+.card{border:.4mm solid var(--line);border-radius:2mm;padding:2.5mm 3mm;margin:2mm 0;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:1.5mm 0;page-break-inside:avoid}
+th,td{border:.3mm solid var(--line);padding:1.2mm 2mm;text-align:left;vertical-align:top}
+th{background:#f0f3fa;font-weight:700}
+td.k{width:26%;font-weight:700;background:#fbfcfe}
+.star{color:var(--red);font-weight:800}
+.mn{background:var(--amber-bg);border:.3mm dashed var(--amber);border-radius:1.5mm;padding:1.5mm 2.5mm;margin:1.5mm 0;font-size:9.5pt}
+.mn b{color:var(--amber)}
+.trap{background:var(--red-bg);border-left:1.2mm solid var(--red);padding:1.5mm 2.5mm;margin:1.5mm 0;font-size:9.5pt;border-radius:0 1.5mm 1.5mm 0}
+.trap b{color:var(--red)}
+.def{background:#f7f9fe;border-left:1.2mm solid var(--blue);padding:1.5mm 2.5mm;margin:1.5mm 0;font-size:9.8pt;border-radius:0 1.5mm 1.5mm 0}
+ul{margin:1mm 0 1mm 5mm}
+li{margin:.6mm 0}
+.flow{font-size:9.8pt;margin:1mm 0}
+.flow b{color:var(--blue)}
+.small{font-size:9pt;color:var(--sub)}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>정보처리기사 필기<br>출제기준 완전 요약노트</h1>
+  <p class="sub">2026 출제기준(2026.01.01~2026.12.31) 세세항목 전체 커버 · 객관식 100문제 · 2시간 30분</p>
+  <div class="box">
+    <b>이 노트의 사용법</b><br>
+    ① 목차 번호는 공단 출제기준의 [주요항목 &gt; 세부항목 &gt; 세세항목] 번호와 동일합니다.<br>
+    ② <span class="star">★</span> = 기출 빈출 · <span style="background:var(--amber-bg);padding:0 1mm">암기</span> 박스 = 두문자 · <span style="color:var(--red)">함정</span> 박스 = 오답 유도 포인트<br>
+    ③ 각 과목 20문제 · 과목당 8개(40점) 미만이면 과락 — 평균 60점이 합격선입니다.
+  </div>
+</div>
+
+<!-- ═══════════════ 1과목 ═══════════════ -->
+<section class="subj">
+<div class="subj-head">1과목 소프트웨어설계<span class="n">20문제 · 요구사항 확인 / 화면 설계 / 애플리케이션 설계 / 인터페이스 설계</span></div>
+
+<h2>1. 요구사항 확인 — 1) 현행 시스템 분석</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 플랫폼 기능 분석</td><td>플랫폼 = 특정 시스템 기반의 운영체제·운영환경. 관점에 따라 범위가 달라짐(응용 관점: Windows·Android / 서비스 관점: 카카오톡). 기능 분석 = 현행 플랫폼이 제공하는 기능 목록화</td></tr>
+    <tr><td class="k">② 플랫폼 성능 특성 분석 <span class="star">★</span></td><td>측정 항목 4: <b>가용성</b>(필요할 때 사용 가능) · <b>응답 시간</b>(명령→반응) · <b>정확성</b>(기대값 대비) · <b>사용률</b>(자원 사용량)</td></tr>
+    <tr><td class="k">③ 운영체제 분석</td><td>고려사항: 신뢰도·성능·기술 지원·주변 기기·구축 비용(총소유비용 TCO)</td></tr>
+    <tr><td class="k">④ 네트워크 분석</td><td>OSI 7계층 기반 네트워크 구성도 파악(장비·회선·백본)</td></tr>
+    <tr><td class="k">⑤ DBMS 분석</td><td>고려사항: 가용성·성능·기술 지원·상호 호환성·구축 비용</td></tr>
+    <tr><td class="k">⑥ 비즈니스 융합 분석</td><td>IT 기술을 기존 산업에 결합해 새 제품·서비스를 만드는 활동 분석(예: 금융+IT=핀테크)</td></tr>
+  </table>
+</div>
+
+<h2>1. 요구사항 확인 — 2) 요구사항 확인</h2>
+<div class="card">
+  <h3>① 요구분석기법 <span class="star">★</span></h3>
+  <div class="def">요구사항 = <b>기능</b>(무엇을 하는가) + <b>비기능</b>(성능·보안·품질·제약 — "~해야 한다"인데 동작이 아니면 비기능)</div>
+  <div class="flow">요구공학 프로세스: <b>도출</b>(인터뷰·브레인스토밍·워크숍·유스케이스) → <b>분석</b>(구조적: DFD·자료사전·Mini-Spec / 객체지향: UML) → <b>명세</b>(정형: Z·VDM / 비정형: 자연어) → <b>확인·검증</b></div>
+  <table>
+    <tr><td class="k">검토 기법 3 <span class="star">★</span></td><td><b>동료 검토</b>(작성자가 설명, 동료가 결함 발견) → <b>워크스루</b>(회의 전 자료 배포, 짧은 검토 회의) → <b>인스펙션</b>(워크스루 발전형 — 전문가·체크리스트·공식 절차)</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> "인스펙션 = 워크스루와 동일" (X, 인스펙션이 발전형) / "요구 분석이 개발비 최대 단계" (X, 최대는 유지보수)</div>
+  <h3>② UML <span class="star">★</span></h3>
+  <div class="def">기본 구성 3: <b>사물(Things) · 관계(Relationships) · 다이어그램(Diagram)</b> — "Terminal" 없음</div>
+  <table>
+    <tr><th>관계</th><th>표기</th><th>의미</th></tr>
+    <tr><td>연관 Association</td><td>실선</td><td>서로 아는 지속적 관계</td></tr>
+    <tr><td>집합 Aggregation</td><td>빈 마름모 ◇</td><td>부분-전체, 부분 <b>독립 가능</b>(컴퓨터◇프린터)</td></tr>
+    <tr><td>포함 Composition</td><td>채운 마름모 ◆</td><td>부분이 전체에 <b>종속</b>(문◆전용열쇠)</td></tr>
+    <tr><td>일반화 Generalization</td><td>빈 삼각형 ▷</td><td>상속 is-a (커피▷음료)</td></tr>
+    <tr><td>의존 Dependency <span class="star">★</span></td><td>점선 화살표</td><td><b>매개변수로 잠깐 사용</b>, 명세 변경이 영향</td></tr>
+    <tr><td>실체화 Realization</td><td>점선 삼각형</td><td>인터페이스 구현 (can-do)</td></tr>
+  </table>
+  <table>
+    <tr><td class="k">구조(정적) 6</td><td>클래스 · 객체 · 컴포넌트 · 배치 · 복합체 구조 · 패키지</td></tr>
+    <tr><td class="k">행위(동적) 7</td><td>유스케이스 · <b>순차(시퀀스)</b> · 커뮤니케이션 · <b>상태</b> · 활동 · 타이밍 · 상호작용 개요</td></tr>
+    <tr><td class="k">유스케이스 관계 <span class="star">★</span></td><td><b>포함 include</b>(반드시 실행, 필수) vs <b>확장 extend</b>(특정 조건일 때만) vs 일반화</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> 순차 다이어그램은 <b>동적</b>(정적 아님). 스테레오타입 표기 = «guillemet»</div>
+  <h3>③ 애자일(Agile) <span class="star">★</span></h3>
+  <div class="def">절차·문서·계획보다 <b>소통·협업·변화 대응</b> 중시. 종류: 스크럼 · XP · 린 · 칸반 · Crystal · <b>FDD(기능 중심)</b> · ASD · DSDM ("모듈 중심 개발"은 애자일 아님 — 구조적)</div>
+  <table>
+    <tr><td class="k">스크럼</td><td>PO(백로그 작성·우선순위) · 스크럼 마스터(가이드, <b>통제 X</b>) · 개발팀 / 스프린트(2~4주) · 일일 스크럼(15분, <b>번다운 차트</b> = 남은 작업량) · 스프린트 검토 → 회고</td></tr>
+    <tr><td class="k">XP</td><td>5가치: <b>용기·단순성·의사소통·피드백·존중</b> / 12실천: Pair Programming · 공동 소유 · CI · TDD · 소규모 릴리즈 · 40시간 · 리팩토링 등 ("Linear Sequential"은 없음)</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> XP 5가치 = "용단의피존" / 애자일 선언: 개인·상호작용 &gt; 프로세스·도구, 동작하는 SW &gt; 포괄적 문서, 고객 협력 &gt; 계약 협상, 변화 대응 &gt; 계획 준수</div>
+</div>
+
+<h2>1. 요구사항 확인 — 3) 분석모델 확인</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 모델링 기법 <span class="star">★</span></td><td><b>럼바우 OMT</b>: 객체 모델링(<b>객체도</b>, 가장 먼저) → 동적 모델링(<b>상태도</b>) → 기능 모델링(<b>DFD</b>) / 구조적 분석: DFD 4요소 = 프로세스(원)·자료 흐름(화살표)·자료 저장소(평행선)·단말(사각형), 자료 사전 기호( = 정의, + 연결, { } 반복, [ | ] 선택, ( ) 생략, ** 주석)</td></tr>
+    <tr><td class="k">② 분석 자동화 도구 <span class="star">★</span></td><td><b>SADT</b>(SoftTech · <b>블록 다이어그램</b>) / <b>SREM</b>(TRW · 미 국방성 · <b>실시간</b>) / <b>PSL/PSA</b>(미시간대 · ISDOS) / <b>TAGS</b>(시스템 공학 자동 접근) / HIPO(계층+입력·처리·출력, <b>화살표 사용</b>) / NS차트(도형 논리 표현, <b>화살표 X</b>, 3제어구조)</td></tr>
+    <tr><td class="k">③ 요구사항 관리 도구</td><td>요구사항 변경 추적·통제: JIRA, Trello, Redmine 등 / CASE 도구: 개발 전 과정 자동화(상위: 분석·설계 / 하위: 코딩·테스트 / 통합), 원천 기술 = 구조적 기법·프로토타이핑·자동 프로그래밍·정보 저장소·분산 처리, 도구 간 호환성 없음</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 럼바우 "객객·동상·기자" (객체=객체도 / 동적=상태도 / 기능=자료흐름도)</div>
+</div>
+
+<h2>2. 화면 설계 — 1) UI 요구사항 확인 / 2) UI 설계</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">UI 유형 <span class="star">★</span></td><td>CLI(명령줄) · GUI(그래픽) · <b>NUI</b>(말·행동 — 제스처: Tap·Double Tap·Drag·Pan·Press·<b>Flick·Pinch</b>, "Flow" 없음) · OUI(모든 사물이 입출력장치)</td></tr>
+    <tr><td class="k">① UI 표준·② 지침</td><td>표준 = 전체 시스템에 걸친 공통 UI 규칙 / 지침 = 요구사항·구현 시 지켜야 할 세부 사항. 설계 원칙 4 <span class="star">★</span>: <b>직관성·유효성·학습성·유연성</b></td></tr>
+    <tr><td class="k">③ 스토리보드</td><td>설계 도구 순서: <b>와이어프레임</b>(뼈대) → <b>목업</b>(정적 실물 모형) → <b>스토리보드</b>(+설명·이동 흐름, 최종 산출물) → <b>프로토타입</b>(동적·인터랙션) → 유스케이스</td></tr>
+    <tr><td class="k">① 감성공학</td><td>인간의 감성을 정량적으로 측정해 제품 설계에 반영(인간 중심 설계). 감성적 품질까지 다루는 HCI 기술 — UI 설계와 연계</td></tr>
+    <tr><td class="k">② UI 설계 도구</td><td>파워목업, 발사믹 목업, 카카오 오븐 등 / UI 상세 설계 지침: 심미성보다 <b>기능성 우선</b>, 오류는 사용자가 쉽게 인지하게</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> UI 원칙 "직·유·학·유" — 직관(쉽게)·유효(목표 달성)·학습(쉽게 배움)·유연(오류 최소화)</div>
+  <div class="trap"><b>함정:</b> UI 개발 시스템의 기능에 "소스 코드 분석·오류 복구"는 없음(그건 디버깅). 기능 O: 입력 검증·에러 처리·도움말·프롬프트</div>
+</div>
+
+<h2>3. 애플리케이션 설계 — 1) 공통 모듈 설계</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 설계 모델링</td><td>상위 설계(아키텍처·인터페이스 정의·<b>UI 설계</b>·DB 설계) vs 하위 설계(<b>모듈</b>·컴포넌트·자료구조) / 협약(Contract)에 의한 설계 3: <b>선행·결과·불변 조건</b> / 공통 모듈 명세 원칙 5: 정확성·명확성·완전성·일관성·추적성</td></tr>
+    <tr><td class="k">② 소프트웨어 아키텍처 <span class="star">★</span></td><td><b>파이프-필터</b>(필터가 처리→파이프로 전달, 단·양방향 모두 가능, 이동 시 오버헤드 발생) / <b>MVC</b>(Model·View·Controller 3분할) / <b>계층화</b>(n-tier, 인접 계층만 통신) / 데이터 중심(공유 저장소) / 브로커(중개) / <b>4+1 뷰</b>: 유스케이스(+1) 중심으로 논리·구현·프로세스·배치</td></tr>
+    <tr><td class="k">③ 재사용</td><td><b>합성 중심</b>(모듈 조립, 블록 구성) vs <b>생성 중심</b>(명세 구체화, 패턴 구성) / 재사용 규모: 함수 &lt; 컴포넌트 &lt; 애플리케이션</td></tr>
+    <tr><td class="k">④ 모듈화 <span class="star">★</span></td><td>기능 분할·부품화. 모듈 크기 작으면 모듈 수↑·통합 비용↑, 크면 모듈 수↓·이해 어려움 / <b>fan-in</b> = 들어오는 화살표(호출하는 상위 수, 높으면 재사용 잘 됨) / <b>fan-out</b> = 나가는 화살표(부하 수, 3~4 초과 시 분리 검토)</td></tr>
+  </table>
+  <h3>⑤ 결합도(낮을수록 좋음) · ⑥ 응집도(높을수록 좋음) <span class="star">★★</span></h3>
+  <table>
+    <tr><th>결합도 (나쁨→좋음)</th><th>키워드</th></tr>
+    <tr><td>내용 Content</td><td>다른 모듈 <b>내부 기능·자료를 직접</b> 참조·수정</td></tr>
+    <tr><td>공통 Common</td><td><b>전역 변수</b>(공통 데이터 영역) 공유</td></tr>
+    <tr><td>외부 External</td><td>다른 모듈에서 <b>선언한 데이터</b>를 참조</td></tr>
+    <tr><td>제어 Control</td><td><b>제어 신호(플래그)</b>로 상대 논리 흐름 조종</td></tr>
+    <tr><td>스탬프 Stamp</td><td><b>배열·구조체</b>(자료구조) 통째로 전달</td></tr>
+    <tr><td>자료 Data</td><td>필요한 <b>값만</b> 매개변수로 전달(최선)</td></tr>
+  </table>
+  <table>
+    <tr><th>응집도 (좋음→나쁨)</th><th>키워드</th></tr>
+    <tr><td>기능적 Functional</td><td><b>단 하나의 기능</b>만 수행(최선)</td></tr>
+    <tr><td>순차적 Sequential</td><td>한 활동의 <b>출력 → 다음 활동의 입력</b></td></tr>
+    <tr><td>교환(통신)적 Communicational</td><td><b>같은 입출력 데이터</b> 사용</td></tr>
+    <tr><td>절차적 Procedural</td><td><b>정해진 순서</b>대로 다수 기능</td></tr>
+    <tr><td>시간적 Temporal <span class="star">★</span></td><td><b>같은 시간대</b> 실행끼리 묶음(초기화 모듈)</td></tr>
+    <tr><td>논리적 Logical</td><td><b>비슷한 범주</b> 기능끼리(스위치 선택)</td></tr>
+    <tr><td>우연적 Coincidental</td><td>아무 관계 없음(최악)</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 결합도 "내공외제스자"(내 공은 외제, 스스로 자랑) / 응집도 "기순교절시논우". 좋은 모듈 = 결합도↓ 응집도↑ ("밖으로 쿨하게, 안으로 진하게")</div>
+  <div class="trap"><b>함정:</b> "제어 신호 + 공통 데이터 영역" 설명은 내용 결합도가 아님(제어/공통) · "같은 시간대" = 시간적 응집도</div>
+</div>
+
+<h2>3. 애플리케이션 설계 — 2) 객체지향 설계</h2>
+<div class="card">
+  <h3>① 객체지향(OOP) <span class="star">★</span></h3>
+  <table>
+    <tr><td class="k">구성 요소</td><td>객체(속성+메소드) · 클래스(공통 특성 틀) · 메시지(객체 간 요청)</td></tr>
+    <tr><td class="k">특성 5</td><td><b>캡슐화</b>(묶고 인터페이스만 노출) · <b>정보은닉</b>(내부 은폐) · <b>추상화</b>(공통 성질 도출) · <b>상속</b>(부모→자식) · <b>다형성</b>(하나의 메시지에 객체마다 고유하게 응답)</td></tr>
+    <tr><td class="k">오버로딩/오버라이딩 <span class="star">★</span></td><td><b>오버로딩</b> = 같은 메소드명 + <b>매개변수 타입·개수 다름</b> / <b>오버라이딩</b> = 상속받은 메소드 <b>재정의</b></td></tr>
+    <tr><td class="k">SOLID 5원칙</td><td><b>S</b>RP 단일 책임 · <b>O</b>CP 개방-폐쇄(확장 열림·수정 닫힘) · <b>L</b>SP 리스코프 치환 · <b>I</b>SP 인터페이스 분리 · <b>D</b>IP 의존 역전(추상에 의존) — SSO(Single Sign-On)는 보안 용어</td></tr>
+  </table>
+  <h3>② 디자인패턴 — GoF 23개 = 생성 5 · 구조 7 · 행위 11 <span class="star">★★</span></h3>
+  <table>
+    <tr><td class="k">생성 5</td><td>추상팩토리 · 팩토리메소드(하위 클래스가 인스턴스 생성) · 빌더 · 프로토타입(<b>복제 clone</b>) · 싱글톤(<b>하나만</b>)</td></tr>
+    <tr><td class="k">구조 7</td><td><b>어댑터</b>(기존 것을 사후에 맞춤, 인터페이스 변환) · <b>브리지</b>(처음부터 기능·구현 계층 분리) · 컴포지트(트리 부분-전체) · 데코레이터(기능 덧씌움) · 퍼사드(단순 창구) · 플라이웨이트(공유로 메모리 절약) · 프록시(대리)</td></tr>
+    <tr><td class="k">행위 11</td><td>책임연쇄 · 커맨드 · 인터프리터 · 이터레이터 · <b>미디에이터</b>(중재자가 통신 통제) · 메멘토(상태 저장·복원) · <b>옵저버</b>(상태 변화 자동 통보 1:N) · 스테이트 · <b>스트래티지</b>(알고리즘 교체) · 템플릿 메소드 · <b>비지터</b>(연산만 따로 추가)</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 생성 "추팩빌프싱" · 구조 "어브컴데퍼플프" · 나머지는 전부 행위. 어댑터 vs 브리지 = "사후 돼지코 vs 사전 다리 놓기"</div>
+</div>
+
+<h2>4. 인터페이스 설계</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1) 요구사항 확인</td><td>① 내외부 인터페이스 요구사항: 기능·데이터·비기능(주기·보안) 분류 후 명세 ② 요구공학: 도출→분석→명세→확인 프로세스를 인터페이스에 적용</td></tr>
+    <tr><td class="k">2) 대상 식별</td><td>① 시스템 아키텍처: 시스템 구성·연계 구조도에서 대상 도출 ② 인터페이스 시스템 3 <span class="star">★</span>: <b>송신</b>(데이터 생성·전송) · <b>수신</b>(변환·활용) · <b>중계 서버</b>(모니터링·보안 강화)</td></tr>
+    <tr><td class="k">3) 상세 설계 <span class="star">★</span></td><td>① 내외부 송수신: <b>직접 연계</b>(DB Link · DB Connection · API/JDBC · 화면 링크 — 빠르지만 결합도↑) vs <b>간접 연계</b>(EAI · ESB · 소켓 · 웹 서비스 SOAP/WSDL/UDDI — 유연하지만 지연) ② 데이터 명세화: 송수신 항목·포맷(<b>JSON</b>: 속성-값 쌍 경량 / <b>XML</b>: 태그 / YAML) + AJAX(비동기 통신) ③ 오류 처리방안 명세화: 구간별(송신·수신·중계) 오류 코드·처리·보고 체계 정의 ④ 인터페이스 설계서: 정의서·명세서 작성 ⑤ 미들웨어 솔루션: <b>RPC</b>(원격 호출) · <b>MOM</b>(메시지 비동기) · <b>TP-Monitor</b>(트랜잭션 처리·감시) · <b>ORB</b>(객체, CORBA) · <b>WAS</b>(동적 콘텐츠)</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> EAI 4유형 "포허메하" — Point-to-Point(1:1) · Hub&amp;Spoke(중앙 허브, 허브 장애=전체 마비) · Message Bus(ESB, 미들웨어 버스) · Hybrid ("Tree" 없음)</div>
+</div>
+</section>
+
+<!-- ═══════════════ 2과목 ═══════════════ -->
+<section class="subj">
+<div class="subj-head">2과목 소프트웨어개발<span class="n">20문제 · 데이터 입출력 / 통합 구현 / 패키징 / 테스트 관리 / 인터페이스 구현</span></div>
+
+<h2>1. 데이터 입출력 구현 — 1) 자료구조</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 스택 <span class="star">★</span></td><td><b>LIFO</b>. 삽입·삭제가 한쪽(top). 오버플로/언더플로. 활용: 수식 후위 변환·인터럽트 처리·재귀·<b>DFS</b>·서브루틴 복귀</td></tr>
+    <tr><td class="k">② 큐</td><td><b>FIFO</b>. front(삭제)·rear(삽입). 활용: 스풀링·작업 스케줄링·<b>BFS</b> / 데크(Deque): 양쪽 삽입·삭제</td></tr>
+    <tr><td class="k">③ 리스트 등</td><td>선형 리스트(배열: 접근 빠름, 삽입·삭제 느림) vs <b>연결 리스트</b>(삽입·삭제 쉬움, <b>검색 느림</b>, 포인터 공간 필요) / 트리: 이진 탐색 트리 치우치면 O(n) → 균형 트리(AVL·2-3·레드블랙) / 순회 = 전위(Root-L-R)·중위(L-Root-R)·후위(L-R-Root) / 정렬 키워드: 최솟값=선택 · 인접 교환=버블 · 끼워넣기=삽입 · 피벗 분할=퀵 · h 간격=쉘 · 완전 이진 트리=힙</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> "연결 리스트는 포인터로 연결되어 검색이 빠르다"(X — 느림) / 전위→후위 변환: 연산자1+피연산자2 묶고 → 연산자를 뒤로 → 괄호 제거</div>
+</div>
+
+<h2>1. 데이터 입출력 구현 — 2) 데이터 조작 프로시저 작성 / 3) 최적화</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 프로시저</td><td>SQL을 묶어 저장, <b>호출로 실행</b>(EXECUTE). 반환값 없어도 됨 (3과목 절차형 SQL과 연결)</td></tr>
+    <tr><td class="k">② 프로그램 디버깅</td><td>오류를 찾아 수정하는 과정. 도구: gdb, IDE 내장 디버거(중단점·워치)</td></tr>
+    <tr><td class="k">③ 단위테스트 도구</td><td><b>xUnit 계열</b>: JUnit(Java)·CppUnit(C++)·NUnit(.NET)·PyUnit — 자동화된 단위 테스트 프레임워크</td></tr>
+    <tr><td class="k">① 쿼리 성능 측정 <span class="star">★</span></td><td><b>APM</b>(Application Performance Management: 스카우터·제니퍼) 모니터링 / <b>옵티마이저</b> = SQL 최적 경로 탐색 DBMS 모듈(RBO 규칙 기반 / CBO 비용 기반) / 실행 계획(EXPLAIN) 확인 후 <b>SQL 튜닝</b>(인덱스 활용, 불필요 연산 제거)</td></tr>
+    <tr><td class="k">② 소스코드 인스펙션</td><td>실행 없이 코드 검토로 결함 발견(정적 기법). 계획→개관(사전 교육)→준비→검사→재작업→추적 절차</td></tr>
+  </table>
+</div>
+
+<h2>2. 통합 구현 — 1) 모듈 구현 / 2) 통합 구현 관리</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 단위모듈 구현</td><td>한 가지 동작만 하는 작은 기능 단위(원자적). IPC(프로세스 간 통신): 공유 메모리·소켓·세마포어·파이프</td></tr>
+    <tr><td class="k">② 단위모듈 테스트</td><td>모듈 하나의 동작 검증(단위 테스트). 테스트 케이스 기반, xUnit 활용</td></tr>
+    <tr><td class="k">① IDE 도구</td><td>편집+컴파일+디버깅 통합 환경: 이클립스·비주얼 스튜디오·IntelliJ·Xcode</td></tr>
+    <tr><td class="k">② 협업도구</td><td>일정·이슈 공유: JIRA·Trello·Slack·Confluence — 원격 개발 지원</td></tr>
+    <tr><td class="k">③ 형상관리 도구 <span class="star">★★</span></td><td>절차: <b>형상 식별</b>(대상·기준선 Baseline) → 버전 제어 → <b>형상 통제</b>(변경 검토·승인, <b>CCB</b>) → <b>형상 감사</b>(베이스라인 무결성 검증) → <b>형상 기록·보고</b> / 도구: 공유 폴더(RCS·SCCS) · 클라이언트/서버(<b>CVS·SVN</b>) · 분산(<b>Git</b>) / 용어: 체크아웃(받기)·체크인·커밋 / 대상에 <b>문서·명세서 포함</b></td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 형상 관리 "식·제·통·감·기". "변경 검토·승인"=통제, "무결성 검증"=감사</div>
+</div>
+
+<h2>3. 제품소프트웨어 패키징</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 애플리케이션 패키징</td><td>모듈을 묶어 배포용으로 준비 — <b>사용자 중심</b> 진행, 모듈화 기반, 버전 관리·릴리즈 노트 연계</td></tr>
+    <tr><td class="k">② 배포 도구</td><td>패키징+보안(암호화·인증·저작권) 지원 도구. 배포 시 암호화 알고리즘(대칭·비대칭·해시) 적용</td></tr>
+    <tr><td class="k">③ 모니터링 도구</td><td>배포 후 성능·상태 감시(APM: 스카우터·제니퍼·뉴렐릭)</td></tr>
+    <tr><td class="k">④ DRM <span class="star">★★</span></td><td>흐름: <b>콘텐츠 제공자</b>(저작권자) → <b>패키저</b>(암호화+메타데이터로 묶음) → <b>콘텐츠 분배자</b>(유통) → 소비자 측 <b>DRM 컨트롤러</b>(<b>이용 권한 통제</b>) / <b>클리어링 하우스</b> = <b>키 관리·라이선스 발급</b>·사용자 인증 / 기술: 암호화·워터마킹·템퍼 프루핑(위변조 시 실행 방해)</td></tr>
+    <tr><td class="k">① 매뉴얼 작성</td><td>설치 매뉴얼(설치 화면 순서대로 캡처·설명) + 사용자 매뉴얼 / 릴리즈 노트: 헤더(문서명·제품명·버전·날짜)+개요+이슈 요약+재현 단계+수정 내용, <b>개발팀(내부)이 최종 정리</b></td></tr>
+    <tr><td class="k">② 국제 표준 제품 품질 특성 <span class="star">★</span></td><td><b>ISO/IEC 9126</b>: 기능성·신뢰성·사용성·효율성·유지보수성·이식성("기신사효유이") → <b>25010</b>으로 개정(호환성·보안성 추가) / <b>12119</b>: 패키지 SW 품질·테스트 / 14598: 품질 평가 절차</td></tr>
+    <tr><td class="k">① 버전관리 도구</td><td>위 형상관리 도구와 동일 계보(RCS→CVS/SVN→Git)</td></tr>
+    <tr><td class="k">② 빌드 자동화 도구 <span class="star">★</span></td><td><b>Ant</b>(XML 기반, 유연하지만 복잡) · <b>Maven</b>(라이프사이클·의존성 관리) · <b>Gradle</b>(<b>Groovy</b> 기반 스크립트, 안드로이드) · <b>Jenkins</b>(<b>CI 서버</b>, 웹 UI, 분산 빌드)</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> DRM 컨트롤러 ≠ "유통·계약 관리"(그건 분배자·클리어링 하우스). "키 관리·라이선스" 키워드 = 클리어링 하우스</div>
+</div>
+
+<h2>4. 애플리케이션 테스트 관리 — 1) 테스트케이스 설계</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 테스트 케이스</td><td>입력값·실행 조건·<b>기대 결과</b>의 명세(한 건) / 테스트 오라클 = 정답지: <b>참</b>(모든 입력) · <b>샘플링</b>(특정 몇몇) · <b>휴리스틱</b>(샘플링+추정) · <b>일관성</b>(변경 전후 동일 여부)</td></tr>
+    <tr><td class="k">② 테스트 레벨 <span class="star">★★</span></td><td>V모델: <b>단위</b>(모듈 하나) → <b>통합</b>(모듈 간 인터페이스 결함) → <b>시스템</b>(전체 기능·비기능) → <b>인수</b>(사용자가, 요구사항 이행 확인 — <b>알파</b>: 개발자 장소·통제 / <b>베타</b>: 사용자 실환경)</td></tr>
+    <tr><td class="k">③ 테스트 시나리오</td><td>테스트 케이스들의 묶음 + <b>동작 순서</b> 기술 문서</td></tr>
+    <tr><td class="k">④ 테스트 지식 체계 <span class="star">★</span></td><td>테스트 원칙 7: 결함 존재를 밝힘(부재 증명 X) · 완벽 테스트 불가 · 초기 집중 · <b>결함 집중</b>(파레토 80:20) · <b>살충제 패러독스</b>(같은 테스트 반복→새 결함 못 찾음) · 정황 의존 · <b>오류-부재의 궤변</b> / <b>검증 Verification</b>(과정·명세 준수·개발자) vs <b>확인 Validation</b>(결과·요구 적합·사용자)</td></tr>
+  </table>
+  <table>
+    <tr><th>화이트박스 (구조 기반, 코드 보임) <span class="star">★★</span></th><th>블랙박스 (명세 기반, 입출력만)</th></tr>
+    <tr><td><b>기초 경로 검사</b>(McCabe) · 제어 구조 검사(<b>조건·루프·데이터 흐름</b>) · 커버리지: 문장&lt;분기&lt;조건&lt;분기/조건&lt;MC/DC</td><td><b>동치(동등) 분할</b> · <b>경계값 분석</b>(오류는 경계에서) · <b>원인-효과 그래프</b> · 오류 예측 · 비교 테스트</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> "경로·조건·루프·흐름(코드 용어)=화이트 / 분할·경계·그래프·예측(입력 용어)=블랙". 순환 복잡도 V(G)=E−N+2</div>
+</div>
+
+<h2>4. 애플리케이션 테스트 관리 — 2) 통합 테스트 / 3) 성능 개선</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 결함관리 도구</td><td>Mantis · Bugzilla · Trac · Redmine — 결함 등록·추적·상태 관리 / 결함 추이 분석(에러: 사람 실수 → 결함: 산출물 → 장애: 시스템 오동작)</td></tr>
+    <tr><td class="k">② 테스트 자동화 도구</td><td>정적(코드 검토) / 동적(실행) / 성능(부하) / 통합·기능(<b>xUnit·STAF</b>(분산 데몬)·<b>FitNesse</b>(위키)·<b>NTAF</b>(NHN)·<b>Selenium</b>(웹)·<b>watir</b>(Ruby)) — ESB·EAI는 도구 아님</td></tr>
+    <tr><td class="k">③ 통합 테스트 <span class="star">★★</span></td><td><b>하향식</b>: 위→아래, 미완성 하위 대역 = <b>스텁 Stub</b>, 상위 로직 조기 검증 / <b>상향식</b>: 아래→위, 미완성 상위 대역 = <b>드라이버 Driver</b>(하위를 호출·제어) / <b>빅뱅</b>: 전부 만든 후 한꺼번에(결함 위치 찾기 어려움) / 회귀 테스트: 수정 후 새 결함 확인</td></tr>
+    <tr><td class="k">① 알고리즘</td><td>복잡도 서열: O(1)&lt;O(log n)&lt;O(n)&lt;O(n log n)(퀵·힙·병합 평균)&lt;O(n²)(버블·선택·삽입)&lt;O(2ⁿ)</td></tr>
+    <tr><td class="k">② 소스코드 품질분석 도구 <span class="star">★</span></td><td><b>정적</b>(실행 X): pmd · cppcheck · checkstyle · SonarQube · ccm · cobertura / <b>동적</b>(실행 O): <b>Avalanche · Valgrind</b>(메모리 누수·스레드 결함) / 성능: JMeter · LoadUI · OpenSTA — 지표: 처리량·응답시간·경과시간·자원사용률</td></tr>
+    <tr><td class="k">③ 코드 최적화</td><td>클린 코드 원칙: 가독성·단순성·의존성 배제·중복 최소화·추상화 / 나쁜 코드: 스파게티 코드 · <b>외계인 코드</b>(오래되어 유지보수 불가) / 리팩토링 = <b>기능 변경 없이</b> 구조 개선</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> "하스·상드" — 하향식=스텁, 상향식=드라이버(Driver는 운전자, 핸들은 위에서)</div>
+</div>
+
+<h2>5. 인터페이스 구현</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1) 설계 확인</td><td>① 기능 확인: 정의서·명세서로 송수신 기능·데이터 확인 ② 데이터 표준 확인: 송수신 항목의 형식·코드 표준(JSON·XML 스키마) 점검</td></tr>
+    <tr><td class="k">2) 기능 구현 <span class="star">★</span></td><td>① 인터페이스 보안: 전송 구간 암호화 — <b>IPSec</b>(IP 계층) · <b>SSL/TLS</b>(전송 계층, HTTPS) · <b>S-HTTP</b>(메시지 단위) + 데이터 무결성 검사 ② 연계 테스트: 단위 → 연계(통합) 순으로 송수신 검증</td></tr>
+    <tr><td class="k">3) 구현 검증</td><td>① 설계 산출물 기반 검증 ② 인터페이스 명세서와 실제 구현 대조 / 검증 도구: xUnit·STAF·FitNesse·NTAF·Selenium·watir + 감시(APM) 도구</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ═══════════════ 3과목 ═══════════════ -->
+<section class="subj">
+<div class="subj-head">3과목 데이터베이스구축<span class="n">20문제 · SQL 응용/활용 · 논리/물리 설계 · 데이터 전환</span></div>
+
+<h2>1. SQL 응용 — 1) 절차형 SQL 작성</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 트리거 <span class="star">★</span></td><td><b>이벤트(INSERT 등) 발생 시 자동 실행</b>되는 절차형 SQL — 호출 불가·반환값 없음. 용도: 무결성 유지·로그 자동화</td></tr>
+    <tr><td class="k">② 이벤트</td><td>"시스템에 어떤 일이 발생한 것" 그 자체. 트리거의 실행 계기(DML 이벤트, 시각 이벤트)</td></tr>
+    <tr><td class="k">③ 사용자 정의 함수</td><td>SQL 문장 안에서 호출, <b>RETURN 반환값 필수</b> (프로시저: 호출로 실행, 반환 선택)</td></tr>
+    <tr><td class="k">④ SQL 문법</td><td>절차형 확장: PL/SQL(오라클)·SQL/PL — DECLARE(선언)→BEGIN/END(처리)→EXCEPTION(예외)</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> "이벤트마다 자동 수행되는 절차형 SQL"=트리거 / "호출로 실행"=프로시저 / "최적 경로 탐색 모듈"=옵티마이저</div>
+</div>
+
+<h2>1. SQL 응용 — 2) 응용 SQL 작성</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① DML <span class="star">★</span></td><td>SELECT · INSERT INTO~VALUES · UPDATE~SET · DELETE FROM. SELECT 구조: SELECT [<b>DISTINCT</b>(중복 제거, WHERE 아님!)] FROM ~ WHERE ~ GROUP BY ~ <b>HAVING</b>(그룹 조건) ~ ORDER BY [ASC/DESC]</td></tr>
+    <tr><td class="k">② DCL</td><td><b>GRANT</b>(권한 부여) · <b>REVOKE</b>(회수) [+ CASCADE: 연쇄 회수] · COMMIT · ROLLBACK · SAVEPOINT</td></tr>
+    <tr><td class="k">③ 윈도우 함수 <span class="star">★</span></td><td>행 집합(파티션) 위에서 순위·집계: <b>RANK</b>(동순위 다음 건너뜀 1,1,3) · <b>DENSE_RANK</b>(안 건너뜀 1,1,2) · <b>ROW_NUMBER</b>(무조건 고유 1,2,3) · LAG/LEAD — 구문: 함수() OVER (PARTITION BY ~ ORDER BY ~)</td></tr>
+    <tr><td class="k">④ 그룹 함수</td><td>COUNT·SUM·AVG·MAX·MIN + <b>ROLLUP</b>(소계+합계, 계층적) · <b>CUBE</b>(모든 조합 집계) · GROUPING SETS(지정 조합만)</td></tr>
+    <tr><td class="k">⑤ 오류 처리</td><td>EXCEPTION 블록으로 예외 정의·처리(PL/SQL), SQLCODE/SQLERRM 확인</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> RANK 1,1,<b>3</b> / DENSE_RANK 1,1,<b>2</b> / ROW_NUMBER 1,<b>2</b>,3 — "랭크는 건너뛰고 덴스는 촘촘히"</div>
+</div>
+
+<h2>2. SQL 활용 — 1) 기본 SQL / 2) 고급 SQL</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① DDL</td><td>CREATE · ALTER(ADD/MODIFY/DROP COLUMN) · DROP [CASCADE(참조 객체까지)/RESTRICT] · TRUNCATE(구조 유지, 데이터 전부 삭제)</td></tr>
+    <tr><td class="k">② 관계형 데이터 모델</td><td>릴레이션(표) · 속성(열)=<b>차수 Degree</b> · 튜플(행)=<b>카디널리티</b> · 도메인(값 범위). 특징: 튜플 유일·무순서, 속성 원자값·무순서 / 최대 튜플 수 = 도메인 크기의 곱</td></tr>
+    <tr><td class="k">③ 트랜잭션 <span class="star">★★</span></td><td>쪼갤 수 없는 논리적 작업 단위. <b>ACID</b>: <b>원자성</b>(All or Nothing — <b>Commit/Rollback으로 보장</b>) · 일관성(고정 요소 유지) · 독립성(끼어들기 X) · 지속성(영구 보존) / 상태: 활동→부분 완료→완료 / 실패→철회(Rollback)</td></tr>
+    <tr><td class="k">④ 테이블</td><td>CREATE TABLE ~ (칼럼 타입 [NOT NULL], PRIMARY KEY, FOREIGN KEY ~ REFERENCES ~ [ON DELETE CASCADE/SET NULL], CHECK, UNIQUE)</td></tr>
+    <tr><td class="k">⑤ 데이터 사전 <span class="star">★</span></td><td>메타 데이터(데이터에 대한 데이터) 저장 = 시스템 카탈로그. <b>사용자 조회 가능, 직접 수정 불가</b>(시스템이 자동 갱신) / <b>데이터 디렉터리</b>: 사전 접근용 위치 정보, <b>시스템 전용</b></td></tr>
+    <tr><td class="k">① 뷰 <span class="star">★</span></td><td>물리적으로 없는 <b>가상 테이블</b> — 논리적 독립성 제공 · <b>독자적 인덱스 불가</b> · 삽입/갱신/삭제 제약 · <b>기본 테이블 삭제 시 자동 삭제</b> · ALTER 불가(DROP 후 재생성)</td></tr>
+    <tr><td class="k">② 인덱스</td><td>검색 가속 자료구조(B-트리 등). 클러스터드(데이터 자체 정렬, 1개) vs 넌클러스터드(별도, 여러 개). 갱신 잦으면 오버헤드</td></tr>
+    <tr><td class="k">③ 집합 연산자</td><td><b>UNION</b>(합집합, 중복 제거) · <b>UNION ALL</b>(중복 포함) · INTERSECT(교집합) · EXCEPT/MINUS(차집합)</td></tr>
+    <tr><td class="k">④ 조인 <span class="star">★</span></td><td>INNER(양쪽 매칭만) · LEFT/RIGHT OUTER(한쪽 전부+NULL) · FULL OUTER · CROSS(모든 조합 m×n) · SELF / 구현: Nested-Loop · Sort-Merge · Hash</td></tr>
+    <tr><td class="k">⑤ 서브쿼리</td><td>괄호 안 SELECT. IN·EXISTS·ANY·ALL / 스칼라(값 1개)·인라인 뷰(FROM 절)·중첩(WHERE 절)</td></tr>
+  </table>
+</div>
+
+<h2>3. 논리 데이터베이스 설계 — 1) 관계데이터베이스 모델</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 관계 데이터 모델</td><td>데이터 모델 3요소: <b>구조·연산·제약조건</b>("출력 구조" 없음) / 설계 흐름: 요구분석 → <b>개념</b>(E-R, DBMS 무관) → <b>논리</b>(테이블 변환·정규화·<b>목표 DBMS 스키마</b>) → <b>물리</b>(저장·접근 경로·인덱스) / 스키마 3층: 외부(사용자)·개념(전체)·내부(물리)</td></tr>
+    <tr><td class="k">② 관계데이터언어 <span class="star">★★</span></td><td><b>관계대수</b> = <b>절차적</b>(How): 순수 4(Select σ 행 / Project π 열 / Join ⋈ / Division ÷) + 집합 4(∪∩− ×카티션곱) / <b>관계해석</b> = <b>비절차적</b>(What) · <b>프레디킷(술어) 해석 기반</b> · 튜플/도메인 해석 · 표현력 동등(상호 변환 가능)</td></tr>
+    <tr><td class="k">③ 시스템 카탈로그와 뷰</td><td>카탈로그 = DB 객체 정보(기본 테이블·뷰·인덱스·권한)의 시스템 테이블. 사용자도 SELECT 가능, INSERT/UPDATE 불가</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> σ(시그마)=가로 자르기(행 선택) / π(파이 기둥)=세로 자르기(열 추출) / "프레디킷=해석"</div>
+</div>
+
+<h2>3. 논리 데이터베이스 설계 — 2) 데이터모델링 및 설계</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 데이터모델 개념</td><td>현실 세계를 컴퓨터 세계로 추상화. 개념적(E-R) → 논리적(관계형) → 물리적</td></tr>
+    <tr><td class="k">② E-R 모델 <span class="star">★</span></td><td>표기: <b>사각형=개체</b> · <b>마름모=관계</b> · <b>타원=속성</b> · 밑줄=기본키 · 선=연결. 특정 DBMS 고려 안 함(개념 단계). 관계 대응수: 1:1, 1:N, N:M(→ 별도 릴레이션으로 해소)</td></tr>
+    <tr><td class="k">③ 논리적 데이터모델링</td><td>E-R → 릴레이션 변환: 개체→테이블, 속성→칼럼, 관계→FK 또는 별도 테이블(N:M)</td></tr>
+    <tr><td class="k">④ 정규화 <span class="star">★★</span></td><td>이상(Anomaly: 삽입·삭제·갱신) 제거 수술. 함수 종속 X→Y 기준. <b>1NF</b> 원자값 → <b>2NF</b> 부분 함수 종속 제거 → <b>3NF</b> 이행(A→B→C) 제거 → <b>BCNF</b> 결정자가 후보키 아닌 종속 제거 → <b>4NF</b> 다치 → <b>5NF</b> 조인</td></tr>
+    <tr><td class="k">⑤ 논리 모델 품질검증</td><td>정확성·완전성·준거성·최신성·일관성·활용성 기준으로 모델 검토</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 정규화 "도·부·이·결·다·조" (도로 부수고 이사 가면 결국 다시 조립)</div>
+</div>
+
+<h2>4. 물리 데이터베이스 설계 — 1) 물리요소 조사 분석</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 스토리지 <span class="star">★</span></td><td><b>DAS</b>(서버 직접 연결 — 빠름·공유 어려움) / <b>NAS</b>(LAN 경유 파일 공유 — 파일 단위) / <b>SAN</b>(전용 광채널망 — DAS 속도+NAS 공유, 블록 단위, 고비용)</td></tr>
+    <tr><td class="k">② 분산 데이터베이스</td><td>4대 투명성 <span class="star">★</span>: <b>위치</b>(어디 있는지 몰라도)·<b>중복</b>(복제 몰라도)·<b>병행</b>(동시 실행 OK)·<b>장애</b>(일부 고장에도 무결) / 장점: 가용성·확장성↑, 단점: 복잡·비용↑</td></tr>
+    <tr><td class="k">③ 이중화 구성</td><td>장애 대비 복제 운영: Active-Active(둘 다 가동) / Active-Standby(대기). 클러스터링·RAID·복제(Replication)로 구현 — 고가용성(HA)</td></tr>
+    <tr><td class="k">④ 암호화</td><td>API 방식(앱에서)·Plug-in(DB 서버)·TDE(DBMS 내장 투명 암호화)·파일 암호화</td></tr>
+    <tr><td class="k">⑤ 접근제어</td><td>DAC(소유자 임의)·MAC(등급 강제)·RBAC(역할) + GRANT/REVOKE (5과목 보안과 연결)</td></tr>
+  </table>
+</div>
+
+<h2>4. 물리 데이터베이스 설계 — 2) 물리속성 설계 / 3) 물리 모델링 / 4) 반정규화 / 5) 품질 검토</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 파티셔닝 <span class="star">★</span></td><td>큰 테이블 분할: <b>범위</b>(월별) · <b>해시</b>(균등 분산) · <b>리스트</b>(지역 명시) · <b>조합</b>(Composite) — "범해리조"</td></tr>
+    <tr><td class="k">② 클러스터링</td><td>같은 값 데이터를 물리적으로 인접 저장(조회 빠름, 갱신 느림) / 서버 클러스터링 = 여러 서버를 하나처럼(HA)</td></tr>
+    <tr><td class="k">③ 데이터베이스 백업 <span class="star">★</span></td><td><b>전체</b>(다 복사) / <b>차등</b>(마지막 전체 이후 변경분 전부) / <b>증분</b>(마지막 백업 이후 변경분만 — 백업 최소·복구 사슬 필요) + 로그 이용 회복(REDO/UNDO)</td></tr>
+    <tr><td class="k">④ 테이블 저장 사이징</td><td>용량 산정: 행 길이×건수×증가율 → 초기 크기·확장 단위 결정</td></tr>
+    <tr><td class="k">⑤ 데이터 지역화</td><td>자주 함께 쓰는 데이터를 가까이 배치해 접근 효율↑(4과목 구역성 Locality 개념의 DB판)</td></tr>
+    <tr><td class="k">① 무결성 <span class="star">★★</span></td><td><b>개체</b>(기본키 NULL·중복 불가) · <b>참조</b>(FK는 NULL이거나 참조 PK에 존재) · <b>도메인</b>(정의된 범위 값) — 보안("불법 사용자로부터 보호")과 구분!</td></tr>
+    <tr><td class="k">② 칼럼 속성</td><td>데이터 타입·길이·NULL 허용·기본값·CHECK 정의</td></tr>
+    <tr><td class="k">③ 키 종류 <span class="star">★★</span></td><td><b>슈퍼키</b>(유일성만) ⊃ <b>후보키</b>(유일+<b>최소</b>) → <b>기본키</b>(대표, NULL 불가) + <b>대체키</b>(<b>후보키 중 기본키 제외 나머지</b>) / <b>외래키</b>(타 릴레이션 PK 참조 — FK 가진 쪽이 "참조하는" 릴레이션)</td></tr>
+    <tr><td class="k">④/1) 반정규화 <span class="star">★</span></td><td>성능·편의 위해 <b>의도적으로 중복 허용</b>(테이블 통합·분할, 중복 칼럼 추가) — 정규화의 반대 트레이드오프, 일관성 저하 위험</td></tr>
+    <tr><td class="k">5) 품질 검토</td><td>① 물리 모델 품질 기준(정확성·완전성 등) ② 물리 E-R 다이어그램 ③ <b>CRUD 분석</b>(프로세스×테이블 매트릭스로 트랜잭션 분석) ④ SQL 성능 튜닝(옵티마이저·실행계획·인덱스)</td></tr>
+  </table>
+</div>
+
+<h2>5. 데이터 전환</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1)① 초기데이터 구축</td><td>기존(원천) 시스템 데이터를 신규 시스템으로 이관해 초기 적재</td></tr>
+    <tr><td class="k">1)② ETL <span class="star">★</span></td><td><b>Extraction(추출) → Transformation(변환) → Loading(적재)</b> — 데이터 전환·데이터웨어하우스 구축의 핵심 절차</td></tr>
+    <tr><td class="k">1)③ 파일 처리 기술</td><td>순차 파일(순서대로) · 색인 순차 파일(ISAM: 기본+색인+오버플로 구역) · 직접 파일(해싱)</td></tr>
+    <tr><td class="k">2) 데이터 전환 수행</td><td>① 수행 계획(범위·일정·방법·복구 대책) ② 체크리스트(단계별 점검 항목) ③ 데이터 검증: 건수·값·로그 검증, 원천-목적지 대사(비교)</td></tr>
+    <tr><td class="k">3) 데이터 정제</td><td>① 정제: 누락·중복·불일치 데이터 교정 ② 품질 분석: 프로파일링으로 오류 패턴 파악 ③ 오류 데이터 측정: 오류 건수·유형 정량화 → 정제 요청서·보고서</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ═══════════════ 4과목 ═══════════════ -->
+<section class="subj">
+<div class="subj-head">4과목 프로그래밍언어활용<span class="n">20문제 · 서버프로그램 · 언어 · OS/네트워크 기초</span></div>
+
+<h2>1. 서버프로그램 구현</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1)① 개발환경 구축</td><td>구현 도구(IDE)·빌드 도구(Ant·Maven·Gradle·Jenkins)·테스트 도구·형상 관리(Git·SVN) / 하드웨어: 웹 서버·WAS·DB 서버 구성</td></tr>
+    <tr><td class="k">1)② 서버 개발 프레임워크 <span class="star">★</span></td><td><b>Spring</b>(Java, 전자정부 표준프레임워크 기반) · Node.js(JS, 비동기 단일 스레드) · Django/Flask(Python) · Codeigniter(PHP) — 프레임워크 특징: <b>제어의 역흐름(IoC)</b>, 모듈화·재사용성↑</td></tr>
+    <tr><td class="k">2)① 보안 취약성 식별</td><td>구현 단계 취약점 점검: 입력 검증 누락(SQLi·XSS)·하드코딩된 비밀번호·버퍼 오버플로 (5과목 시큐어 코딩과 연결)</td></tr>
+    <tr><td class="k">2)② API</td><td>Application Programming Interface — 기능 호출 규약. 개방형 <b>Open API</b>·REST API(HTTP 메서드 GET/POST/PUT/DELETE로 자원 조작)</td></tr>
+    <tr><td class="k">3)① 배치 프로그램 <span class="star">★</span></td><td>사용자 개입 없이 <b>정해진 조건·일정에 대량 데이터를 일괄 처리</b>. 필수 요소: <b>대용량 데이터·자동화·견고성(오류에도 중단 없이)·안정성/신뢰성·성능</b> / 유형: 정기·이벤트성·On-Demand / 도구: 스프링 배치·Quartz(스케줄러)</td></tr>
+  </table>
+</div>
+
+<h2>2. 프로그래밍 언어 활용</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1) 기본문법 <span class="star">★</span></td><td>① 데이터 타입: 기본형(int·float·char·boolean) / C 포인터(주소 저장, *역참조 &amp;주소) ② 변수: 명명 규칙(예약어 X, 숫자 시작 X), static(정적)·지역·전역 ③ 연산자 우선순위: 괄호 &gt; 단항(++ -- !) &gt; 산술(* / % &gt; + -) &gt; 시프트 &gt; 관계(&lt; &gt; &gt;= ) &gt; 등가(== !=) &gt; 비트(&amp; ^ |) &gt; 논리(&amp;&amp; ||) &gt; 조건 ?: &gt; 대입</td></tr>
+    <tr><td class="k">2) 언어특성 <span class="star">★</span></td><td>① <b>절차적</b>: C·ALGOL·FORTRAN(과학)·COBOL(사무) ② <b>객체지향</b>: Java·C++·C#·Python ③ <b>스크립트</b>: JavaScript·Python·PHP·Perl·Bash(인터프리터 방식) ④ <b>선언형</b>: 함수형(LISP·Haskell — 무엇을 계산하나) · 논리형(Prolog) · SQL·HTML도 선언형</td></tr>
+    <tr><td class="k">3) 라이브러리</td><td>① C: stdio(입출력)·<b>stdlib(변환·malloc·rand)</b>·string(strlen)·math / Java: java.lang(기본)·util(컬렉션) / Python: 내장+외부(pip) ② 데이터 입출력: scanf/printf(형식 지정자 %d %s %f), Java Scanner, Python input ③ 예외 처리: try-catch-finally(Java), try-except(Python) ④ 프로토타입: C 함수 원형 선언(컴파일러에 미리 알림)</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> Java 오버로딩 = 이름 같고 <b>매개변수 다름</b> / Python 리스트 컴프리헨션 [식 for 요소 if 조건] — 조건 먼저 거르고 식 적용 / 문법 오류는 실행 전 컴파일 에러부터 의심</div>
+</div>
+
+<h2>3. 응용 SW 기초 기술 활용 — 1) 운영체제 기초</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 운영체제 종류</td><td>Windows(GUI·선점형) / UNIX(대화식·다중 사용자, <b>커널</b>=핵심 상주+<b>쉘</b>=명령 해석기) / Linux(오픈소스) / MacOS·Android·iOS</td></tr>
+    <tr><td class="k">② 메모리 관리 <span class="star">★★</span></td><td>관리 전략 3: <b>반입 Fetch</b>(언제) · <b>배치 Placement</b>(어디 — First/Best/Worst Fit) · <b>교체 Replacement</b>(누굴) / 가상 메모리: 페이징(고정, 내부 단편화) vs 세그먼테이션(가변, 외부 단편화) / 페이지 교체: <b>OPT·FIFO·LRU·LFU·NUR·SCR</b> / <b>스래싱</b> = 페이지 교환 시간 &gt; 수행 시간 → 워킹 셋·페이지 부재 빈도(PFF)로 방지 / 구역성: 시간(반복·스택·부프로그램)·공간(배열·순차)</td></tr>
+    <tr><td class="k">③ 프로세스 스케줄링 <span class="star">★★</span></td><td>상태: 제출→접수→<b>준비→(디스패치)→실행→대기</b>→종료, PCB 보유, 스레드=경량 프로세스 / <b>비선점</b>: FCFS·SJF·<b>HRN</b>[(대기+서비스)÷서비스, 클수록 우선]·기한부 / <b>선점</b>: RR·SRT·MQ·MFQ / 교착상태 4조건: <b>상호배제·점유와 대기·비선점·환형 대기</b>, 해결: 예방·회피(<b>은행가</b>-다익스트라)·발견·회복 / 동기화: 세마포어(P/V 연산)·뮤텍스 / 디스크: FCFS·SSTF(가까운)·SCAN(엘리베이터)·C-SCAN·LOOK</td></tr>
+    <tr><td class="k">④ 환경변수 <span class="star">★</span></td><td>출력: <b>env·printenv·setenv</b> / 설정: set·export / 해제: unset — "configenv" 없음</td></tr>
+    <tr><td class="k">⑤ shell script</td><td>조건 if/case · 반복 for/while(참인 동안)/<b>until</b>(참이 될 때까지) / 빈출 명령: fork(프로세스 생성)·chmod(권한: r4 w2 x1, 755)·chown·ls·cat·ps·kill·uname</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 교착상태 "상·점·비·환" / HRN "High = 값 클수록 우선" / 파일 디스크립터(FCB)는 사용자가 직접 참조 불가</div>
+</div>
+
+<h2>3. 응용 SW 기초 기술 활용 — 2) 네트워크 기초</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 인터넷 구성 개념</td><td>프로토콜 3요소 <span class="star">★</span>: <b>구문(형식)·의미(제어·오류)·시간(순서·속도)</b> / 패킷 교환: <b>가상 회선</b>(같은 경로·순서 보장) vs <b>데이터그램</b>(독립 경로) / 라우팅: IGP(<b>RIP</b> 거리벡터·15홉 / <b>OSPF</b> 링크상태·다익스트라·대규모) vs EGP(<b>BGP</b> AS 간)</td></tr>
+    <tr><td class="k">② 네트워크 7계층 <span class="star">★★</span></td><td>아래부터 <b>물</b>리(비트, 리피터·허브) · <b>데</b>이터링크(<b>프레임</b>, 인접 노드 간, 브리지·스위치) · <b>네</b>트워크(<b>패킷</b>, 경로·IP, 라우터) · <b>전</b>송(세그먼트, <b>종단 간</b> 신뢰성, TCP/UDP) · <b>세</b>션(대화·동기점) · <b>표</b>현(압축·암호화·변환) · <b>응</b>용(HTTP·FTP) / 오류 제어: FEC(해밍 코드, 수신 측 자체 수정) vs BEC(ARQ 재전송: Stop-and-Wait·Go-back-N·Selective)</td></tr>
+    <tr><td class="k">③ IP <span class="star">★★</span></td><td>IPv4: 32bit·옥텟 4·클래스 경계 <b>128(B)/192(C)/224(D)/240(E)</b> / 서브네팅: 빌린 비트→크기 2^(남은 비트)→시작 주소 나열→<b>±2</b>(네트워크·브로드캐스트 제외) / IPv6: <b>128bit·콜론</b>·유니/멀티/<b>애니</b>캐스트(브로드캐스트 없음)·IPSec 내장</td></tr>
+    <tr><td class="k">④ TCP/UDP <span class="star">★</span></td><td><b>TCP</b>: 연결형·신뢰성·3-way handshake(SYN→SYN+ACK→ACK)·순서/재전송 보장·흐름 제어(슬라이딩 윈도우) / <b>UDP</b>: 비연결·빠름·실시간 / 보조: <b>ARP</b>(IP→MAC)·RARP(MAC→IP)·ICMP(오류 보고, ping)·IGMP(멀티캐스트) / IEEE 802.3=CSMA/CD(유선), 802.11=CSMA/CA(무선), 802.15=블루투스 / 포트: FTP 20/21·SSH 22·Telnet 23·SMTP 25·DNS 53·HTTP 80·POP3 110·HTTPS 443</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> "물데네전세표응" + PDU "비프패세데" — 프레임=데이터링크, 패킷=네트워크(정의 스위치 최다 출제)</div>
+</div>
+
+<h2>3. 응용 SW 기초 기술 활용 — 3) 기본 개발환경 구축</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 웹서버 <span class="star">★</span></td><td>정적 콘텐츠(HTML·이미지) 처리: Apache·Nginx·IIS / <b>WAS</b>: 동적 처리(Tomcat·JEUS·WebLogic) — 웹 서버 ↔ WAS ↔ DB 3계층 구성</td></tr>
+    <tr><td class="k">② DB서버</td><td>DBMS 설치·운영(Oracle·MySQL·PostgreSQL·MariaDB) — 접속 계정·권한·백업 정책 구성</td></tr>
+    <tr><td class="k">③ 패키지</td><td>OS 패키지 관리자: apt(데비안)·yum/dnf(레드햇) / 언어: pip(Python)·npm(Node) — 의존성 자동 해결</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- ═══════════════ 5과목 ═══════════════ -->
+<section class="subj">
+<div class="subj-head">5과목 정보시스템구축관리<span class="n">20문제 · 방법론 · IT프로젝트 구축관리 · SW개발 보안 · 시스템 보안</span></div>
+
+<h2>1. 소프트웨어개발 방법론 활용 — 1) 방법론 선정</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 생명주기 모델 <span class="star">★</span></td><td><b>폭포수</b>(후퇴 불가·산출물 명확) / <b>프로토타입</b>(시제품으로 요구 확인) / <b>나선형</b>: <b>계획→위험 분석→개발→고객 평가</b> 반복, 위험 최소화 / <b>애자일</b>(짧은 반복·고객 소통) / V모델(단계별 검증 연결)</td></tr>
+    <tr><td class="k">② 개발 방법론</td><td><b>구조적</b>(1970s, 모듈·DFD·하향식) → <b>정보공학</b>(1980s, 데이터 중심·ERD·ISP) → <b>객체지향</b>(객체+메시지) → <b>CBD</b>(컴포넌트 조립 — 산출물: 분석 '정의서·명세서' / 설계 '설계서' / 구현 '코드·결과서' / 시험 '결과서·지침서') → <b>애자일</b> → <b>제품 계열</b>(임베디드, 영역공학+응용공학)</td></tr>
+    <tr><td class="k">③ 요구공학 방법론</td><td>도출→분석→명세→확인 + CASE 도구(SADT·SREM·PSL/PSA·TAGS) — 1과목과 동일 내용 재출제</td></tr>
+    <tr><td class="k">④ 비용산정 모델 <span class="star">★★</span></td><td><b>하향식</b>(비과학): 전문가 판단 · <b>델파이</b>(조정자+익명 제출) / <b>상향식</b>: <b>LOC</b>[예측치=(낙관+4×기대+비관)/6, 노력=LOC÷인당 생산성] · <b>COCOMO</b>(Boehm: <b>Organic 5만↓</b>/Semi-detached 30만↓/Embedded 30만↑) · <b>Putnam</b>(Rayleigh-Norden 곡선, 도구 <b>SLIM</b>) · <b>FP</b>(알브레히트, 기능별 가중치, 도구 <b>ESTIMACS</b>) / 일정: <b>PERT</b>(불확실, 3점 추정)·<b>CPM</b>(확실, 임계 경로)·간트(막대) / <b>Brooks 법칙</b>: 지연 프로젝트에 인력 추가 → 더 지연</td></tr>
+  </table>
+  <div class="trap"><b>함정:</b> "비용 추정 모형이 아닌 것" → PERT·CPM·간트(일정 계획). FP는 비용 추정 맞음</div>
+</div>
+
+<h2>1. 소프트웨어개발 방법론 활용 — 2) 테일러링</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 개발 표준 <span class="star">★</span></td><td><b>ISO/IEC 12207</b>(생명주기: 기본-획득·공급·개발·운영·유지보수 / 지원 / 조직) · <b>CMM(I)</b> 5단계 "초·반·정·관·최"(CMMI는 초기·관리·정의·정량적 관리·최적화) · <b>SPICE</b>(ISO 15504) 6수준: <b>불완전→수행→관리→확립→예측→최적</b>(레벨 0부터!) · ISO 9126 품질 특성 "기신사효유이" · 12119(패키지 SW)·29119(테스트)</td></tr>
+    <tr><td class="k">② 테일러링 기준</td><td>기존 방법론을 프로젝트에 맞게 최적화. <b>내부 기준</b>: 목표 환경·요구사항·규모·보유 기술 / <b>외부 기준</b>: <b>법적 제약</b>·표준 품질</td></tr>
+    <tr><td class="k">③ 개발 프레임워크</td><td>스프링(Java·전자정부) · 전자정부 표준프레임워크 · 닷넷 — 재사용 기반 개발 표준화. 특징: 모듈화·재사용성·확장성·<b>제어의 역흐름</b></td></tr>
+  </table>
+</div>
+
+<h2>2. IT프로젝트 정보시스템 구축관리</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1) 네트워크 구축 관리 <span class="star">★</span></td><td>① 신기술: <b>SDN</b>(제어부·데이터부 분리)·NFV(기능 가상화)·<b>Mesh Network</b>(대규모 디바이스·공공 안전)·애드혹(기지국 없이 자율)·피코넷(블루투스 소규모)·USN·NFC·UWB·<b>Zing</b>(초고속 근접)·MQTT(IoT 경량 pub/sub)·QoS ② 장비: L1 리피터(신호 재생)·허브 / L2 브리지·스위치(MAC) / L3 <b>라우터</b>(경로)·백본 스위치 / L4~7 게이트웨이(프로토콜 번역) / <b>STA</b>(스패닝 트리: 루프 방지)·<b>브라우터</b>(브리지+라우터)·VLAN·NAT</td></tr>
+    <tr><td class="k">2) SW 구축 관리</td><td>① 신기술: 매시업(API 조합)·RIA·시맨틱 웹·디지털 트윈·블록체인(분산 원장, BaaS)·<b>하둡/맵리듀스</b>(빅데이터 분산)·데이터 마이닝 vs OLAP·텐서플로(구글 ML)·도커/쿠버네티스(컨테이너) ② SW개발보안 정책: 시큐어 코딩 의무화(행안부 가이드), Secure SDLC 적용</td></tr>
+    <tr><td class="k">3) HW 구축 관리 <span class="star">★</span></td><td>① 신기술: 멤리스터(전원 꺼져도 기억)·3D 프린팅·엣지 컴퓨팅 ② 서버 장비: <b>Secure-OS</b>(커널에 보안 내장)·<b>NAS/DAS/SAN</b>(스토리지 3형)·<b>고가용성 HA</b>(이중화·클러스터링)·RAID(0 스트라이핑/1 미러링/5 패리티)</td></tr>
+    <tr><td class="k">4) DB 구축 관리</td><td>① 신기술: 빅데이터(3V: Volume·Velocity·Variety)·NoSQL(비관계형: Key-Value·문서·그래프)·데이터웨어하우스/마트·<b>다크 데이터</b>(활용 안 되고 쌓인 데이터) ② 관리 기능: 백업·복구·튜닝·이중화 ③ 표준화: 명명 규칙·데이터 사전·메타데이터 관리(용어·도메인·코드 표준)</td></tr>
+  </table>
+</div>
+
+<h2>3. 소프트웨어 개발 보안 구축 — 1) SW개발 보안 설계</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① Secure SDLC <span class="star">★</span></td><td>개발 전 단계에 보안 활동 통합: <b>CLASP</b>(OWASP, 활동·역할 기반, 운영 중 시스템에 적용 용이, 5관점) / <b>MS SDL</b>(마이크로소프트) / <b>Seven Touchpoints</b>(검증된 7가지 보안 활동: 코드 검토·위험 분석·침투 테스트 등) / 보안 3요소 <span class="star">★</span>: <b>기밀성</b>(열람)·<b>무결성</b>(수정)·<b>가용성</b>(사용) + 인증·부인방지</td></tr>
+    <tr><td class="k">② 입력데이터 검증 및 표현</td><td>미검증 입력 → <b>SQL Injection</b>(입력창에 SQL)·<b>XSS</b>(악성 스크립트 주입)·경로 조작. 대응: 서버 측 검증·파라미터 바인딩·이스케이프</td></tr>
+    <tr><td class="k">③ 보안기능</td><td>인증(지식·소유·생체·행위 기반) · 접근 제어(DAC·MAC·<b>RBAC</b>-직무 기반) · 기밀성(암호화) · 권한 관리(최소 권한 원칙) · <b>SSO</b>(한 번 로그인)</td></tr>
+    <tr><td class="k">④ 에러처리</td><td>오류 메시지에 내부 정보(스택·경로) 노출 금지, 예외의 일관 처리</td></tr>
+    <tr><td class="k">⑤ 세션통제</td><td>세션 타임아웃·재로그인 시 세션 ID 재발급 — <b>세션 하이재킹</b> 방지(탐지: 비동기화·ACK Storm·재전송 증가·리셋)</td></tr>
+  </table>
+</div>
+
+<h2>3. 소프트웨어 개발 보안 구축 — 2) SW개발 보안 구현</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">① 암호 알고리즘 <span class="star">★★</span></td><td><b>대칭키</b>(키 동일·빠름·키 수 <b>n(n−1)/2</b>): 블록—DES(64)·AES(128/192/256)·<b>SEED·ARIA</b>(국산)·IDEA / 스트림—<b>RC4</b>·LFSR(비트 XOR) / <b>비대칭</b>(공개키 암호화→<b>개인키 복호화</b>·키 수 <b>2n</b>): <b>RSA</b>(소인수분해)·ECC(타원곡선)·DSA(서명)·Diffie-Hellman(키 교환) / <b>해시</b>(단방향·복호화 불가): SHA·MD5 + <b>솔트</b>(레인보우 테이블 방어) / 전자서명 = 개인키로 서명·공개키로 검증(부인방지)</td></tr>
+    <tr><td class="k">② 코드오류</td><td>널 포인터 역참조·정수 오버플로·버퍼 오버플로(대응: <b>스택가드</b>-카나리)·자원 해제 누락</td></tr>
+    <tr><td class="k">③ 캡슐화</td><td>잘못된 캡슐화 → 내부 정보 노출. private 접근 제한·정보 은닉 준수</td></tr>
+    <tr><td class="k">④ API 오용</td><td>취약 API(rand·strcpy 등) 사용 금지, 검증된 보안 API 사용</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> 대칭 "다스아리(DES·AES·SEED·ARIA·RC4)" / 비대칭 "레드(RSA·ECC·DSA)" — DES(암호화)와 DSA(서명)는 한 글자 차이·다른 진영</div>
+</div>
+
+<h2>4. 시스템 보안 구축</h2>
+<div class="card">
+  <table>
+    <tr><td class="k">1)① 서비스 공격 유형 <span class="star">★★</span></td><td>DoS: <b>SYN Flooding</b>(3-way 마지막 ACK 안 보냄)·<b>Smurf</b>(출발지 위조+브로드캐스트 ping)·Ping of Death·<b>LAND</b>(출발지=목적지)·Teardrop / <b>DDoS</b>(좀비 PC·봇넷, C&amp;C 서버)·DRDoS(반사) / <b>스니핑</b>(엿듣기·수동) vs <b>스푸핑</b>(위장: IP·ARP·DNS) / 세션 하이재킹 / 피싱→파밍(DNS 변조)→스미싱(SMS)→큐싱(QR) / APT(장기 표적)·랜섬웨어·백도어·무차별 대입·크리덴셜 스터핑</td></tr>
+    <tr><td class="k">1)② 서버 인증</td><td>지식(비밀번호)·소유(OTP·인증서)·생체(지문·홍채)·행위(서명·걸음) / <b>PKI</b>(공개키 기반 구조, 인증서로 신뢰) / <b>커버로스</b>(티켓 기반 중앙 인증) / i-PIN·아이핀</td></tr>
+    <tr><td class="k">1)③ 서버 접근통제 <span class="star">★</span></td><td><b>DAC</b>(소유자 임의·신분 기반) · <b>MAC</b>(보안 등급 강제) · <b>RBAC</b>(직무·역할) — "QAC" 없음</td></tr>
+    <tr><td class="k">1)④ 보안 아키텍처·⑤ Framework</td><td>계층적 보안 설계(네트워크 분리·<b>DMZ</b>) / 프레임워크: ISO 27001(ISMS 국제)·<b>ISMS-P</b>(국내 정보보호+개인정보) / 정보보호 거버넌스</td></tr>
+    <tr><td class="k">2)① 로그 분석</td><td>UNIX: utmp(현재 로그인)·wtmp(로그인 이력)·btmp(실패)·sulog / Windows: 이벤트 뷰어 — 침해 흔적 추적</td></tr>
+    <tr><td class="k">2)② 보안 솔루션 <span class="star">★★</span></td><td>방화벽(정책 차단, 내부 공격엔 무력) · <b>IDS</b>: <b>오용 탐지</b>(Signature·아는 패턴·오탐 적음·신종 X) vs <b>이상 탐지</b>(Anomaly·평균 대비·신종 O·오탐 많음), HIDS/NIDS(<b>Snort</b>) · <b>IPS</b>(탐지+차단) · WAF(웹 전용) · VPN(암호화 터널) · NAC(단말 통제) · ESM/SIEM(로그 통합) · <b>허니팟</b>(미끼 시스템) · DMZ 설치 가능</td></tr>
+    <tr><td class="k">2)③ 취약점 분석</td><td>자산 식별→위협·취약점 평가→위험도 산정(위험 = 자산×위협×취약점). 도구: Nmap(포트 스캔)·Nessus·OWASP ZAP / 모의 침투 테스트</td></tr>
+  </table>
+  <div class="mn"><b>암기:</b> "시그니처=서명=이미 아는 것=<b>오용</b> 탐지" — 이상 탐지에 붙이면 오답(빈출 함정)</div>
+</div>
+</section>
+
+</body>
+</html>

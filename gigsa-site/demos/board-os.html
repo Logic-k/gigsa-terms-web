@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운영체제 핵심 마스터보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .mem-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+
+        .sim-table {
+            border-collapse: separate;
+            border-spacing: 4px;
+        }
+        .sim-cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            color: #475569;
+        }
+        .sim-cell.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            transform: scale(1.05);
+            transition: all 0.2s;
+        }
+        .sim-header {
+            width: 40px;
+            text-align: center;
+            font-weight: 900;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        .fault-indicator {
+            width: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        .fault-yes { color: #ef4444; } /* Red */
+        .fault-no { color: #10b981; }  /* Green */
+
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">⚙️</span>
+                <span class="font-black text-xl tracking-tighter text-slate-800">OS<span class="text-amber-500"> MASTER</span></span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-bold text-sm text-slate-500">
+                <a href="#memory" class="hover:text-amber-500 transition">메모리 관리</a>
+                <a href="#simulator" class="hover:text-amber-500 transition">페이지 교체 시뮬레이터</a>
+                <a href="#deadlock" class="hover:text-amber-500 transition">교착상태 & 스케줄링</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-24">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">운영체제 <br><span class="text-amber-500">핵심 마스터보드</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium text-lg">
+                가장 많이 나오는 페이징/세그멘테이션 기법과, 직접 풀어야 하는 페이지 교체 알고리즘(FIFO, LRU)을 눈으로 확인하며 완벽하게 이해하세요.
+            </p>
+        </header>
+
+        <section id="memory" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-amber-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-amber-500">1️⃣</span> 가상 메모리 관리: 페이징 vs 세그멘테이션
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">프로그램을 메모리에 올릴 때 <strong>어떻게 자를 것인가?</strong> (크기냐, 의미냐)</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Paging -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm card-hover transition-all">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-black text-slate-800">페이징 (Paging) 기법</h3>
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">고정 크기</span>
+                    </div>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">프로그램과 주기억장치를 <strong class="text-blue-600">동일한 고정 크기(Page)</strong>로 나누어 적재하는 방식입니다.</p>
+                    
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col gap-2">
+                        <div class="flex gap-2 w-full">
+                            <div class="mem-block bg-blue-500 h-10 flex-1 text-xs">Page 1</div>
+                            <div class="mem-block bg-blue-500 h-10 flex-1 text-xs">Page 2</div>
+                            <div class="mem-block bg-blue-500 h-10 flex-1 text-xs">Page 3</div>
+                            <div class="mem-block bg-blue-500 h-10 flex-1 text-xs">Page 4</div>
+                        </div>
+                        <div class="flex gap-2 w-full mt-4">
+                            <div class="w-full text-center text-xs font-bold text-slate-400">물리 메모리(Frame)도 같은 크기로 분할됨</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-red-50 rounded-xl border border-red-100">
+                        <h4 class="font-bold text-red-700 text-sm mb-1">단점: 내부 단편화 (Internal Fragmentation)</h4>
+                        <p class="text-xs text-red-600">마지막 페이지가 꽉 차지 않고 공간이 남을 경우, 그 빈 공간은 쓸 수 없게 낭비됩니다.</p>
+                    </div>
+                </div>
+
+                <!-- Segmentation -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm card-hover transition-all">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-black text-slate-800">세그멘테이션 (Segmentation)</h3>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">가변 크기</span>
+                    </div>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">프로그램을 함수, 데이터 등 <strong class="text-emerald-600">논리적인 의미 단위(Segment)</strong>로 나누어 적재하는 방식입니다.</p>
+                    
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col gap-2">
+                        <div class="flex gap-2 w-full items-end h-[56px]">
+                            <div class="mem-block bg-emerald-500 w-1/4 h-8 text-xs">Main()</div>
+                            <div class="mem-block bg-emerald-500 w-2/4 h-14 text-xs">Data Array</div>
+                            <div class="mem-block bg-emerald-500 w-1/4 h-10 text-xs">Stack</div>
+                        </div>
+                        <div class="flex gap-2 w-full mt-2">
+                            <div class="w-full text-center text-xs font-bold text-slate-400">크기가 제각각인 논리적 덩어리</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                        <h4 class="font-bold text-amber-700 text-sm mb-1">단점: 외부 단편화 (External Fragmentation)</h4>
+                        <p class="text-xs text-amber-600">메모리에 넣고 빼기를 반복하다 보면, 중간중간 띄엄띄엄 생긴 빈 공간들의 합은 충분하지만, 연속된 큰 공간이 없어 큰 세그먼트가 들어가지 못하는 현상입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulator" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-amber-100 pb-4">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-black flex items-center gap-2">
+                            <span class="text-amber-500">2️⃣</span> 페이지 교체 알고리즘 시뮬레이터
+                        </h2>
+                        <p class="text-slate-500 mt-2 font-medium">실제 기출문제처럼 참조열(Reference String)이 주어졌을 때 메모리(Frame)가 어떻게 변하는지 확인하세요.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-[2rem] p-8 shadow-xl text-white">
+                <div class="flex flex-col md:flex-row justify-between gap-6 mb-8 items-center bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex-1 w-full">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">참조열 (Page Reference String)</label>
+                        <div class="flex gap-2 font-mono text-lg bg-slate-900 px-4 py-2 rounded-xl border border-slate-700 text-amber-400 overflow-x-auto whitespace-nowrap" id="ref-string">
+                            1, 2, 3, 1, 4, 1, 5, 2, 3
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">메모리 프레임 수</label>
+                        <select id="frame-size" class="bg-slate-900 text-white font-bold px-4 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-amber-500">
+                            <option value="3" selected>3 프레임</option>
+                            <option value="4">4 프레임</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mb-8">
+                    <button onclick="runSimulation('FIFO')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg border border-blue-500">
+                        FIFO 실행 (First In First Out)
+                        <span class="block text-xs font-normal text-blue-200 mt-1">가장 먼저 들어온 페이지를 쫓아냅니다.</span>
+                    </button>
+                    <button onclick="runSimulation('LRU')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl transition shadow-lg border border-emerald-500">
+                        LRU 실행 (Least Recently Used)
+                        <span class="block text-xs font-normal text-emerald-200 mt-1">가장 오랫동안 사용되지 않은 페이지를 쫓아냅니다.</span>
+                    </button>
+                </div>
+
+                <!-- Simulation Output Area -->
+                <div class="bg-slate-50 p-6 rounded-2xl overflow-x-auto min-h-[250px] relative">
+                    <h3 id="sim-title" class="text-slate-800 font-black text-xl mb-4">버튼을 눌러 시뮬레이션을 시작하세요</h3>
+                    <div id="sim-container" class="flex gap-2">
+                        <!-- JS injected table -->
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center text-slate-800">
+                        <div class="flex gap-4">
+                            <div class="flex items-center gap-2 text-sm font-bold"><span class="w-3 h-3 rounded-full bg-red-500"></span> Page Fault (부재)</div>
+                            <div class="flex items-center gap-2 text-sm font-bold"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Page Hit (적중)</div>
+                        </div>
+                        <div id="sim-result" class="text-lg font-black text-blue-600"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-800 p-4 rounded-xl text-sm text-slate-300">
+                        <strong class="text-blue-400">💡 LFU (Least Frequently Used)</strong><br>
+                        참조 횟수가 가장 적은 페이지를 교체합니다. (사용 빈도 기준)
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl text-sm text-slate-300">
+                        <strong class="text-emerald-400">💡 OPT (Optimal)</strong><br>
+                        앞으로 가장 오랫동안 사용되지 않을 페이지를 교체합니다. (이론상 최적이지만 미래를 알아야 하므로 실제 구현 불가능)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="deadlock" class="scroll-mt-24 space-y-12">
+            
+            <!-- 교착상태 -->
+            <div>
+                <div class="border-b-2 border-amber-100 pb-4 mb-8">
+                    <h2 class="text-3xl font-black flex items-center gap-2">
+                        <span class="text-amber-500">3️⃣</span> 교착상태 (Deadlock) 발생 4요소
+                    </h2>
+                    <p class="text-slate-500 mt-2 font-medium">4가지 조건이 <strong>모두 충족될 때만</strong> 교착상태가 발생합니다. <strong class="text-rose-600">암기법: 맹·점·비·환</strong></p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border-t-4 border-rose-500 shadow-sm relative overflow-hidden group">
+                        <div class="text-4xl font-black text-slate-100 absolute -right-2 -bottom-4 group-hover:scale-110 transition">1</div>
+                        <h3 class="font-black text-slate-800 text-lg mb-2 relative z-10">상호 배제 <br><span class="text-sm font-normal text-slate-400">(Mutual Exclusion)</span></h3>
+                        <p class="text-xs text-slate-600 relative z-10">한 번에 오직 하나의 프로세스만이 해당 자원을 사용할 수 있음. (독점)</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border-t-4 border-amber-500 shadow-sm relative overflow-hidden group">
+                        <div class="text-4xl font-black text-slate-100 absolute -right-2 -bottom-4 group-hover:scale-110 transition">2</div>
+                        <h3 class="font-black text-slate-800 text-lg mb-2 relative z-10">점유와 대기 <br><span class="text-sm font-normal text-slate-400">(Hold and Wait)</span></h3>
+                        <p class="text-xs text-slate-600 relative z-10">최소한 하나의 자원을 점유하고 있으면서 다른 프로세스에 할당된 자원을 추가로 점유하기 위해 대기함.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border-t-4 border-emerald-500 shadow-sm relative overflow-hidden group">
+                        <div class="text-4xl font-black text-slate-100 absolute -right-2 -bottom-4 group-hover:scale-110 transition">3</div>
+                        <h3 class="font-black text-slate-800 text-lg mb-2 relative z-10">비선점 <br><span class="text-sm font-normal text-slate-400">(No Preemption)</span></h3>
+                        <p class="text-xs text-slate-600 relative z-10">다른 프로세스에 할당된 자원은 사용이 끝날 때까지 강제로 빼앗을 수 없음.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border-t-4 border-blue-500 shadow-sm relative overflow-hidden group">
+                        <div class="text-4xl font-black text-slate-100 absolute -right-2 -bottom-4 group-hover:scale-110 transition">4</div>
+                        <h3 class="font-black text-slate-800 text-lg mb-2 relative z-10">환형 대기 <br><span class="text-sm font-normal text-slate-400">(Circular Wait)</span></h3>
+                        <p class="text-xs text-slate-600 relative z-10">프로세스들이 원형으로 서로의 자원을 요구하며 대기하고 있는 상태. (꼬리에 꼬리를 묾)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 스케줄링 -->
+            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200">
+                <h3 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2">⏱️ 프로세스 스케줄링 기법</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 비선점형 -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white px-3 py-1 rounded text-sm font-bold shadow-sm">비선점형 (Non-Preemptive)</span>
+                        </div>
+                        <p class="text-sm text-slate-600">이미 할당된 CPU를 다른 프로세스가 강제로 빼앗을 수 없는 방식.</p>
+                        <ul class="space-y-3">
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-indigo-700 block mb-1">FCFS (First Come First Serve)</span>
+                                <span class="text-xs text-slate-500">도착한 순서대로 CPU를 할당. (가장 공평하지만 긴 작업이 먼저 오면 뒤가 다 밀리는 호위 효과 발생)</span>
+                            </li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-indigo-700 block mb-1">SJF (Shortest Job First)</span>
+                                <span class="text-xs text-slate-500">실행 시간이 가장 짧은 작업부터 할당. (평균 대기시간 최소화되나, 긴 작업은 영원히 대기하는 기아 현상 발생 가능)</span>
+                            </li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-indigo-700 block mb-1">HRN (Highest Response-ratio Next)</span>
+                                <span class="text-xs text-slate-500">대기 시간과 서비스 시간을 고려해 우선순위 계산. <code>(대기시간 + 서비스시간) / 서비스시간</code></span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 선점형 -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-rose-600 text-white px-3 py-1 rounded text-sm font-bold shadow-sm">선점형 (Preemptive)</span>
+                        </div>
+                        <p class="text-sm text-slate-600">우선순위가 높은 프로세스가 현재 CPU를 사용 중인 프로세스를 쫓아내고 빼앗을 수 있는 방식.</p>
+                        <ul class="space-y-3">
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-rose-700 block mb-1">RR (Round Robin)</span>
+                                <span class="text-xs text-slate-500">FCFS 방식에 시간 할당량(Time Slice)을 두어 정해진 시간만큼만 실행 후 다음 프로세스로 넘김. (시분할 시스템)</span>
+                            </li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-rose-700 block mb-1">SRT (Shortest Remaining Time)</span>
+                                <span class="text-xs text-slate-500">SJF의 선점형 버전. 새로 도착한 프로세스의 남은 시간이 현재 실행 중인 프로세스의 남은 시간보다 짧으면 뺏음.</span>
+                            </li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-rose-700 block mb-1">다단계 큐 (Multi-level Queue)</span>
+                                <span class="text-xs text-slate-500">작업들을 여러 종류의 그룹으로 나누어 여러 개의 큐를 이용해 스케줄링.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="mt-24 py-8 bg-slate-900 text-slate-400 text-center text-sm border-t-4 border-amber-500">
+        <p>정보처리기사 완벽 대비 가이드 - 운영체제 핵심 요약 및 시뮬레이터</p>
+    </footer>
+
+    <script>
+        const sequence = [1, 2, 3, 1, 4, 1, 5, 2, 3];
+        
+        function runSimulation(algorithm) {
+            const frameSize = parseInt(document.getElementById('frame-size').value);
+            const container = document.getElementById('sim-container');
+            const title = document.getElementById('sim-title');
+            const resultText = document.getElementById('sim-result');
+            
+            container.innerHTML = '';
+            title.innerText = `${algorithm} 알고리즘 실행 결과 (${frameSize} 프레임)`;
+            
+            let frames = [];
+            let faults = 0;
+            let timeUsed = []; // For LRU
+
+            // Generate Columns
+            sequence.forEach((req, index) => {
+                const col = document.createElement('div');
+                col.className = 'flex flex-col gap-1 items-center';
+                
+                // Header (Request)
+                const header = document.createElement('div');
+                header.className = 'sim-header';
+                header.innerText = req;
+                col.appendChild(header);
+
+                let isFault = false;
+                let replaceIdx = -1;
+
+                if (!frames.includes(req)) {
+                    isFault = true;
+                    faults++;
+                    if (frames.length < frameSize) {
+                        frames.push(req);
+                        if(algorithm === 'LRU') timeUsed.push(index);
+                    } else {
+                        if (algorithm === 'FIFO') {
+                            frames.shift();
+                            frames.push(req);
+                        } else if (algorithm === 'LRU') {
+                            // Find least recently used
+                            let lruIdx = 0;
+                            let minTime = timeUsed[0];
+                            for(let i = 1; i < timeUsed.length; i++) {
+                                if(timeUsed[i] < minTime) {
+                                    minTime = timeUsed[i];
+                                    lruIdx = i;
+                                }
+                            }
+                            frames[lruIdx] = req;
+                            timeUsed[lruIdx] = index;
+                        }
+                    }
+                } else {
+                    if (algorithm === 'LRU') {
+                        const idx = frames.indexOf(req);
+                        timeUsed[idx] = index;
+                    }
+                }
+
+                // Draw Frames
+                for (let i = 0; i < frameSize; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'sim-cell';
+                    if (i < frames.length) {
+                        cell.innerText = frames[i];
+                        if (frames[i] === req && isFault) {
+                            cell.classList.add('active'); // highlight new inserted
+                        }
+                    } else {
+                        cell.innerText = '';
+                    }
+                    col.appendChild(cell);
+                }
+
+                // Fault Indicator
+                const indicator = document.createElement('div');
+                indicator.className = `fault-indicator ${isFault ? 'fault-yes' : 'fault-no'}`;
+                indicator.innerText = isFault ? 'F' : 'H';
+                col.appendChild(indicator);
+
+                container.appendChild(col);
+            });
+
+            resultText.innerText = `총 Page Fault: ${faults}회`;
+        }
+    </script>
+</body>
+</html>

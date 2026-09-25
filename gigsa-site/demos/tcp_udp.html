@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP vs UDP 인터랙티브 마스터</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        :root {
+            --tcp-color: #3b82f6; /* Blue */
+            --tcp-light: #eff6ff;
+            --udp-color: #10b981; /* Emerald */
+            --udp-light: #ecfdf5;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+
+        .packet-stage {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #1e293b;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 4px solid #334155;
+            box-shadow: inset 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .packet {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: left 1.5s linear, opacity 0.3s;
+            z-index: 10;
+        }
+
+        .packet.tcp-syn { background-color: #eab308; }
+        .packet.tcp-ack { background-color: #a855f7; }
+        .packet.tcp-data { background-color: var(--tcp-color); }
+        .packet.udp-data { background-color: var(--udp-color); }
+
+        .terminal-log {
+            font-family: monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            height: 100%;
+            overflow-y: auto;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .header-grid {
+            display: grid;
+            grid-template-columns: repeat(32, 1fr);
+            gap: 2px;
+            background: #cbd5e1;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header-field {
+            background: white;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #334155;
+        }
+        
+        .field-hover:hover {
+            background: #f1f5f9;
+            cursor: help;
+        }
+
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">⚡</span>
+                <span class="font-black text-xl tracking-tighter text-slate-800">PROTOCOL<span class="text-blue-600"> VISUAL</span></span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-bold text-sm text-slate-500">
+                <a href="#comparison" class="hover:text-blue-600 transition">특성 비교</a>
+                <a href="#simulator" class="hover:text-blue-600 transition">작동 시뮬레이터</a>
+                <a href="#headers" class="hover:text-blue-600 transition">헤더 구조</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-20">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">전송 계층의 두 라이벌: <br><span class="text-blue-600">TCP</span> vs <span class="text-emerald-500">UDP</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium">
+                안전하고 정확하게 보낼 것인가(TCP), 아니면 빠르고 거침없이 쏟아낼 것인가(UDP). <br>정보처리기사 4계층 핵심 프로토콜의 작동 방식을 눈으로 확인하세요.
+            </p>
+        </header>
+
+        <section id="comparison" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- TCP Card -->
+            <div class="feature-card bg-white rounded-3xl p-8 border-t-8 border-t-blue-500 shadow-sm">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-800">TCP</h2>
+                        <p class="text-blue-600 font-bold text-sm mt-1">Transmission Control Protocol</p>
+                    </div>
+                    <div class="text-4xl">📦</div>
+                </div>
+                
+                <ul class="space-y-4">
+                    <li class="flex gap-3">
+                        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-black shrink-0 h-fit">연결형</span>
+                        <span class="text-sm text-slate-600">통신 전 3-Way Handshake로 <strong>논리적 연결을 수립</strong>합니다. (가상 회선 방식)</span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-black shrink-0 h-fit">신뢰성</span>
+                        <span class="text-sm text-slate-600">데이터의 순서를 보장하고, 분실 시 <strong>재전송(Retransmission)</strong>합니다.</span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-black shrink-0 h-fit">제어</span>
+                        <span class="text-sm text-slate-600">송수신 속도를 맞추는 <strong>흐름 제어</strong>, 네트워크 혼잡을 막는 <strong>혼잡 제어</strong> 기능이 있습니다.</span>
+                    </li>
+                </ul>
+                <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-500 font-medium">
+                    <span class="font-bold text-slate-700">📌 주요 활용:</span> 웹(HTTP), 이메일(SMTP), 파일 전송(FTP) 등 데이터 유실이 없어야 하는 서비스
+                </div>
+            </div>
+
+            <!-- UDP Card -->
+            <div class="feature-card bg-white rounded-3xl p-8 border-t-8 border-t-emerald-500 shadow-sm">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-800">UDP</h2>
+                        <p class="text-emerald-600 font-bold text-sm mt-1">User Datagram Protocol</p>
+                    </div>
+                    <div class="text-4xl">🚀</div>
+                </div>
+                
+                <ul class="space-y-4">
+                    <li class="flex gap-3">
+                        <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-black shrink-0 h-fit">비연결형</span>
+                        <span class="text-sm text-slate-600">사전 연결 없이 수신자의 수신 가능 여부와 무관하게 <strong>데이터를 일방적으로 던집니다.</strong></span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-black shrink-0 h-fit">비신뢰성</span>
+                        <span class="text-sm text-slate-600">순서를 보장하지 않으며, 패킷이 중간에 유실되어도 <strong>재전송하지 않습니다.</strong></span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-black shrink-0 h-fit">초고속</span>
+                        <span class="text-sm text-slate-600">복잡한 제어 기능과 헤더가 없어 오버헤드가 적고 <strong>속도가 매우 빠릅니다.</strong></span>
+                    </li>
+                </ul>
+                <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-500 font-medium">
+                    <span class="font-bold text-slate-700">📌 주요 활용:</span> 실시간 스트리밍(YouTube), 온라인 게임, 화상 회의, DNS 등 속도가 생명인 서비스
+                </div>
+            </div>
+        </section>
+
+        <section id="simulator" class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-200">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800">통신 방식 시뮬레이터</h2>
+                    <p class="text-sm text-slate-500 mt-2">버튼을 눌러 데이터가 전송되는 실제 과정을 관찰하세요.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runSimulation('TCP')" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg shadow-blue-200">TCP 시뮬레이션</button>
+                    <button onclick="runSimulation('UDP')" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-200">UDP 시뮬레이션</button>
+                    <button onclick="resetSim()" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition">초기화</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                <div class="lg:col-span-3 packet-stage relative" id="stage">
+                    <!-- Nodes -->
+                    <div class="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col items-center z-20">
+                        <div class="w-16 h-16 bg-slate-700 border-2 border-slate-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg">💻</div>
+                        <span class="text-white font-bold text-xs mt-2 uppercase">Client (Sender)</span>
+                    </div>
+                    <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center z-20">
+                        <div class="w-16 h-16 bg-slate-700 border-2 border-slate-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg">🖥️</div>
+                        <span class="text-white font-bold text-xs mt-2 uppercase">Server (Receiver)</span>
+                    </div>
+                    <!-- Animated elements will be injected here -->
+                </div>
+                
+                <div class="lg:col-span-1 bg-slate-900 rounded-2xl p-4 flex flex-col border border-slate-700 h-[300px]">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase mb-2 border-b border-slate-700 pb-2">Network Log</div>
+                    <div id="sim-log" class="terminal-log space-y-1">
+                        <div>대기 중... (버튼을 클릭하세요)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <span id="sim-status" class="inline-block px-4 py-2 bg-slate-100 text-slate-600 font-bold text-sm rounded-full">
+                    원하는 프로토콜을 선택하여 시뮬레이션을 시작하세요.
+                </span>
+            </div>
+        </section>
+
+        <section id="headers" class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-2xl font-black text-slate-800">프로토콜 헤더(Header) 구조 비교</h2>
+                <p class="text-sm text-slate-500 mt-2">TCP는 신뢰성을 위해 무겁고 복잡하며, UDP는 가볍고 단순합니다.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <h3 class="font-bold text-lg text-slate-800">TCP Header <span class="text-xs font-normal text-slate-400 ml-2">(보통 20 Bytes ~ 최대 60 Bytes)</span></h3>
+                </div>
+                
+                <div class="header-grid">
+                    <!-- Row 1 -->
+                    <div class="header-field field-hover" style="grid-column: span 16;" title="출발지 포트 번호">Source Port (16 bit)</div>
+                    <div class="header-field field-hover" style="grid-column: span 16;" title="목적지 포트 번호">Destination Port (16 bit)</div>
+                    <!-- Row 2 -->
+                    <div class="header-field field-hover bg-blue-50" style="grid-column: span 32;" title="데이터의 순서를 보장하기 위한 번호">Sequence Number (32 bit) - 순서 제어</div>
+                    <!-- Row 3 -->
+                    <div class="header-field field-hover bg-purple-50" style="grid-column: span 32;" title="수신 확인 및 다음 받을 번호">Acknowledgment Number (32 bit) - 수신 확인</div>
+                    <!-- Row 4 -->
+                    <div class="header-field field-hover" style="grid-column: span 4;" title="헤더 길이">Data Offset</div>
+                    <div class="header-field field-hover" style="grid-column: span 6;" title="예약됨">Reserved</div>
+                    <div class="header-field field-hover bg-yellow-50" style="grid-column: span 6;" title="URG, ACK, PSH, RST, SYN, FIN">Flags (6 bit)</div>
+                    <div class="header-field field-hover bg-rose-50" style="grid-column: span 16;" title="수신 버퍼 여유 공간">Window Size (16 bit) - 흐름 제어</div>
+                    <!-- Row 5 -->
+                    <div class="header-field field-hover" style="grid-column: span 16;" title="데이터 오류 검출">Checksum (16 bit)</div>
+                    <div class="header-field field-hover" style="grid-column: span 16;" title="긴급 데이터 포인터">Urgent Pointer (16 bit)</div>
+                </div>
+                
+                <div class="flex items-center gap-2 mt-12 mb-4">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                    <h3 class="font-bold text-lg text-slate-800">UDP Header <span class="text-xs font-normal text-slate-400 ml-2">(고정 8 Bytes)</span></h3>
+                </div>
+                
+                <div class="header-grid" style="border-color: #a7f3d0; background: #a7f3d0;">
+                    <!-- Row 1 -->
+                    <div class="header-field field-hover" style="grid-column: span 16;">Source Port (16 bit)</div>
+                    <div class="header-field field-hover" style="grid-column: span 16;">Destination Port (16 bit)</div>
+                    <!-- Row 2 -->
+                    <div class="header-field field-hover" style="grid-column: span 16;" title="헤더와 데이터를 합친 총 길이">Length (16 bit)</div>
+                    <div class="header-field field-hover" style="grid-column: span 16;" title="데이터 오류 검출 (UDP는 선택적)">Checksum (16 bit)</div>
+                </div>
+
+                <div class="mt-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-black text-slate-700 text-sm mb-2 flex items-center gap-2">💡 정보처리기사 기출 포인트</h4>
+                    <ul class="text-sm text-slate-600 space-y-2">
+                        <li>• <strong>TCP 헤더의 Flags(제어 비트):</strong> <code>URG, ACK, PSH, RST, SYN, FIN</code> 6가지 플래그로 연결 상태를 제어합니다. (특히 연결 설정 시 SYN, 연결 해제 시 FIN 사용)</li>
+                        <li>• <strong>흐름 제어(Flow Control):</strong> 수신자의 처리 속도에 맞춰 송신 속도를 조절하는 것으로, TCP 헤더의 <code>Window Size</code>를 사용합니다. (슬라이딩 윈도우 방식)</li>
+                        <li>• UDP는 순서 번호(Sequence Number)나 수신 확인(Acknowledgment Number) 필드가 <strong>아예 존재하지 않음</strong>을 확인할 수 있습니다.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-24 opacity-40 text-xs">
+        <p>정보처리기사 네트워크 요약 가이드 | TCP/UDP 시뮬레이터</p>
+    </footer>
+
+    <script>
+        const stage = document.getElementById('stage');
+        const logPanel = document.getElementById('sim-log');
+        const statusText = document.getElementById('sim-status');
+        let isRunning = false;
+        let animationTimeouts = [];
+
+        function addLog(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.innerText = `> ${msg}`;
+            if(type === 'tcp') div.className = 'text-blue-400';
+            else if(type === 'udp') div.className = 'text-emerald-400';
+            else if(type === 'error') div.className = 'text-rose-400';
+            else div.className = 'text-slate-400';
+            
+            logPanel.appendChild(div);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        function createPacket(text, className, startLeft, endLeft, topOffset, duration) {
+            const packet = document.createElement('div');
+            packet.className = `packet ${className}`;
+            packet.innerText = text;
+            packet.style.left = startLeft;
+            packet.style.marginTop = topOffset;
+            stage.appendChild(packet);
+
+            // Trigger reflow
+            packet.getBoundingClientRect();
+
+            packet.style.transition = `left ${duration}s linear, opacity 0.3s`;
+            packet.style.left = endLeft;
+
+            return packet;
+        }
+
+        function clearStage() {
+            animationTimeouts.forEach(t => clearTimeout(t));
+            animationTimeouts = [];
+            const packets = stage.querySelectorAll('.packet');
+            packets.forEach(p => p.remove());
+            logPanel.innerHTML = '';
+        }
+
+        function resetSim() {
+            if(isRunning) return;
+            clearStage();
+            addLog("대기 중... (버튼을 클릭하세요)");
+            statusText.innerText = "원하는 프로토콜을 선택하여 시뮬레이션을 시작하세요.";
+            statusText.className = "inline-block px-4 py-2 bg-slate-100 text-slate-600 font-bold text-sm rounded-full";
+        }
+
+        async function runTCPSim() {
+            statusText.innerText = "TCP 모드: 안전하고 신뢰성 있는 전송 진행 중...";
+            statusText.className = "inline-block px-4 py-2 bg-blue-100 text-blue-700 font-bold text-sm rounded-full";
+            
+            addLog("--- 3-Way Handshake 시작 ---", "tcp");
+            
+            // 1. SYN
+            addLog("Client: SYN (연결 요청) 전송", "tcp");
+            let p1 = createPacket("SYN", "tcp-syn", "10%", "80%", "-20px", 1.5);
+            await wait(1500);
+            p1.style.opacity = 0;
+            
+            // 2. SYN+ACK
+            addLog("Server: SYN+ACK (요청 수락 및 연결 요청) 전송", "tcp");
+            let p2 = createPacket("SYN+ACK", "tcp-syn", "80%", "10%", "0px", 1.5);
+            await wait(1500);
+            p2.style.opacity = 0;
+
+            // 3. ACK
+            addLog("Client: ACK (수락 확인) 전송 -> 연결 수립 완료!", "tcp");
+            let p3 = createPacket("ACK", "tcp-ack", "10%", "80%", "20px", 1.5);
+            await wait(1500);
+            p3.style.opacity = 0;
+
+            addLog("--- 데이터 전송 시작 ---", "tcp");
+            
+            // Data 1 & 2
+            addLog("Client: DATA 1, DATA 2 전송", "tcp");
+            let d1 = createPacket("DATA 1", "tcp-data", "10%", "80%", "-10px", 1.2);
+            await wait(400);
+            let d2 = createPacket("DATA 2", "tcp-data", "10%", "80%", "30px", 1.2);
+            await wait(1000);
+            d1.style.opacity = 0;
+            d2.style.opacity = 0;
+
+            // ACK for Data
+            addLog("Server: ACK 3 (DATA 1,2 잘 받았음. 3번 줘) 전송", "tcp");
+            let a1 = createPacket("ACK 3", "tcp-ack", "80%", "10%", "10px", 1.2);
+            await wait(1400);
+            a1.style.opacity = 0;
+
+            addLog("TCP 전송 완료 (무결성 보장)", "tcp");
+            isRunning = false;
+        }
+
+        async function runUDPSim() {
+            statusText.innerText = "UDP 모드: 연결 없이 초고속 연속 전송 중...";
+            statusText.className = "inline-block px-4 py-2 bg-emerald-100 text-emerald-700 font-bold text-sm rounded-full";
+            
+            addLog("--- 연결 절차 없이 즉시 전송 시작 ---", "udp");
+            addLog("Client: DATA 1~5 일방적 전송 (속도 우선)", "udp");
+
+            // Shoot packets rapidly
+            for(let i=1; i<=5; i++) {
+                let offset = (Math.random() * 80 - 40) + "px"; // Random spread
+                let duration = 0.8 + Math.random() * 0.4; // Fast speeds
+                
+                let p = createPacket(`DATA ${i}`, "udp-data", "10%", "85%", offset, duration);
+                
+                // Simulate occasional drop for educational purposes
+                if(i === 3) {
+                    setTimeout(() => {
+                        p.style.opacity = 0;
+                        addLog("네트워크 혼잡: DATA 3 유실됨 (재전송 안함!)", "error");
+                    }, duration * 500); // Disappear halfway
+                } else {
+                    setTimeout(() => { p.style.opacity = 0; }, duration * 1000);
+                }
+                
+                await wait(200); // Very short interval
+            }
+            
+            await wait(1500);
+            addLog("Server: ACK 없음. 받은 것만 처리함.", "udp");
+            addLog("UDP 전송 완료 (빠르지만 유실 가능성 존재)", "udp");
+            isRunning = false;
+        }
+
+        function wait(ms) {
+            return new Promise(resolve => {
+                const timeout = setTimeout(resolve, ms);
+                animationTimeouts.push(timeout);
+            });
+        }
+
+        async function runSimulation(type) {
+            if(isRunning) return;
+            isRunning = true;
+            clearStage();
+
+            if(type === 'TCP') {
+                await runTCPSim();
+            } else {
+                await runUDPSim();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이진 트리 순회 인터랙티브 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #fdfcfb;
+            scroll-behavior: smooth;
+        }
+
+        .tree-node {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            background: white;
+            border: 3px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 10;
+        }
+
+        .node-active {
+            background: #3b82f6 !important;
+            color: white !important;
+            border-color: #2563eb !important;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .node-visited {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-color: #cbd5e1;
+        }
+
+        .tree-line {
+            position: absolute;
+            background-color: #e2e8f0;
+            height: 2px;
+            transform-origin: 0 0;
+            z-index: 1;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+
+        .traversal-step {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 2px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-900 pb-20">
+
+    <nav class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🌲</span>
+                <span class="font-extrabold text-xl tracking-tighter text-emerald-700">TREE MASTER</span>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="resetSimulation()" class="text-xs font-bold text-slate-500 hover:text-red-500 transition">초기화</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 mt-12 space-y-16">
+        
+        <!-- Header Section -->
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900">트리 순회, <span class="text-blue-600">눈으로 이해하세요</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto">
+                이진 트리의 모든 노드를 빠뜨리지 않고 방문하는 세 가지 전략(전위, 중위, 후위)을 실시간 애니메이션으로 학습합니다.
+            </p>
+        </header>
+
+        <!-- Simulation Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Tree Canvas -->
+            <div class="lg:col-span-7 bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100 flex flex-col items-center justify-center min-h-[500px] relative overflow-hidden">
+                <div class="absolute top-6 left-8">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">Visual Stage</span>
+                </div>
+                
+                <div id="tree-stage" class="relative w-full h-[350px]">
+                    <div id="node-container"></div>
+                    <div id="line-container"></div>
+                </div>
+
+                <div class="mt-12 w-full bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-bold text-slate-400 uppercase tracking-tighter">순회 결과 (Traversal Order)</span>
+                        <div id="status-label" class="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-600 rounded">대기 중</div>
+                    </div>
+                    <div id="result-display" class="flex flex-wrap gap-2 min-h-[40px] items-center">
+                        <span class="text-sm text-slate-300 italic">버튼을 눌러 순회를 시작하세요...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls & Info -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-700 mb-4 uppercase tracking-widest">트리 형태 선택</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="changeTree('perfect')" id="btn-perfect" class="tree-btn px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white transition">포화 이진 트리</button>
+                        <button onclick="changeTree('complete')" id="btn-complete" class="tree-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">완전 이진 트리</button>
+                        <button onclick="changeTree('skewed')" id="btn-skewed" class="tree-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">편향 이진 트리</button>
+                        <button onclick="changeTree('expression')" id="btn-expression" class="tree-btn px-4 py-2 rounded-xl text-xs font-bold bg-purple-100 text-purple-700 hover:bg-purple-200 transition border border-purple-200">수식 트리 (표기법)</button>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-900 rounded-[2.5rem] p-8 text-white shadow-xl">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-indigo-300">🕹️</span> 순회 방식 선택
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <button onclick="startTraversal('pre')" class="w-full group bg-indigo-800 hover:bg-white hover:text-indigo-900 p-5 rounded-2xl transition-all text-left border border-indigo-700">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-lg">전위 순회 (Pre-order)</span>
+                                <span class="text-xs opacity-60">Root → L → R</span>
+                            </div>
+                            <p class="text-xs mt-2 opacity-50 group-hover:opacity-100">뿌리(Root)를 가장 먼저 방문합니다.</p>
+                        </button>
+
+                        <button onclick="startTraversal('in')" class="w-full group bg-indigo-800 hover:bg-white hover:text-indigo-900 p-5 rounded-2xl transition-all text-left border border-indigo-700">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-lg">중위 순회 (In-order)</span>
+                                <span class="text-xs opacity-60">L → Root → R</span>
+                            </div>
+                            <p class="text-xs mt-2 opacity-50 group-hover:opacity-100">왼쪽 서브트리 방문 후 뿌리를 방문합니다.</p>
+                        </button>
+
+                        <button onclick="startTraversal('post')" class="w-full group bg-indigo-800 hover:bg-white hover:text-indigo-900 p-5 rounded-2xl transition-all text-left border border-indigo-700">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-lg">후위 순회 (Post-order)</span>
+                                <span class="text-xs opacity-60">L → R → Root</span>
+                            </div>
+                            <p class="text-xs mt-2 opacity-50 group-hover:opacity-100">자식들을 모두 방문한 뒤 뿌리를 방문합니다.</p>
+                        </button>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-indigo-800">
+                        <label class="text-xs font-bold text-indigo-300 uppercase block mb-3">애니메이션 속도</label>
+                        <input type="range" id="speed-control" min="200" max="1500" value="800" step="100" class="w-full accent-emerald-400">
+                        <div class="flex justify-between text-[10px] mt-2 opacity-50 font-bold">
+                            <span>FAST</span>
+                            <span>SLOW</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Small Chart Area -->
+                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-700 mb-4 uppercase tracking-widest">시험 출제 빈도 (최근 5년)</h3>
+                    <div class="chart-container">
+                        <canvas id="examChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expression Notation Section -->
+        <section class="bg-purple-50 rounded-[3rem] p-10 md:p-12 border border-purple-100 shadow-sm">
+            <div class="mb-10">
+                <h2 class="text-2xl font-black text-purple-900 flex items-center gap-2">
+                    <span class="text-purple-500">🧮</span> 수식 트리와 표기법 변환
+                </h2>
+                <p class="text-purple-700 mt-2 opacity-80 text-sm">트리의 순회 방식을 수식(Expression)에 적용하면, 컴퓨터가 계산하기 쉬운 표기법으로 변환됩니다. <br>상단의 <strong>'수식 트리'</strong>를 선택하고 순회 버튼을 눌러 시뮬레이션 해보세요.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Infix -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-purple-100 shadow-sm relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-slate-400"></div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-black text-lg text-slate-800">중위 표기법<br><span class="text-xs text-slate-400 font-normal">Infix Notation</span></h3>
+                        <span class="text-xs font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded">중위 순회</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-lg font-mono text-center font-bold text-slate-700 mb-4 border border-slate-200">
+                        A + B * C - D
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        우리가 일상적으로 사용하는 방식입니다. 연산자가 피연산자 <strong>가운데(In)</strong> 위치합니다. 사람이 읽기는 편하지만, 괄호와 연산자 우선순위 때문에 컴퓨터가 처리하기는 까다롭습니다.
+                    </p>
+                </div>
+
+                <!-- Prefix -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-purple-200 shadow-sm relative overflow-hidden group hover:border-purple-400 transition-colors">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-purple-400"></div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-black text-lg text-purple-900">전위 표기법<br><span class="text-xs text-purple-400 font-normal">Prefix Notation</span></h3>
+                        <span class="text-xs font-bold bg-purple-100 text-purple-600 px-2 py-1 rounded">전위 순회</span>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg font-mono text-center font-bold text-purple-700 mb-4 border border-purple-200">
+                        * + A B - C D
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        연산자가 피연산자 <strong>앞(Pre)</strong>에 위치합니다. 스택(Stack)을 이용하여 괄호 없이도 우선순위에 맞게 컴퓨터가 빠르게 계산할 수 있도록 고안되었습니다.
+                    </p>
+                </div>
+
+                <!-- Postfix -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-pink-200 shadow-sm relative overflow-hidden group hover:border-pink-400 transition-colors">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-pink-400"></div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-black text-lg text-pink-900">후위 표기법<br><span class="text-xs text-pink-400 font-normal">Postfix Notation</span></h3>
+                        <span class="text-xs font-bold bg-pink-100 text-pink-600 px-2 py-1 rounded">후위 순회</span>
+                    </div>
+                    <div class="bg-pink-50 p-3 rounded-lg font-mono text-center font-bold text-pink-700 mb-4 border border-pink-200">
+                        A B + C D - *
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        연산자가 피연산자 <strong>뒤(Post)</strong>에 위치합니다. <strong>컴퓨터가 수식을 처리할 때 가장 많이 사용하는 방식</strong>이며, 정보처리기사 시험에 단골로 출제되는 핵심 표기법입니다.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-white/60 p-4 rounded-xl border border-purple-100 text-sm text-purple-800 font-medium">
+                <span class="font-bold">💡 시험 꿀팁:</span> 수식 트리에서 피연산자(A, B, C 등)는 무조건 '단말 노드(잎새)'에 위치하고, 연산자(+, -, * 등)는 무조건 '부모 노드(가지)'에 위치합니다!
+            </div>
+        </section>
+
+        <!-- Theoretical Summary -->
+        <section class="bg-emerald-50 rounded-[3rem] p-10 md:p-16 border border-emerald-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-black text-emerald-900 mb-6">순회 알고리즘 <br><span class="text-emerald-600">완벽 정리 보드</span></h2>
+                    <ul class="space-y-6">
+                        <li class="flex gap-4">
+                            <div class="bg-emerald-200 text-emerald-700 w-8 h-8 rounded-full flex shrink-0 items-center justify-center font-black">1</div>
+                            <div>
+                                <h4 class="font-bold text-emerald-800">재귀적 속성</h4>
+                                <p class="text-sm text-emerald-700 opacity-80">모든 순회는 재귀적입니다. 하나의 서브트리에서 적용된 규칙은 전체 트리에서도 동일하게 반복됩니다.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="bg-emerald-200 text-emerald-700 w-8 h-8 rounded-full flex shrink-0 items-center justify-center font-black">2</div>
+                            <div>
+                                <h4 class="font-bold text-emerald-800">전위의 특징</h4>
+                                <p class="text-sm text-emerald-700 opacity-80">결과값의 맨 첫 번째 노드는 항상 전체 트리의 <strong>루트(Root)</strong> 노드입니다.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="bg-emerald-200 text-emerald-700 w-8 h-8 rounded-full flex shrink-0 items-center justify-center font-black">3</div>
+                            <div>
+                                <h4 class="font-bold text-emerald-800">중위의 특징</h4>
+                                <p class="text-sm text-emerald-700 opacity-80">이진 탐색 트리(BST)를 중위 순회하면 <strong>오름차순</strong>으로 정렬된 결과를 얻을 수 있습니다.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm space-y-4">
+                    <h4 class="font-black text-slate-800 border-b pb-2">기출 암기 공식</h4>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-sm font-mono leading-relaxed">
+                        <div class="flex justify-between mb-1"><span class="text-blue-600 font-bold">PRE</span> <span>Root-L-R</span></div>
+                        <div class="flex justify-between mb-1"><span class="text-emerald-600 font-bold">IN</span> <span>L-Root-R</span></div>
+                        <div class="flex justify-between"><span class="text-rose-600 font-bold">POST</span> <span>L-R-Root</span></div>
+                    </div>
+                    <p class="text-[11px] text-slate-400">※ 화살표 방향으로만 움직인다고 생각하지 말고, "언제 부모를 처리하는가"에 집중하세요.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-20 opacity-30 text-xs">
+        <p>Information Processing Guide | Binary Tree Traversal Simulator | 2024</p>
+    </footer>
+
+    <script>
+        const treesData = {
+            perfect: {
+                root: {
+                    id: 'A',
+                    left: { id: 'B', left: { id: 'D', left: null, right: null }, right: { id: 'E', left: null, right: null } },
+                    right: { id: 'C', left: { id: 'F', left: null, right: null }, right: { id: 'G', left: null, right: null } }
+                },
+                nodes: [
+                    { id: 'A', x: 50, y: 0 },
+                    { id: 'B', x: 25, y: 96 },
+                    { id: 'C', x: 75, y: 96 },
+                    { id: 'D', x: 12, y: 192 },
+                    { id: 'E', x: 38, y: 192 },
+                    { id: 'F', x: 62, y: 192 },
+                    { id: 'G', x: 88, y: 192 }
+                ],
+                edges: [['A', 'B'], ['A', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'F'], ['C', 'G']]
+            },
+            complete: {
+                root: {
+                    id: 'A',
+                    left: { id: 'B', left: { id: 'D', left: null, right: null }, right: { id: 'E', left: null, right: null } },
+                    right: { id: 'C', left: { id: 'F', left: null, right: null }, right: null }
+                },
+                nodes: [
+                    { id: 'A', x: 50, y: 0 },
+                    { id: 'B', x: 25, y: 96 },
+                    { id: 'C', x: 75, y: 96 },
+                    { id: 'D', x: 12, y: 192 },
+                    { id: 'E', x: 38, y: 192 },
+                    { id: 'F', x: 62, y: 192 }
+                ],
+                edges: [['A', 'B'], ['A', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'F']]
+            },
+            skewed: {
+                root: {
+                    id: 'A',
+                    left: { id: 'B', left: { id: 'C', left: { id: 'D', left: null, right: null }, right: null }, right: null },
+                    right: null
+                },
+                nodes: [
+                    { id: 'A', x: 50, y: 0 },
+                    { id: 'B', x: 38, y: 80 },
+                    { id: 'C', x: 26, y: 160 },
+                    { id: 'D', x: 14, y: 240 }
+                ],
+                edges: [['A', 'B'], ['B', 'C'], ['C', 'D']]
+            },
+            expression: {
+                root: {
+                    id: '*',
+                    left: { id: '+', left: { id: 'A', left: null, right: null }, right: { id: 'B', left: null, right: null } },
+                    right: { id: '-', left: { id: 'C', left: null, right: null }, right: { id: 'D', left: null, right: null } }
+                },
+                nodes: [
+                    { id: '*', x: 50, y: 0 },
+                    { id: '+', x: 25, y: 96 },
+                    { id: '-', x: 75, y: 96 },
+                    { id: 'A', x: 12, y: 192 },
+                    { id: 'B', x: 38, y: 192 },
+                    { id: 'C', x: 62, y: 192 },
+                    { id: 'D', x: 88, y: 192 }
+                ],
+                edges: [['*', '+'], ['*', '-'], ['+', 'A'], ['+', 'B'], ['-', 'C'], ['-', 'D']]
+            }
+        };
+
+        const resultDisplay = document.getElementById('result-display');
+        const statusLabel = document.getElementById('status-label');
+        let isRunning = false;
+        let currentTreeType = 'perfect';
+
+        function changeTree(type) {
+            if (isRunning) return;
+            currentTreeType = type;
+            
+            // Update UI buttons
+            document.querySelectorAll('.tree-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById(`btn-${type}`);
+            activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+            activeBtn.classList.add('bg-blue-600', 'text-white');
+
+            renderTree();
+            resetSimulation();
+        }
+
+        function renderTree() {
+            const data = treesData[currentTreeType];
+            const nodeContainer = document.getElementById('node-container');
+            nodeContainer.innerHTML = '';
+            
+            data.nodes.forEach(n => {
+                const nodeEl = document.createElement('div');
+                nodeEl.id = `node-${n.id}`;
+                nodeEl.className = 'tree-node absolute -translate-x-1/2';
+                nodeEl.style.left = `${n.x}%`;
+                nodeEl.style.top = `${n.y}px`;
+                nodeEl.innerText = n.id;
+                nodeContainer.appendChild(nodeEl);
+            });
+
+            // Draw lines after nodes are mounted
+            setTimeout(drawLines, 10);
+        }
+
+        function drawLines() {
+            const container = document.getElementById('line-container');
+            container.innerHTML = '';
+            
+            const edges = treesData[currentTreeType].edges;
+            
+            edges.forEach(([p, c]) => {
+                const parent = document.getElementById(`node-${p}`);
+                const child = document.getElementById(`node-${c}`);
+                if (!parent || !child) return;
+                
+                const x1 = parent.offsetLeft + 24;
+                const y1 = parent.offsetTop + 24;
+                const x2 = child.offsetLeft + 24;
+                const y2 = child.offsetTop + 24;
+
+                const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                const line = document.createElement('div');
+                line.className = 'tree-line';
+                line.style.width = `${length}px`;
+                line.style.left = `${x1}px`;
+                line.style.top = `${y1}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                container.appendChild(line);
+            });
+        }
+
+        async function visitNode(nodeId) {
+            const nodeEl = document.getElementById(`node-${nodeId}`);
+            nodeEl.classList.add('node-active');
+            
+            // Add to result display
+            const step = document.createElement('span');
+            step.className = 'traversal-step';
+            step.innerText = nodeId;
+            if (resultDisplay.querySelector('span.italic')) resultDisplay.innerHTML = '';
+            resultDisplay.appendChild(step);
+
+            const speed = parseInt(document.getElementById('speed-control').value);
+            await new Promise(r => setTimeout(r, speed));
+            
+            nodeEl.classList.remove('node-active');
+            nodeEl.classList.add('node-visited');
+        }
+
+        async function preOrder(node) {
+            if (!node) return;
+            await visitNode(node.id);
+            await preOrder(node.left);
+            await preOrder(node.right);
+        }
+
+        async function inOrder(node) {
+            if (!node) return;
+            await inOrder(node.left);
+            await visitNode(node.id);
+            await inOrder(node.right);
+        }
+
+        async function postOrder(node) {
+            if (!node) return;
+            await postOrder(node.left);
+            await postOrder(node.right);
+            await visitNode(node.id);
+        }
+
+        async function startTraversal(type) {
+            if (isRunning) return;
+            resetSimulation();
+            isRunning = true;
+            
+            let label = "";
+            let expLabel = currentTreeType === 'expression' ? " ➔ " : "";
+            
+            switch(type) {
+                case 'pre': 
+                    label = "전위 순회 중..."; 
+                    if(currentTreeType === 'expression') expLabel += "전위식(Prefix)";
+                    break;
+                case 'in': 
+                    label = "중위 순회 중..."; 
+                    if(currentTreeType === 'expression') expLabel += "중위식(Infix)";
+                    break;
+                case 'post': 
+                    label = "후위 순회 중..."; 
+                    if(currentTreeType === 'expression') expLabel += "후위식(Postfix)";
+                    break;
+            }
+            statusLabel.innerText = label + expLabel;
+            statusLabel.classList.replace('bg-blue-100', 'bg-emerald-100');
+            statusLabel.classList.replace('text-blue-600', 'text-emerald-600');
+
+            const rootNode = treesData[currentTreeType].root;
+            if (type === 'pre') await preOrder(rootNode);
+            else if (type === 'in') await inOrder(rootNode);
+            else if (type === 'post') await postOrder(rootNode);
+
+            statusLabel.innerText = "완료";
+            statusLabel.classList.replace('bg-emerald-100', 'bg-slate-800');
+            statusLabel.classList.replace('text-emerald-600', 'text-white');
+            isRunning = false;
+        }
+
+        function resetSimulation() {
+            document.querySelectorAll('.tree-node').forEach(n => {
+                n.classList.remove('node-active', 'node-visited');
+            });
+            resultDisplay.innerHTML = '<span class="text-sm text-slate-300 italic">버튼을 눌러 순회를 시작하세요...</span>';
+            statusLabel.innerText = "대기 중";
+            statusLabel.className = "text-xs font-bold px-2 py-1 bg-blue-100 text-blue-600 rounded";
+            isRunning = false;
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('examChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['전위', '중위', '후위', '표현식'],
+                    datasets: [{
+                        data: [25, 45, 20, 10],
+                        backgroundColor: ['#6366f1', '#10b981', '#f43f5e', '#f59e0b'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        x: { display: false },
+                        y: { grid: { display: false }, ticks: { font: { size: 11, weight: 'bold' } } }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            renderTree();
+            initChart();
+            window.addEventListener('resize', drawLines);
+        };
+    </script>
+</body>
+</html>

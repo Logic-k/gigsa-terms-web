@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네트워크 & 보안 마스터보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ARQ Animation styles */
+        .arq-timeline { position: relative; border-left: 2px solid #cbd5e1; margin-left: 20px; padding-bottom: 20px;}
+        .arq-node { position: relative; padding-left: 20px; margin-bottom: 15px; }
+        .arq-node::before {
+            content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+            width: 10px; height: 10px; border-radius: 50%; background: #3b82f6;
+        }
+        
+        /* Tree styles for Routing */
+        .tree-line { width: 2px; height: 15px; background: #cbd5e1; margin: 0 auto; }
+        .tree-h-line { height: 2px; background: #cbd5e1; width: 100%; }
+
+        /* Security Neon Theme */
+        .sec-bg { background-color: #0f172a; color: #f8fafc; }
+        .glow-cyan { box-shadow: 0 0 15px rgba(34, 211, 238, 0.3); border-color: rgba(34, 211, 238, 0.5); }
+        .glow-purple { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); border-color: rgba(168, 85, 247, 0.5); }
+
+    </style>
+</head>
+<body class="pb-24">
+
+    <!-- Navigation -->
+    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🌐</span>
+                <span class="font-black text-xl tracking-tighter text-slate-800">NET<span class="text-blue-600"> & </span><span class="text-purple-600">SEC</span></span>
+            </div>
+            <div class="hidden lg:flex space-x-6 font-bold text-sm text-slate-500">
+                <a href="#devices" class="hover:text-blue-600 transition">네트워크 장비</a>
+                <a href="#flow-arq" class="hover:text-blue-600 transition">흐름/오류 제어(ARQ)</a>
+                <a href="#lan-ieee" class="hover:text-blue-600 transition">CSMA & IEEE</a>
+                <a href="#routing" class="hover:text-blue-600 transition">라우팅 프로토콜</a>
+                <a href="#access-control" class="hover:text-purple-600 transition">접근 통제 (보안)</a>
+                <a href="#crypto" class="hover:text-purple-600 transition">암호 알고리즘</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-24">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">네트워크 구축 및 <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">정보 보안 마스터보드</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium text-lg">
+                OSI 계층별 네트워크 장비부터 혼동하기 쉬운 CSMA/CD와 CA, 오류 제어 기법(ARQ), 그리고 필수 암기 보안 정책까지 시각적으로 정리합니다.
+            </p>
+        </header>
+
+        <!-- Section 1: Network Devices -->
+        <section id="devices" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-blue-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-slate-800">
+                    <span class="text-blue-500">🔌</span> 통신 시스템 & 네트워크 장비
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">데이터를 목적지까지 전달하기 위해 OSI 계층별로 사용되는 장비들의 역할입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Layer 1 -->
+                <div class="bg-white rounded-3xl p-6 border-t-4 border-rose-500 shadow-sm card-hover relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-6xl opacity-10">L1</div>
+                    <span class="px-3 py-1 bg-rose-100 text-rose-700 text-xs font-black rounded-full mb-4 inline-block">물리 계층 (Physical)</span>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span>📡</span> 리피터 (Repeater)</h3>
+                            <p class="text-xs text-slate-600 mt-1">디지털 신호를 증폭시켜 전송 거리를 연장하는 장비. (단순 신호 증폭기)</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span>🐙</span> 더미 허브 (Hub)</h3>
+                            <p class="text-xs text-slate-600 mt-1">여러 대의 컴퓨터를 별형(Star)으로 연결. 한 곳에서 들어온 신호를 모든 포트로 브로드캐스팅(전달).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 2 -->
+                <div class="bg-white rounded-3xl p-6 border-t-4 border-amber-500 shadow-sm card-hover relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-6xl opacity-10">L2</div>
+                    <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-black rounded-full mb-4 inline-block">데이터 링크 (Data Link)</span>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span>🌉</span> 브리지 (Bridge)</h3>
+                            <p class="text-xs text-slate-600 mt-1">두 개의 LAN을 연결. MAC 주소를 기반으로 프레임을 필터링 및 포워딩함.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span>🎛️</span> L2 스위치 (Switch)</h3>
+                            <p class="text-xs text-slate-600 mt-1">다중 포트 브리지. 목적지 MAC 주소만 보고 해당 포트로만 데이터를 전송하여 충돌(Collision)을 막음.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 3 -->
+                <div class="bg-white rounded-3xl p-6 border-t-4 border-emerald-500 shadow-sm card-hover relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-6xl opacity-10">L3</div>
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-black rounded-full mb-4 inline-block">네트워크 (Network)</span>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span>🚥</span> 라우터 (Router)</h3>
+                            <p class="text-xs text-slate-600 mt-1">서로 다른 네트워크 간에 데이터를 전송. IP 주소를 읽고 가장 빠른 최적의 경로(Routing)를 설정함.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span>🚪</span> 게이트웨이 (Gateway)</h3>
+                            <p class="text-xs text-slate-600 mt-1">전혀 다른 프로토콜 구조를 가진 네트워크를 연결해주는 출입문 역할. (보통 L3 이상에서 동작)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Flow Control & ARQ -->
+        <section id="flow-arq" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-blue-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-slate-800">
+                    <span class="text-blue-500">🚥</span> 흐름 제어(Flow) 및 오류 제어(ARQ)
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">데이터 링크/전송 계층에서 신뢰성을 보장하기 위해 수신측 상태에 맞춰 전송하고, 에러 시 재전송하는 기법입니다.</p>
+            </div>
+
+            <!-- 흐름 제어 -->
+            <div class="bg-indigo-50 p-8 rounded-3xl border border-indigo-100">
+                <h3 class="font-black text-indigo-900 text-xl mb-6">흐름 제어 (Flow Control)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-slate-800">정지-대기 (Stop-and-Wait)</h4>
+                            <span class="text-xl">🛑</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-4">패킷을 하나 보내고, 수신측에서 <strong>ACK(수신 확인)가 올 때까지 무조건 기다렸다가</strong> 다음 패킷을 보내는 가장 단순한 방식. (비효율적)</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-indigo-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-slate-800">슬라이딩 윈도우 (Sliding Window)</h4>
+                            <span class="text-xl">🪟</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-4">수신측이 처리할 수 있는 버퍼 크기(윈도우)만큼 <strong>ACK를 기다리지 않고 연속해서 패킷을 쏟아붓는 방식.</strong> (TCP의 기본 흐름 제어)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오류 제어 (ARQ) -->
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                <h3 class="font-black text-slate-800 text-xl mb-2 flex items-center gap-2">🔄 자동 반복 요청 (ARQ) 3대장</h3>
+                <p class="text-sm text-slate-500 mb-8">오류 발생 시 송신측에 재전송(Retransmission)을 요구하는 기법입니다.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Stop-and-Wait ARQ -->
+                    <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50">
+                        <h4 class="font-bold text-blue-700 mb-2 border-b pb-2">1. Stop-and-Wait ARQ</h4>
+                        <div class="text-[10px] text-slate-500 mb-4 h-10">가장 기초. 1개 보내고 ACK(성공) 또는 NAK(에러)가 올 때까지 기다림. NAK가 오면 그 1개를 다시 보냄.</div>
+                        <div class="arq-timeline">
+                            <div class="arq-node text-xs font-bold">1번 전송 ➔</div>
+                            <div class="arq-node text-xs font-bold text-emerald-600">➔ ACK 수신</div>
+                            <div class="arq-node text-xs font-bold">2번 전송 ➔</div>
+                            <div class="arq-node text-xs font-bold text-red-500">➔ NAK 수신 (에러)</div>
+                            <div class="arq-node text-xs font-bold text-blue-600">2번 재전송 ➔</div>
+                        </div>
+                    </div>
+
+                    <!-- Go-Back-N ARQ -->
+                    <div class="border-2 border-indigo-200 rounded-2xl p-5 bg-indigo-50/30">
+                        <h4 class="font-bold text-indigo-700 mb-2 border-b pb-2 flex justify-between items-center">
+                            2. Go-Back-N ARQ
+                            <span class="text-[10px] bg-indigo-200 text-indigo-800 px-2 rounded">가장 많이 씀</span>
+                        </h4>
+                        <div class="text-[10px] text-slate-500 mb-4 h-10">연속해서 쫙 보내다가, 2번 패킷이 에러나면 <strong>2번부터 그 뒤에 보냈던 모든 패킷(3, 4, 5..)을 싹 다 다시 보냄.</strong></div>
+                        <div class="arq-timeline">
+                            <div class="arq-node text-xs font-bold text-slate-400">1, 2, 3, 4번 연속 전송 ➔</div>
+                            <div class="arq-node text-xs font-bold text-red-500">➔ 2번 패킷 에러 발생!</div>
+                            <div class="arq-node text-xs font-bold text-slate-500">3, 4번은 정상 도착했지만 무시됨</div>
+                            <div class="arq-node text-xs font-bold text-indigo-600">2, 3, 4번 전부 재전송 ➔</div>
+                        </div>
+                    </div>
+
+                    <!-- Selective Repeat ARQ -->
+                    <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50">
+                        <h4 class="font-bold text-teal-700 mb-2 border-b pb-2">3. Selective Repeat ARQ</h4>
+                        <div class="text-[10px] text-slate-500 mb-4 h-10">에러가 발생한 <strong>딱 그 패킷(선택적)만 다시 보냄.</strong> 복잡하지만 네트워크 효율은 가장 좋음.</div>
+                        <div class="arq-timeline">
+                            <div class="arq-node text-xs font-bold text-slate-400">1, 2, 3, 4번 연속 전송 ➔</div>
+                            <div class="arq-node text-xs font-bold text-red-500">➔ 2번 패킷 에러 발생!</div>
+                            <div class="arq-node text-xs font-bold text-emerald-600">3, 4번은 버퍼에 저장해둠</div>
+                            <div class="arq-node text-xs font-bold text-teal-600">2번만 콕 찝어 재전송 ➔</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: LAN & IEEE -->
+        <section id="lan-ieee" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-blue-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-slate-800">
+                    <span class="text-blue-500">📡</span> LAN 통신 방식 및 IEEE 표준
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">유선과 무선의 매체 접근 제어 방식(CSMA)과 주요 IEEE 802 규격을 완벽 비교합니다.</p>
+            </div>
+
+            <!-- CSMA/CD vs CA -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- CSMA/CD -->
+                <div class="bg-white rounded-3xl p-8 border-l-8 border-l-blue-500 shadow-sm relative overflow-hidden group">
+                    <div class="absolute right-4 top-4 text-5xl opacity-20 transition group-hover:scale-110">🔌</div>
+                    <h3 class="font-black text-2xl text-slate-800 mb-1">CSMA/<span class="text-blue-600">CD</span></h3>
+                    <p class="text-sm font-bold text-slate-400 mb-6">Collision <span class="text-blue-500">Detection</span> (충돌 <span class="text-blue-500">검출</span>)</p>
+                    
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-blue-100 text-blue-600 px-2 rounded font-bold shrink-0">적용</span>
+                            <strong>유선 이더넷 (Ethernet)</strong> 환경에서 사용
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-blue-100 text-blue-600 px-2 rounded font-bold shrink-0">원리</span>
+                            선이 비어있는지 확인(CS) 후 전송 ➔ <strong>충돌이 꽝! 일어나면 그걸 감지(CD)</strong> ➔ 잠시 대기(랜덤 시간) 후 재전송
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-blue-100 text-blue-600 px-2 rounded font-bold shrink-0">특징</span>
+                            선으로 직접 연결되어 있으니 충돌을 바로 알아챌 수 있습니다.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- CSMA/CA -->
+                <div class="bg-white rounded-3xl p-8 border-l-8 border-l-emerald-500 shadow-sm relative overflow-hidden group">
+                    <div class="absolute right-4 top-4 text-5xl opacity-20 transition group-hover:scale-110">📶</div>
+                    <h3 class="font-black text-2xl text-slate-800 mb-1">CSMA/<span class="text-emerald-500">CA</span></h3>
+                    <p class="text-sm font-bold text-slate-400 mb-6">Collision <span class="text-emerald-500">Avoidance</span> (충돌 <span class="text-emerald-500">회피</span>)</p>
+                    
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-emerald-100 text-emerald-600 px-2 rounded font-bold shrink-0">적용</span>
+                            <strong>무선 랜 (Wi-Fi)</strong> 환경에서 사용
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-emerald-100 text-emerald-600 px-2 rounded font-bold shrink-0">원리</span>
+                            공기가 비어있는지 확인 ➔ 충돌을 감지하기 힘드니까 아예 <strong>사전에 사인을 주고받아(RTS/CTS) 충돌을 회피(CA)</strong>함.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-emerald-100 text-emerald-600 px-2 rounded font-bold shrink-0">특징</span>
+                            공기 중에서는 충돌이 나도 파악하기 힘들기 때문에 충돌을 <strong>미연에 방지</strong>하는 것이 핵심입니다.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- IEEE Cheat Sheet -->
+            <div class="bg-slate-900 rounded-[2rem] p-8 text-white shadow-xl">
+                <h3 class="font-black text-xl mb-6 flex items-center gap-2">
+                    <span class="text-yellow-400">📝</span> IEEE 802.x 치트시트 (필수 암기)
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center card-hover">
+                        <div class="text-3xl font-black text-blue-400 mb-1">802.3</div>
+                        <div class="text-sm font-bold text-white">이더넷 (Ethernet)</div>
+                        <div class="text-[10px] text-slate-400 mt-2">유선 LAN (CSMA/CD)</div>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center card-hover">
+                        <div class="text-3xl font-black text-emerald-400 mb-1">802.11</div>
+                        <div class="text-sm font-bold text-white">무선 LAN (Wi-Fi)</div>
+                        <div class="text-[10px] text-slate-400 mt-2">무선 네트워크 (CSMA/CA)</div>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center card-hover">
+                        <div class="text-3xl font-black text-blue-300 mb-1">802.15</div>
+                        <div class="text-sm font-bold text-white">블루투스 (Bluetooth)</div>
+                        <div class="text-[10px] text-slate-400 mt-2">무선 개인 통신망 (WPAN)</div>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center card-hover">
+                        <div class="text-3xl font-black text-amber-400 mb-1">802.5</div>
+                        <div class="text-sm font-bold text-white">토큰 링 (Token Ring)</div>
+                        <div class="text-[10px] text-slate-400 mt-2">링형 토폴로지 전송 방식</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Routing Protocol & Topology -->
+        <section id="routing" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-blue-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-slate-800">
+                    <span class="text-blue-500">🗺️</span> 라우팅 프로토콜 & 네트워크 토폴로지
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">최적의 길을 찾는 알고리즘(라우팅)과 기기들의 연결 형태(토폴로지)입니다.</p>
+            </div>
+
+            <!-- Routing -->
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                <h3 class="font-black text-slate-800 text-xl mb-8 border-l-4 border-blue-500 pl-3">동적 라우팅 프로토콜 핵심 트리</h3>
+                
+                <div class="flex flex-col items-center max-w-2xl mx-auto text-sm">
+                    <div class="bg-slate-800 text-white font-bold py-2 px-6 rounded-lg shadow-md z-10">동적 라우팅 (Dynamic Routing)</div>
+                    <div class="tree-line"></div>
+                    
+                    <div class="flex w-full justify-between relative px-24">
+                        <div class="absolute top-0 left-24 right-24 tree-h-line"></div>
+                        <!-- IGP -->
+                        <div class="flex flex-col items-center">
+                            <div class="tree-line mt-0"></div>
+                            <div class="bg-blue-100 text-blue-800 font-bold py-2 px-4 rounded-lg shadow-sm border border-blue-200 z-10">IGP (내부 게이트웨이)</div>
+                            <div class="text-[10px] text-slate-400 mb-2">동일한 AS 내부 라우팅</div>
+                            <div class="tree-line"></div>
+                            
+                            <div class="flex gap-4 relative">
+                                <div class="absolute top-0 left-1/4 right-1/4 tree-h-line"></div>
+                                <div class="flex flex-col items-center">
+                                    <div class="tree-line mt-0"></div>
+                                    <div class="bg-white border-2 border-indigo-400 p-3 rounded-xl text-center w-28 card-hover">
+                                        <div class="font-black text-indigo-700">RIP</div>
+                                        <div class="text-[10px] text-slate-500 leading-tight mt-1">거리 벡터 방식<br>최대 15홉(Hop)</div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="tree-line mt-0"></div>
+                                    <div class="bg-white border-2 border-emerald-400 p-3 rounded-xl text-center w-28 card-hover">
+                                        <div class="font-black text-emerald-700">OSPF</div>
+                                        <div class="text-[10px] text-slate-500 leading-tight mt-1">링크 상태 방식<br>다익스트라(최단경로)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EGP -->
+                        <div class="flex flex-col items-center">
+                            <div class="tree-line mt-0"></div>
+                            <div class="bg-rose-100 text-rose-800 font-bold py-2 px-4 rounded-lg shadow-sm border border-rose-200 z-10">EGP (외부 게이트웨이)</div>
+                            <div class="text-[10px] text-slate-400 mb-2">서로 다른 AS 간 라우팅</div>
+                            <div class="tree-line"></div>
+                            <div class="bg-white border-2 border-rose-400 p-3 rounded-xl text-center w-28 card-hover">
+                                <div class="font-black text-rose-700">BGP</div>
+                                <div class="text-[10px] text-slate-500 leading-tight mt-1">경로 벡터 방식<br>인터넷 백본망 사용</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topology -->
+            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200">
+                <h3 class="font-black text-slate-800 text-xl mb-6 flex items-center gap-2">🔗 네트워크 토폴로지</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-2">⭐</div>
+                        <h4 class="font-bold text-slate-800 text-sm">성형 (Star)</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">중앙 허브 집중식. 단말 고장시 영향 없으나 중앙 고장시 전체 마비</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-2">🚌</div>
+                        <h4 class="font-bold text-slate-800 text-sm">버스형 (Bus)</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">하나의 통신 회선 공유. 설치가 쉽지만 기기가 많아지면 충돌 잦음</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="text-3xl mb-2">💍</div>
+                        <h4 class="font-bold text-slate-800 text-sm">링형 (Ring)</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">이웃 기기끼리 고리 모양 연결. 단방향 전송 (토큰 패싱 사용)</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 border-b-4 border-b-blue-500">
+                        <div class="text-3xl mb-2">🕸️</div>
+                        <h4 class="font-bold text-slate-800 text-sm">망형 (Mesh)</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">모두가 서로 연결. 신뢰성 최고! 비용도 최고! (회선 수: n(n-1)/2)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECURITY SECTION -->
+        <hr class="border-t-4 border-slate-800 my-16 border-dashed">
+
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight glow-purple"><span class="text-purple-600">CYBER SECURITY</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium text-lg">
+                접근 통제 3원칙(MAC, DAC, RBAC)과 암호 알고리즘 총정리
+            </p>
+        </header>
+
+        <!-- Section 5: Access Control -->
+        <section id="access-control" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-purple-200 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-slate-800">
+                    <span class="text-purple-500">🛡️</span> 접근 통제 정책 (Access Control)
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">누가 어떤 데이터에 접근할 수 있는지 권한을 부여하는 세 가지 방식입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- MAC -->
+                <div class="sec-bg p-8 rounded-3xl glow-purple border transition card-hover">
+                    <h3 class="font-black text-2xl text-white mb-1">MAC</h3>
+                    <p class="text-xs text-purple-300 font-bold mb-6">Mandatory Access Control<br>(강제적 접근 통제)</p>
+                    
+                    <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                        <span class="text-3xl block text-center mb-2">👮</span>
+                        <p class="text-xs text-slate-300 text-center font-bold">"자원의 보안 등급과 사용자의 권한 등급을 비교해 통제한다!"</p>
+                    </div>
+                    <ul class="text-sm text-slate-400 space-y-2">
+                        <li>• <strong>주체:</strong> 시스템 (관리자)</li>
+                        <li>• <strong>기준:</strong> 보안 등급 (Top Secret, Secret 등)</li>
+                        <li>• <strong>특징:</strong> 가장 강력함. 군대나 정부 기관에서 주로 사용.</li>
+                    </ul>
+                </div>
+
+                <!-- DAC -->
+                <div class="sec-bg p-8 rounded-3xl glow-cyan border transition card-hover">
+                    <h3 class="font-black text-2xl text-white mb-1">DAC</h3>
+                    <p class="text-xs text-cyan-300 font-bold mb-6">Discretionary Access Control<br>(임의적 접근 통제)</p>
+                    
+                    <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                        <span class="text-3xl block text-center mb-2">🧑‍💻</span>
+                        <p class="text-xs text-slate-300 text-center font-bold">"이 파일은 내꺼니까, 내가 홍길동한테 권한 줄게!"</p>
+                    </div>
+                    <ul class="text-sm text-slate-400 space-y-2">
+                        <li>• <strong>주체:</strong> 데이터 소유자 (Owner)</li>
+                        <li>• <strong>기준:</strong> 사용자의 신원 (ID)</li>
+                        <li>• <strong>특징:</strong> 소유자가 권한을 마음대로 부여/회수. 유닉스/리눅스 파일 권한이 대표적.</li>
+                    </ul>
+                </div>
+
+                <!-- RBAC -->
+                <div class="sec-bg p-8 rounded-3xl border border-slate-700 shadow-xl transition card-hover hover:border-yellow-500">
+                    <h3 class="font-black text-2xl text-white mb-1">RBAC</h3>
+                    <p class="text-xs text-yellow-400 font-bold mb-6">Role-Based Access Control<br>(역할 기반 접근 통제)</p>
+                    
+                    <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                        <span class="text-3xl block text-center mb-2">👔</span>
+                        <p class="text-xs text-slate-300 text-center font-bold">"과장 역할에게는 수정 권한을, 인턴 역할에게는 읽기 권한을!"</p>
+                    </div>
+                    <ul class="text-sm text-slate-400 space-y-2">
+                        <li>• <strong>주체:</strong> 중앙 관리자</li>
+                        <li>• <strong>기준:</strong> 조직 내 역할 (Role)</li>
+                        <li>• <strong>특징:</strong> 인사이동이 잦은 기업 환경에 적합. 권한 관리가 매우 용이함.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Crypto -->
+        <section id="crypto" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-purple-200 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-slate-800">
+                    <span class="text-purple-500">🔐</span> 암호 알고리즘 총정리
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">정보처리기사 시험에 100% 출제되는 알고리즘 분류표입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 양방향 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center justify-between border-b pb-2">
+                        양방향 알고리즘 <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">복호화 O</span>
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-bold text-blue-700 mb-2">대칭키 (Symmetric Key)</h4>
+                            <p class="text-xs text-slate-500 mb-2">암호화 키 = 복호화 키. (비밀키 암호화)</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 text-sm font-bold rounded">DES</span>
+                                <span class="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 text-sm font-bold rounded">AES</span>
+                                <span class="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 text-sm font-bold rounded">SEED (국산)</span>
+                                <span class="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 text-sm font-bold rounded">ARIA (국산)</span>
+                                <span class="px-3 py-1 bg-blue-50 border border-blue-100 text-blue-800 text-sm font-bold rounded">IDEA</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-purple-700 mb-2">비대칭키 (Asymmetric Key)</h4>
+                            <p class="text-xs text-slate-500 mb-2">암호화 키(공개) ≠ 복호화 키(개인). (공개키 암호화)</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-purple-50 border border-purple-100 text-purple-800 text-sm font-bold rounded">RSA</span>
+                                <span class="px-3 py-1 bg-purple-50 border border-purple-100 text-purple-800 text-sm font-bold rounded">ECC (타원곡선)</span>
+                                <span class="px-3 py-1 bg-purple-50 border border-purple-100 text-purple-800 text-sm font-bold rounded">ElGamal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 단방향 -->
+                <div class="sec-bg rounded-3xl p-8 border border-slate-800 shadow-xl flex flex-col">
+                    <h3 class="text-xl font-black text-white mb-6 flex items-center justify-between border-b border-slate-700 pb-2">
+                        단방향 알고리즘 <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">복호화 X</span>
+                    </h3>
+                    
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-emerald-400 mb-2">해시 (Hash)</h4>
+                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+                            입력 데이터의 길이에 상관없이 고정된 길이의 해시값을 출력합니다.<br>주로 비밀번호 저장이나 <strong>데이터 무결성(위변조 방지)</strong> 확인에 사용됩니다.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-emerald-900/50 border border-emerald-700 text-emerald-300 text-sm font-bold rounded">SHA (SHA-256 등)</span>
+                            <span class="px-3 py-1 bg-emerald-900/50 border border-emerald-700 text-emerald-300 text-sm font-bold rounded">MD5</span>
+                            <span class="px-3 py-1 bg-emerald-900/50 border border-emerald-700 text-emerald-300 text-sm font-bold rounded">HAS-160 (국산)</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-slate-800 rounded-xl border border-slate-700">
+                        <span class="text-xs font-bold text-amber-400 block mb-1">💡 합격 핵심 팁</span>
+                        <p class="text-xs text-slate-300">시험 문제에서 <strong class="text-white">"암/복호화 키가 같다"</strong>면 대칭키(AES 등)를, <strong class="text-white">"무결성 확인"</strong>을 묻는다면 해시(SHA 등)를 고르세요!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-24 py-8 bg-slate-900 border-t border-slate-800 text-center text-slate-500 text-sm">
+        <p>정보처리기사 완벽 대비 맵 - 네트워크 구축 및 통신 / 사이버 보안</p>
+    </footer>
+
+</body>
+</html>

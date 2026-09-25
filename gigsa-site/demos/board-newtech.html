@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT 신기술 마스터보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #f8fafc; /* slate-50 */
+            scroll-behavior: smooth;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.15), 0 8px 10px -6px rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        /* Cloud Stack Styles */
+        .cloud-tier {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .cloud-tier:hover {
+            transform: scale(1.02) translateX(10px);
+            z-index: 10;
+        }
+
+        /* Tech Connection Lines */
+        .tech-line {
+            width: 2px;
+            background: linear-gradient(to bottom, #38bdf8, transparent);
+            margin: 0 auto;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="bg-slate-900/80 backdrop-blur-lg border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl animate-float" style="animation-duration: 3s;">🚀</span>
+                <span class="font-black text-xl tracking-tighter text-white">NEW<span class="text-sky-400">TECH</span></span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-bold text-sm text-slate-400">
+                <a href="#cloud" class="hover:text-sky-400 transition">클라우드 인프라</a>
+                <a href="#bigdata" class="hover:text-sky-400 transition">빅데이터 & 하둡</a>
+                <a href="#network" class="hover:text-sky-400 transition">SDN & NFV</a>
+                <a href="#glossary" class="hover:text-sky-400 transition">최신 트렌드 용어</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-24">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight glow-text">IT 신기술 및 인프라 <br><span class="text-sky-400">핵심 마스터보드</span></h1>
+            <p class="text-slate-400 max-w-2xl mx-auto font-medium text-lg">
+                수많은 영문 약자와 생소한 최신 기술 트렌드, 정보처리기사 필기/실기에 출제되는 0순위 핵심 키워드만 선별하여 구조화했습니다.
+            </p>
+        </header>
+
+        <section id="cloud" class="scroll-mt-24 space-y-10">
+            <div class="border-b-2 border-slate-800 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-white">
+                    <span class="text-sky-400">☁️</span> 클라우드 컴퓨팅 서비스 (XaaS)
+                </h2>
+                <p class="text-slate-400 mt-2 font-medium">제공자가 사용자에게 어디까지 관리하고 제공해 주느냐에 따른 서비스 계층 분류입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Stack Visual -->
+                <div class="lg:col-span-5 flex flex-col justify-end h-full gap-3 pt-8">
+                    <div class="cloud-tier bg-gradient-to-r from-sky-900 to-slate-800 border-2 border-sky-500 rounded-2xl p-6 shadow-[0_0_20px_rgba(56,189,248,0.2)]">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-black text-2xl text-sky-400">SaaS</h3>
+                                <p class="text-xs text-sky-200 mt-1">Software as a Service</p>
+                            </div>
+                            <span class="text-3xl opacity-50">📱</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cloud-tier bg-gradient-to-r from-emerald-900 to-slate-800 border-2 border-emerald-500 rounded-2xl p-6 w-[95%] shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-black text-2xl text-emerald-400">PaaS</h3>
+                                <p class="text-xs text-emerald-200 mt-1">Platform as a Service</p>
+                            </div>
+                            <span class="text-3xl opacity-50">🛠️</span>
+                        </div>
+                    </div>
+
+                    <div class="cloud-tier bg-gradient-to-r from-indigo-900 to-slate-800 border-2 border-indigo-500 rounded-2xl p-6 w-[90%] shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-black text-2xl text-indigo-400">IaaS</h3>
+                                <p class="text-xs text-indigo-200 mt-1">Infrastructure as a Service</p>
+                            </div>
+                            <span class="text-3xl opacity-50">🖥️</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanations -->
+                <div class="lg:col-span-7 bg-slate-800/50 rounded-3xl p-8 border border-slate-700 space-y-6">
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-sky-400 text-lg flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-400"></span> SaaS (소프트웨어 제공)</h4>
+                        <p class="text-sm text-slate-300 bg-slate-800 p-4 rounded-xl">사용자가 별도의 설치 없이 인터넷을 통해 애플리케이션(소프트웨어)을 바로 사용하는 서비스입니다. <br><span class="text-slate-500 text-xs block mt-2">예: 구글 워크스페이스, 네이버 MYBOX, 넷플릭스</span></p>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-emerald-400 text-lg flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> PaaS (플랫폼 제공)</h4>
+                        <p class="text-sm text-slate-300 bg-slate-800 p-4 rounded-xl">개발자가 소프트웨어를 개발, 테스트, 배포할 수 있는 <strong>환경(운영체제, DB 등 플랫폼)</strong>을 제공하는 서비스입니다. <br><span class="text-slate-500 text-xs block mt-2">예: AWS Elastic Beanstalk, Heroku</span></p>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-indigo-400 text-lg flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400"></span> IaaS (인프라 제공)</h4>
+                        <p class="text-sm text-slate-300 bg-slate-800 p-4 rounded-xl">서버, 스토리지, 네트워크 등 가장 기초적인 <strong>컴퓨팅 자원(하드웨어 인프라)</strong>을 가상화하여 제공합니다. 사용자가 OS부터 직접 설치해야 합니다. <br><span class="text-slate-500 text-xs block mt-2">예: AWS EC2, Microsoft Azure VM</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="bigdata" class="scroll-mt-24 space-y-10">
+            <div class="border-b-2 border-slate-800 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-white">
+                    <span class="text-amber-400">🐘</span> 빅데이터와 하둡(Hadoop)
+                </h2>
+                <p class="text-slate-400 mt-2 font-medium">대규모 데이터를 분산 처리하는 핵심 오픈소스 프레임워크와 주요 기술입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Hadoop Architecture -->
+                <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 card-hover flex flex-col h-full">
+                    <h3 class="text-2xl font-black text-amber-400 mb-6">하둡 (Hadoop) 핵심 구성</h3>
+                    <p class="text-sm text-slate-300 mb-8">일반 PC급 컴퓨터들로 가상화된 대형 클러스터를 구성하여 방대한 데이터를 분산 저장하고 처리하는 자바(Java) 기반 프레임워크입니다.</p>
+                    
+                    <div class="flex-grow flex flex-col gap-4">
+                        <div class="bg-slate-900 border border-amber-500/50 p-5 rounded-2xl relative overflow-hidden">
+                            <div class="absolute right-0 top-0 w-16 h-16 bg-amber-500/10 rounded-bl-full"></div>
+                            <span class="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-1 rounded mb-2 inline-block">분산 저장 기술</span>
+                            <h4 class="font-bold text-white text-lg mb-1">HDFS</h4>
+                            <p class="text-xs text-slate-400">(Hadoop Distributed File System)<br>대용량 파일을 여러 서버에 쪼개어 저장하고 다중 복제하여 신뢰성을 확보하는 파일 시스템.</p>
+                        </div>
+                        <div class="flex justify-center"><div class="tech-line h-4" style="background: #f59e0b;"></div></div>
+                        <div class="bg-slate-900 border border-amber-500/50 p-5 rounded-2xl relative overflow-hidden">
+                            <div class="absolute right-0 top-0 w-16 h-16 bg-amber-500/10 rounded-bl-full"></div>
+                            <span class="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-1 rounded mb-2 inline-block">분산 처리 기술</span>
+                            <h4 class="font-bold text-white text-lg mb-1">맵리듀스 (MapReduce)</h4>
+                            <p class="text-xs text-slate-400">데이터를 필터링/분류하는 <strong>Map</strong> 작업과, 그 결과를 요약/합산하는 <strong>Reduce</strong> 작업으로 나누어 병렬 처리하는 프로그래밍 모델.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Big Data Tech -->
+                <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 card-hover">
+                    <h3 class="text-2xl font-black text-white mb-6">관련 데이터 기술</h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-900 p-5 rounded-2xl border-l-4 border-l-rose-500">
+                            <h4 class="font-bold text-rose-400 text-lg mb-1">데이터 마이닝 (Data Mining)</h4>
+                            <p class="text-sm text-slate-300">대규모 데이터 세트 안에서 숨겨진 패턴, 관계, 규칙을 찾아내어 예측 가능한 유용한 정보로 변환하는 기술입니다.</p>
+                        </div>
+                        <div class="bg-slate-900 p-5 rounded-2xl border-l-4 border-l-purple-500">
+                            <h4 class="font-bold text-purple-400 text-lg mb-1">텍스트 마이닝 (Text Mining)</h4>
+                            <p class="text-sm text-slate-300">반정형/비정형 텍스트 데이터(뉴스, SNS 글 등)에서 자연어 처리(NLP) 기술을 활용해 유용한 정보를 추출하는 기법입니다.</p>
+                        </div>
+                        <div class="bg-slate-900 p-5 rounded-2xl border-l-4 border-l-blue-500">
+                            <h4 class="font-bold text-blue-400 text-lg mb-1">타이포스쿼팅 (Typosquatting)</h4>
+                            <p class="text-xs text-slate-400 mb-2">💡 빅데이터와 직접적 관련은 없지만 자주 나오는 <span class="text-rose-400 font-bold">보안 용어</span></p>
+                            <p class="text-sm text-slate-300">사용자가 인터넷 주소를 칠 때 오타를 내기 쉬운 점을 노려, 유명 사이트와 철자가 비슷한 도메인을 미리 등록해 두고 해킹/광고에 이용하는 수법 (URL 하이재킹).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="network" class="scroll-mt-24 space-y-10">
+            <div class="border-b-2 border-slate-800 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-white">
+                    <span class="text-emerald-400">🖧</span> 차세대 네트워크: SDN vs NFV
+                </h2>
+                <p class="text-slate-400 mt-2 font-medium">네트워크를 하드웨어 중심에서 소프트웨어 중심으로 혁신하는 두 가지 핵심 기술입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- SDN -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 border border-emerald-500/30 card-hover relative">
+                    <div class="absolute top-6 right-6 text-4xl opacity-20">🧠</div>
+                    <div class="mb-6">
+                        <h3 class="font-black text-3xl text-emerald-400">SDN</h3>
+                        <p class="font-bold text-slate-300 text-sm mt-1">Software-Defined Networking</p>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        네트워크 장비(라우터, 스위치)에서 <strong>'경로를 결정하는 두뇌(제어부, Control Plane)'</strong>와 <strong>'데이터를 전달하는 손발(전송부, Data Plane)'</strong>을 분리하는 기술입니다.
+                    </p>
+                    <div class="bg-emerald-950/50 p-4 rounded-xl border border-emerald-800/50 text-sm text-emerald-200">
+                        <span class="font-black block mb-2">⭐ 핵심 포인트</span>
+                        <ul class="space-y-1 list-disc list-inside">
+                            <li>제어부와 전송부의 분리</li>
+                            <li>소프트웨어를 통한 중앙 집중식 네트워크 제어</li>
+                            <li>대표 프로토콜: <strong>OpenFlow (오픈플로우)</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- NFV -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 border border-purple-500/30 card-hover relative">
+                    <div class="absolute top-6 right-6 text-4xl opacity-20">💻</div>
+                    <div class="mb-6">
+                        <h3 class="font-black text-3xl text-purple-400">NFV</h3>
+                        <p class="font-bold text-slate-300 text-sm mt-1">Network Functions Virtualization</p>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        방화벽, 라우터 등 기존의 전용 하드웨어 장비가 하던 네트워크 <strong>'기능'</strong>들을 소프트웨어 형태로 <strong>가상화(Virtualization)</strong>하여, 일반 범용 서버(x86)에서 실행하는 기술입니다.
+                    </p>
+                    <div class="bg-purple-950/50 p-4 rounded-xl border border-purple-800/50 text-sm text-purple-200">
+                        <span class="font-black block mb-2">⭐ 핵심 포인트</span>
+                        <ul class="space-y-1 list-disc list-inside">
+                            <li>하드웨어 중심 ➔ 소프트웨어(가상 머신) 중심으로 전환</li>
+                            <li>특수 장비 구매 비용 절감 및 유연성 증가</li>
+                            <li>SDN과 함께 사용되어 시너지 효과를 냄</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="glossary" class="scroll-mt-24 space-y-10">
+            <div class="border-b-2 border-slate-800 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2 text-white">
+                    <span class="text-rose-400">📚</span> 정보처리기사 단골 신기술 용어
+                </h2>
+                <p class="text-slate-400 mt-2 font-medium">객관식/단답형 실기 문제로 빈출되는 최신 IT 트렌드 용어 총정리입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- MSA -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 card-hover">
+                    <div class="text-2xl mb-2">🧩</div>
+                    <h3 class="font-bold text-white text-lg mb-2">MSA (마이크로서비스 아키텍처)</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">거대한 하나의 애플리케이션(Monolithic)을 독립적으로 배포 가능한 작고 여러 개의 서비스 단위로 쪼개어 개발하는 아키텍처입니다.</p>
+                </div>
+
+                <!-- Digital Twin -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 card-hover">
+                    <div class="text-2xl mb-2">👯</div>
+                    <h3 class="font-bold text-white text-lg mb-2">디지털 트윈 (Digital Twin)</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">현실 세계의 물리적 사물이나 시스템을 가상 세계(컴퓨터)에 똑같이 복제하여 시뮬레이션함으로써 결과를 예측하는 기술입니다.</p>
+                </div>
+
+                <!-- Docker -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 card-hover">
+                    <div class="text-2xl mb-2">🐳</div>
+                    <h3 class="font-bold text-white text-lg mb-2">도커 (Docker) / 컨테이너</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">애플리케이션과 그 실행에 필요한 라이브러리, 환경 등을 패키지로 묶어(컨테이너) 격리된 환경에서 실행하는 가상화 플랫폼입니다.</p>
+                </div>
+
+                <!-- Blockchain -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 card-hover">
+                    <div class="text-2xl mb-2">⛓️</div>
+                    <h3 class="font-bold text-white text-lg mb-2">블록체인 (Blockchain)</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">데이터를 블록에 담아 체인 형태로 연결하고, 수많은 컴퓨터에 동시에 분산 저장하여 위/변조를 막는 P2P 분산 원장 기술입니다.</p>
+                </div>
+
+                <!-- BYOD / MDM -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 card-hover border-t-4 border-t-emerald-500">
+                    <div class="text-2xl mb-2">📱</div>
+                    <h3 class="font-bold text-white text-lg mb-2">BYOD & MDM</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed"><strong class="text-emerald-400">BYOD:</strong> 개인 소유 스마트기기를 회사 업무에 활용하는 환경.<br><strong class="text-emerald-400">MDM:</strong> 이를 안전하게 통제(데이터 삭제, 보안설정)하는 모바일 기기 관리 솔루션.</p>
+                </div>
+
+                <!-- Edge Computing -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 card-hover">
+                    <div class="text-2xl mb-2">📡</div>
+                    <h3 class="font-bold text-white text-lg mb-2">엣지 컴퓨팅 (Edge Computing)</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">중앙 클라우드 서버까지 데이터를 보내지 않고, 데이터가 발생하는 주변(Edge) 기기 근처에서 데이터를 즉시 처리하여 지연 시간을 줄이는 기술입니다.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-24 py-8 bg-slate-900 border-t border-slate-800 text-center text-slate-500 text-sm">
+        <p>정보처리기사 완벽 대비 맵 - IT 신기술 및 인프라 마스터</p>
+    </footer>
+
+</body>
+</html>

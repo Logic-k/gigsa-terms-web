@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SW 테스트 & 품질관리 마스터보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .flip-container {
+            perspective: 1000px;
+        }
+        .flip-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-container:hover .flip-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-front, .flip-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Integration Testing Graphics */
+        .module-node {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+        .line-v {
+            width: 2px;
+            background-color: #94a3b8;
+            margin: 0 auto;
+        }
+
+        /* CMMI Step Ladder */
+        .cmmi-step {
+            transition: all 0.3s;
+        }
+        .cmmi-step:hover {
+            transform: scale(1.05) translateX(10px);
+        }
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🧪</span>
+                <span class="font-black text-xl tracking-tighter text-slate-800">TEST<span class="text-rose-500"> & QUALITY</span></span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-bold text-sm text-slate-500">
+                <a href="#black-white" class="hover:text-rose-500 transition">기법 (W/B)</a>
+                <a href="#integration" class="hover:text-rose-500 transition">통합 & V&V</a>
+                <a href="#config" class="hover:text-rose-500 transition">형상 & 버전관리</a>
+                <a href="#quality" class="hover:text-rose-500 transition">품질 & CMMI</a>
+                <a href="#tools-maint" class="hover:text-rose-500 transition">도구 & 유지보수</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-24">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">소프트웨어 테스트 & 품질 <br><span class="text-rose-500">핵심 마스터보드</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium text-lg">
+                가장 헷갈리는 화이트/블랙박스, 상향/하향식 통합 테스트, 그리고 형상 관리와 국제 표준까지 한 방에 정리합니다.
+            </p>
+        </header>
+
+        <section id="black-white" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-rose-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-rose-500">1️⃣</span> 테스트 기법: 화이트박스 vs 블랙박스
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">내부를 볼 것인가(구조/코드), 외부만 볼 것인가(기능/명세). 기출 1순위 파트입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- White Box -->
+                <div class="bg-white border-2 border-slate-200 rounded-3xl p-8 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-slate-100 rounded-bl-full -z-10 group-hover:bg-slate-200 transition"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-800">화이트박스 테스트</h3>
+                            <p class="text-sm font-bold text-slate-400 mt-1">White-Box Testing (구조적 테스트)</p>
+                        </div>
+                        <div class="text-4xl">🔎</div>
+                    </div>
+                    <p class="text-sm text-slate-600 mb-6 font-medium leading-relaxed">모듈의 <strong class="text-slate-900">내부 소스 코드 구조</strong>를 들여다보고, 논리적인 모든 경로(Path)를 테스트하는 기법입니다. (개발자 관점)</p>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">주요 종류 (기출 필수 암기)</span>
+                        <ul class="space-y-3">
+                            <li class="flex flex-col">
+                                <span class="font-bold text-slate-800 text-sm">✓ 기초 경로 검사 (Base Path)</span>
+                                <span class="text-xs text-slate-500">McCabe의 순환 복잡도(V(G) = E - N + 2)를 이용해 독립적 경로 확인</span>
+                            </li>
+                            <li class="flex flex-col">
+                                <span class="font-bold text-slate-800 text-sm">✓ 제어 구조 검사</span>
+                                <span class="text-xs text-slate-500">조건 검사(Condition), 루프 검사(Loop), 데이터 흐름 검사(Data Flow)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Black Box -->
+                <div class="bg-slate-900 border-2 border-slate-800 rounded-3xl p-8 shadow-lg card-hover relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-slate-800 rounded-bl-full -z-10 group-hover:bg-slate-700 transition"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h3 class="text-2xl font-black text-white">블랙박스 테스트</h3>
+                            <p class="text-sm font-bold text-slate-400 mt-1">Black-Box Testing (기능 테스트)</p>
+                        </div>
+                        <div class="text-4xl">📦</div>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-6 font-medium leading-relaxed">내부 코드는 안 봅니다! 프로그램의 <strong class="text-rose-400">요구사항 명세서</strong>를 보며 기능이 제대로 작동하는지 확인하는 기법입니다. (사용자 관점)</p>
+                    
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">주요 종류 (기출 필수 암기)</span>
+                        <ul class="space-y-3">
+                            <li class="flex flex-col">
+                                <span class="font-bold text-white text-sm">✓ 동치 분할 (Equivalence Partitioning)</span>
+                                <span class="text-xs text-slate-400">타당한 값과 타당하지 않은 값을 그룹으로 나눠 대표값 테스트</span>
+                            </li>
+                            <li class="flex flex-col">
+                                <span class="font-bold text-white text-sm">✓ 경계값 분석 (Boundary Value Analysis)</span>
+                                <span class="text-xs text-rose-300">오류는 주로 경계에서 발생! 경계값을 콕 집어 테스트 (가장 많이 출제)</span>
+                            </li>
+                            <li class="flex flex-col">
+                                <span class="font-bold text-white text-sm">✓ 원인-결과 그래프 / 오류 예측 검사</span>
+                                <span class="text-xs text-slate-400">입출력 관계 분석 / 테스터의 경험과 직관에 의존</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 정적 vs 동적 팁 -->
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
+                <div class="text-3xl">💡</div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-1">정적 분석 도구 vs 동적 분석 도구</h4>
+                    <p class="text-sm text-blue-700 leading-relaxed">
+                        <strong>정적 분석(Static):</strong> 프로그램을 <span class="underline underline-offset-2">실행하지 않고</span> 소스 코드를 보며 결함(코딩 표준, 논리적 오류)을 찾아내는 방법입니다. (리뷰, 워크스루, 인스펙션)<br>
+                        <strong>동적 분석(Dynamic):</strong> 프로그램을 <span class="underline underline-offset-2">직접 실행하여</span> 오류를 찾는 방법입니다. (화이트박스, 블랙박스 테스트 모두 동적 분석에 속함)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="integration" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-rose-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-rose-500">2️⃣</span> 통합 테스트 (하향식 vs 상향식) & 검사 기법
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">단위 테스트가 끝난 모듈들을 합쳐가며 테스트합니다. <strong>Stub(스텁)과 Driver(드라이버)</strong>를 절대 헷갈리지 마세요.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 하향식 (Top-Down) -->
+                <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-black text-slate-800">하향식 통합 (Top-Down)</h3>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">하위 모듈 대신 Stub 필요</span>
+                    </div>
+                    
+                    <!-- Diagram -->
+                    <div class="bg-slate-50 rounded-2xl p-6 h-64 flex flex-col items-center justify-center border border-slate-100 relative">
+                        <div class="module-node bg-blue-600 w-32 shadow-md">Main 제어 모듈</div>
+                        <div class="line-v h-8"></div>
+                        <div class="flex gap-8 w-full justify-center">
+                            <div class="flex flex-col items-center">
+                                <div class="module-node bg-blue-500 w-24 shadow-md text-sm">모듈 A</div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="module-node bg-amber-400 w-24 shadow-md text-sm border-2 border-dashed border-amber-600 text-amber-900 animate-pulse">Stub (더미)</div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-8 text-center bg-white p-2 border rounded shadow-sm absolute bottom-4">상위 제어 모듈부터 아래로 내려가며 통합.<br>아직 완성 안된 하위 모듈 대신 <strong>스텁(Stub)</strong> 사용.</p>
+                    </div>
+                </div>
+
+                <!-- 상향식 (Bottom-Up) -->
+                <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-black text-slate-800">상향식 통합 (Bottom-Up)</h3>
+                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">상위 제어기 대신 Driver 필요</span>
+                    </div>
+                    
+                    <!-- Diagram -->
+                    <div class="bg-slate-50 rounded-2xl p-6 h-64 flex flex-col items-center justify-center border border-slate-100 relative">
+                        <div class="module-node bg-indigo-400 w-32 shadow-md text-sm border-2 border-dashed border-indigo-600 text-indigo-900 animate-pulse mb-8">Driver (제어기)</div>
+                        <div class="flex gap-4 w-full justify-center border-t-2 border-slate-300 pt-6 relative">
+                            <div class="absolute -top-[2px] left-1/2 -translate-x-1/2 w-[2px] h-6 bg-slate-300 -translate-y-full"></div>
+                            <div class="absolute -top-[2px] left-1/4 w-1/2 h-[2px] bg-slate-300"></div>
+                            
+                            <div class="module-node bg-blue-500 w-20 shadow-md text-xs">모듈 X</div>
+                            <div class="module-node bg-blue-500 w-20 shadow-md text-xs">모듈 Y</div>
+                            <div class="module-node bg-blue-500 w-20 shadow-md text-xs">모듈 Z</div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-6 text-center bg-white p-2 border rounded shadow-sm absolute bottom-4">최하위 모듈부터 위로 올라가며 통합.<br>제어 역할을 해줄 더미 프로그램인 <strong>드라이버(Driver)</strong> 사용.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검증 vs 확인 / 알파 vs 베타 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200 flex flex-col justify-center group hover:border-emerald-400 transition">
+                    <h4 class="font-black text-emerald-800 mb-2 flex items-center gap-2"><span>🔍</span> 검증(Verification) vs 확인(Validation)</h4>
+                    <p class="text-xs text-emerald-700 mb-4 font-bold">소프트웨어 테스트의 두 가지 핵심 관점 (V-모델)</p>
+                    <ul class="text-sm space-y-3">
+                        <li class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm relative overflow-hidden">
+                            <div class="absolute left-0 top-0 w-1 h-full bg-blue-500"></div>
+                            <span class="font-black text-blue-700 block mb-1">검증 (Verification) - "과정" 중심</span>
+                            <span class="text-slate-600 text-xs leading-relaxed block">"제품을 <strong>올바르게</strong> 만들고 있는가?"<br><strong>개발자 시각</strong>에서 요구사항 명세서대로 기능이 버그 없이 잘 구현되었는지 테스트합니다.</span>
+                            <span class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold mt-2 inline-block">수행: 단위 테스트, 통합 테스트, 시스템 테스트</span>
+                        </li>
+                        <li class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm relative overflow-hidden">
+                            <div class="absolute left-0 top-0 w-1 h-full bg-emerald-500"></div>
+                            <span class="font-black text-emerald-700 block mb-1">확인 (Validation) - "결과" 중심</span>
+                            <span class="text-slate-600 text-xs leading-relaxed block">"<strong>올바른</strong> 제품을 만들고 있는가?"<br><strong>사용자 시각</strong>에서 실제 고객이 원했던 요구와 목적에 부합하는지 최종적으로 테스트합니다.</span>
+                            <span class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold mt-2 inline-block">수행: 인수 테스트 (알파/베타 테스트)</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-amber-50 rounded-2xl p-6 border border-amber-200 flex flex-col justify-center">
+                    <h4 class="font-black text-amber-800 mb-4 flex items-center gap-2"><span>🎮</span> 인수 테스트: 알파(Alpha) vs 베타(Beta)</h4>
+                    <ul class="text-sm space-y-3">
+                        <li class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
+                            <span class="font-bold text-amber-600">알파(Alpha) 검사</span><br>
+                            <span class="text-slate-600">사용자가 <strong>개발자 환경(회사)</strong>에서 통제된 상태로 수행하는 검사.</span>
+                        </li>
+                        <li class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
+                            <span class="font-bold text-amber-600">베타(Beta) 검사</span><br>
+                            <span class="text-slate-600">선정된 다수의 사용자가 <strong>실제 사용 환경</strong>에서 수행하는 검사. (필드 테스팅)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- V-Model Diagram -->
+            <div class="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-xl mt-8">
+                <h4 class="font-black text-white text-xl mb-8 text-center flex justify-center items-center gap-2">
+                    <span class="text-blue-400">V-모델</span> <span class="text-sm font-normal text-slate-400">(개발 단계와 테스트의 대응 관계)</span>
+                </h4>
+                
+                <div class="max-w-3xl mx-auto space-y-4">
+                    <!-- Row 1 -->
+                    <div class="flex justify-between items-center text-sm font-bold">
+                        <div class="w-[30%] p-3 bg-blue-900/50 border border-blue-500 text-blue-200 text-center rounded-xl shadow-lg">요구사항 분석</div>
+                        <div class="flex-1 border-t-2 border-dashed border-slate-600 relative">
+                            <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 bg-slate-900 px-2">확인(Validation)</span>
+                        </div>
+                        <div class="w-[30%] p-3 bg-emerald-900/50 border border-emerald-500 text-emerald-200 text-center rounded-xl shadow-lg">인수 테스트</div>
+                    </div>
+                    <!-- Row 2 -->
+                    <div class="flex justify-between items-center text-sm font-bold px-[5%]">
+                        <div class="w-[30%] p-3 bg-blue-800/50 border border-blue-400 text-blue-200 text-center rounded-xl shadow-lg">기본(아키텍처) 설계</div>
+                        <div class="flex-1 border-t-2 border-dashed border-slate-600"></div>
+                        <div class="w-[30%] p-3 bg-emerald-800/50 border border-emerald-400 text-emerald-200 text-center rounded-xl shadow-lg">시스템 테스트</div>
+                    </div>
+                    <!-- Row 3 -->
+                    <div class="flex justify-between items-center text-sm font-bold px-[10%]">
+                        <div class="w-[30%] p-3 bg-blue-700/50 border border-blue-300 text-blue-100 text-center rounded-xl shadow-lg">상세 설계</div>
+                        <div class="flex-1 border-t-2 border-dashed border-slate-600 relative">
+                            <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 bg-slate-900 px-2">검증(Verification)</span>
+                        </div>
+                        <div class="w-[30%] p-3 bg-emerald-700/50 border border-emerald-300 text-emerald-100 text-center rounded-xl shadow-lg">통합 테스트</div>
+                    </div>
+                    <!-- Row 4 -->
+                    <div class="flex justify-center items-center text-sm font-bold mt-4">
+                        <div class="w-[25%] p-3 bg-emerald-600 border border-emerald-400 text-white text-center rounded-xl shadow-lg relative left-[5%]">단위 테스트</div>
+                    </div>
+                    <!-- Row 5 (Bottom) -->
+                    <div class="flex justify-center items-center text-sm font-bold">
+                        <div class="w-[20%] p-3 bg-rose-600 border border-rose-400 text-white text-center rounded-xl shadow-[0_0_15px_rgba(225,29,72,0.5)]">코딩 (구현)</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="config" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-rose-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-rose-500">3️⃣</span> 형상 관리(Configuration Mgt) & 버전 관리
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">소프트웨어의 변경 사항을 추적하고 통제하는 활동입니다. 형상 관리 절차와 버전 관리 도구를 구분하세요.</p>
+            </div>
+
+            <!-- 형상 관리 절차 (Flow) -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+                <h3 class="font-black text-slate-800 mb-6">형상 관리 4단계 절차 (순서 암기!)</h3>
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between w-full">
+                    <div class="flex-1 bg-slate-50 p-4 rounded-xl border-2 border-slate-200 text-center w-full">
+                        <div class="text-2xl mb-2">🏷️</div>
+                        <div class="font-bold text-rose-600 mb-1">형상 식별</div>
+                        <div class="text-xs text-slate-500">관리 대상(형상 항목)에 이름과 번호 부여</div>
+                    </div>
+                    <div class="text-slate-300 font-black text-2xl hidden md:block">➔</div>
+                    <div class="text-slate-300 font-black text-2xl md:hidden">⬇</div>
+                    
+                    <div class="flex-1 bg-slate-50 p-4 rounded-xl border-2 border-slate-200 text-center w-full">
+                        <div class="text-2xl mb-2">🛑</div>
+                        <div class="font-bold text-rose-600 mb-1">형상 통제</div>
+                        <div class="text-xs text-slate-500">변경 요구 검토, 승인(CCB 승인 필요)</div>
+                    </div>
+                    <div class="text-slate-300 font-black text-2xl hidden md:block">➔</div>
+                    <div class="text-slate-300 font-black text-2xl md:hidden">⬇</div>
+                    
+                    <div class="flex-1 bg-slate-50 p-4 rounded-xl border-2 border-slate-200 text-center w-full">
+                        <div class="text-2xl mb-2">📊</div>
+                        <div class="font-bold text-rose-600 mb-1">형상 상태 보고</div>
+                        <div class="text-xs text-slate-500">변경 상태를 기록하고 보고(Accounting)</div>
+                    </div>
+                    <div class="text-slate-300 font-black text-2xl hidden md:block">➔</div>
+                    <div class="text-slate-300 font-black text-2xl md:hidden">⬇</div>
+                    
+                    <div class="flex-1 bg-slate-50 p-4 rounded-xl border-2 border-slate-200 text-center w-full">
+                        <div class="text-2xl mb-2">✅</div>
+                        <div class="font-bold text-rose-600 mb-1">형상 감사</div>
+                        <div class="text-xs text-slate-500">기준선에 맞게 변경되었는지 확인/검증</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-rose-50 p-6 rounded-2xl border border-rose-100 flex flex-col md:flex-row items-center gap-6">
+                    <div class="text-4xl">🎯</div>
+                    <div>
+                        <h4 class="font-black text-rose-800 mb-2">형상 관리 총정리 핵심: 베이스라인(Baseline)과 CCB</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            <strong class="text-rose-700">베이스라인 (기준선):</strong> 개발 과정의 특정 단계가 끝났을 때, 공식적으로 승인된 형상 항목들의 상태입니다. 기준선이 설정되면 이후의 변경은 반드시 공식적인 <strong>통제 절차</strong>를 거쳐야 합니다.<br>
+                            <strong class="text-rose-700">CCB (형상통제위원회, Configuration Control Board):</strong> 베이스라인 설정 이후 발생한 변경 요청(Change Request)을 검토하고 승인 혹은 거절하는 공식 기구입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 소프트웨어 버전 관리 도구 -->
+            <h3 class="font-black text-slate-800 text-xl pl-2 border-l-4 border-rose-500">소프트웨어 버전 관리 도구 3가지 방식</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 1. 공유 폴더 -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-slate-400"></div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">공유 폴더 방식</h4>
+                    <p class="text-xs text-slate-500 mb-4 h-12">매일 개발 완료된 파일을 로컬 PC의 공유 폴더에 복사하는 원시적인 방식.</p>
+                    <div class="bg-slate-50 p-3 rounded-lg text-sm font-bold text-slate-600 text-center">
+                        대표 도구: SCCS, RCS
+                    </div>
+                </div>
+                
+                <!-- 2. 클라이언트/서버 -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">클라이언트/서버 방식</h4>
+                    <p class="text-xs text-slate-500 mb-4 h-12">중앙 서버에 하나의 저장소를 두고, 여러 클라이언트가 동기화하는 방식.</p>
+                    <div class="bg-blue-50 p-3 rounded-lg text-sm font-bold text-blue-700 text-center">
+                        대표 도구: CVS, SVN (Subversion)
+                    </div>
+                </div>
+
+                <!-- 3. 분산 저장소 -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">분산 저장소 방식</h4>
+                    <p class="text-xs text-slate-500 mb-4 h-12">원격 서버뿐만 아니라 각 개발자 PC에도 전체 저장소를 가지는 방식. (가장 최신)</p>
+                    <div class="bg-emerald-50 p-3 rounded-lg text-sm font-bold text-emerald-700 text-center">
+                        대표 도구: Git, Bitbucket
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quality" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-rose-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-rose-500">4️⃣</span> SW 품질 표준 & CMMI 모델
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">소프트웨어의 품질을 평가하는 국제 표준(ISO)과 프로세스 성숙도 평가 모델(CMMI)입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- ISO 품질 표준 -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+                    <h3 class="font-black text-xl text-slate-800 mb-6 flex items-center gap-2">🌐 ISO/IEC 소프트웨어 품질 표준</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="bg-indigo-600 text-white font-black px-3 py-1 rounded text-sm shrink-0 shadow">ISO 9126</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">소프트웨어 품질 특성 평가 표준</h4>
+                                <p class="text-xs text-slate-500 mt-1">6가지 품질 특성 암기: <strong>기·신·사·효·유·이</strong> (기능성, 신뢰성, 사용성, 효율성, 유지보수성, 이식성)</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="bg-slate-600 text-white font-black px-3 py-1 rounded text-sm shrink-0 shadow">ISO 14598</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">소프트웨어 품질 평가 프로세스 표준</h4>
+                                <p class="text-xs text-slate-500 mt-1">평가자, 개발자, 구매자 관점에서 품질 평가 과정을 정의</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="bg-slate-600 text-white font-black px-3 py-1 rounded text-sm shrink-0 shadow">ISO 12119</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">패키지 소프트웨어 품질 요구사항</h4>
+                                <p class="text-xs text-slate-500 mt-1">상용으로 판매되는 패키지 SW(COTS)에 대한 품질 테스트 표준</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 bg-rose-50 rounded-2xl border border-rose-200 shadow-sm mt-4">
+                            <div class="bg-rose-500 text-white font-black px-3 py-1 rounded text-sm shrink-0 shadow">ISO 25000</div>
+                            <div>
+                                <h4 class="font-bold text-rose-800 text-sm">SQuaRE (통합 표준)</h4>
+                                <p class="text-xs text-rose-600 mt-1">기존의 ISO 9126, 14598 등을 통합한 <strong>차세대 소프트웨어 품질 평가 통합 프레임워크</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-slate-200 space-y-4">
+                            <h4 class="font-black text-slate-800 mb-4 flex items-center gap-2">🔄 소프트웨어 프로세스 관련 개발 표준</h4>
+                            
+                            <div class="flex items-start gap-4 p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                                <div class="bg-amber-600 text-white font-black px-3 py-1 rounded text-sm shrink-0 shadow">ISO/IEC 12207</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">소프트웨어 생명주기 프로세스 표준</h4>
+                                    <p class="text-xs text-slate-600 mt-1">소프트웨어 개발, 운영, 유지보수 등 전 과정의 프로세스를 분류한 국제 표준. (기본, 지원, 조직 생명주기 프로세스로 구성)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <div class="bg-emerald-600 text-white font-black px-3 py-1 rounded text-sm shrink-0 shadow">SPICE (ISO/IEC 15504)</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">소프트웨어 프로세스 평가를 위한 국제 표준</h4>
+                                    <p class="text-xs text-slate-600 mt-1">프로세스 수행 능력을 6단계로 평가: <strong class="text-emerald-700">불완전 ➔ 수행 ➔ 관리 ➔ 확립 ➔ 예측 ➔ 최적화</strong> (CMMI와 유사)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CMMI Levels -->
+                <div class="lg:col-span-5 bg-slate-900 rounded-3xl p-8 shadow-xl text-white relative overflow-hidden flex flex-col justify-center">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-rose-500 opacity-20 blur-3xl rounded-full"></div>
+                    
+                    <h3 class="font-black text-2xl mb-2 relative z-10">CMMI 성숙도 레벨</h3>
+                    <p class="text-xs text-slate-400 mb-8 relative z-10">능력 성숙도 통합 모델. 레벨 1부터 5까지 순서대로 외우세요.</p>
+
+                    <div class="space-y-3 relative z-10">
+                        <div class="cmmi-step flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-sm">1</div>
+                            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 flex-1">
+                                <span class="font-bold text-slate-300 block">초기 (Initial)</span>
+                                <span class="text-[10px] text-slate-500">프로세스가 불안정하고 예측 불가</span>
+                            </div>
+                        </div>
+                        <div class="cmmi-step flex items-center gap-3 pl-4">
+                            <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center font-bold text-sm">2</div>
+                            <div class="bg-slate-800 p-3 rounded-xl border border-slate-600 flex-1">
+                                <span class="font-bold text-blue-300 block">관리 (Managed)</span>
+                                <span class="text-[10px] text-slate-400">프로젝트 단위의 프로세스 관리</span>
+                            </div>
+                        </div>
+                        <div class="cmmi-step flex items-center gap-3 pl-8">
+                            <div class="w-8 h-8 rounded-full bg-slate-500 flex items-center justify-center font-bold text-sm">3</div>
+                            <div class="bg-slate-800 p-3 rounded-xl border border-slate-500 flex-1">
+                                <span class="font-bold text-emerald-300 block">정의 (Defined)</span>
+                                <span class="text-[10px] text-slate-300">조직 차원의 표준화된 프로세스</span>
+                            </div>
+                        </div>
+                        <div class="cmmi-step flex items-center gap-3 pl-12">
+                            <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center font-bold text-sm">4</div>
+                            <div class="bg-slate-800 p-3 rounded-xl border border-rose-500/50 flex-1">
+                                <span class="font-bold text-rose-300 block">정량적 관리 (Quantitatively Managed)</span>
+                                <span class="text-[10px] text-slate-300">정량적(수치화된) 통계적 프로세스 통제</span>
+                            </div>
+                        </div>
+                        <div class="cmmi-step flex items-center gap-3 pl-16">
+                            <div class="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center font-bold text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.5)]">5</div>
+                            <div class="bg-slate-800 p-3 rounded-xl border border-yellow-500/50 flex-1">
+                                <span class="font-bold text-yellow-400 block">최적화 (Optimizing)</span>
+                                <span class="text-[10px] text-slate-300">지속적인 프로세스 개선 및 혁신</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="tools-maint" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-rose-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-rose-500">5️⃣</span> 테스트 도구 & 소프트웨어 유지보수
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">자동화된 테스트 지원 도구들과 소프트웨어 개발 생명주기의 마지막 단계인 유지보수 유형입니다.</p>
+            </div>
+
+            <!-- 테스트 자동화 및 성능 점검 도구 -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+                <h3 class="font-black text-slate-800 text-xl mb-6 flex items-center gap-2">🛠️ 테스트 자동화 및 성능 점검 도구</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 card-hover">
+                        <h4 class="font-bold text-indigo-700 mb-2 flex items-center gap-2"><span>🔍</span> 정적 분석 도구</h4>
+                        <p class="text-xs text-slate-600 mb-2">프로그램을 실행하지 않고 소스 코드의 코딩 표준, 복잡도, 결함을 분석합니다.</p>
+                        <span class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded text-slate-500">종류: pmd, cppcheck, SonarQube</span>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 card-hover">
+                        <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2"><span>⚡</span> 테스트 실행 도구</h4>
+                        <p class="text-xs text-slate-600 mb-2">스크립트를 실행하여 테스트를 자동화합니다. (데이터 주도 방식 / 키워드 주도 방식)</p>
+                        <span class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded text-slate-500">종류: Selenium, Watir</span>
+                    </div>
+
+                    <div class="bg-rose-50 p-5 rounded-2xl border border-rose-200 card-hover">
+                        <h4 class="font-bold text-rose-700 mb-2 flex items-center gap-2"><span>📈</span> 성능 점검 (부하) 도구</h4>
+                        <p class="text-xs text-slate-600 mb-2">가상의 사용자(Virtual User)를 대량으로 생성하여 시스템의 처리량, 응답시간, 병목현상을 테스트합니다.</p>
+                        <span class="text-[10px] bg-white border border-rose-200 px-2 py-1 rounded text-rose-600 font-bold">종류: JMeter, LoadRunner, 성능 부하 테스트</span>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 card-hover">
+                        <h4 class="font-bold text-emerald-700 mb-2 flex items-center gap-2"><span>🧰</span> 테스트 하네스 도구</h4>
+                        <p class="text-xs text-slate-600 mb-2">테스트를 지원하기 위해 생성된 코드 및 데이터를 말합니다.</p>
+                        <span class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded text-slate-500 font-bold">구성: 드라이버(Driver), 스텁(Stub), 목(Mock) 객체</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 소프트웨어 유지보수 유형 -->
+            <div>
+                <h3 class="font-black text-slate-800 text-xl pl-2 border-l-4 border-rose-500 mb-6">소프트웨어 유지보수 (Maintenance) 4대 유형</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-red-500 card-hover">
+                        <h4 class="font-bold text-slate-800 mb-1">교정형 (하자 보수)</h4>
+                        <span class="text-[10px] font-bold text-red-500 mb-3 block">Corrective Maintenance</span>
+                        <p class="text-xs text-slate-600">개발 중 발견하지 못한 <strong class="text-red-500">오류(버그)</strong>를 찾아 고치는 작업입니다.</p>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-amber-500 card-hover">
+                        <h4 class="font-bold text-slate-800 mb-1">적응형 (환경 적응)</h4>
+                        <span class="text-[10px] font-bold text-amber-500 mb-3 block">Adaptive Maintenance</span>
+                        <p class="text-xs text-slate-600">운영체제 업그레이드, 하드웨어 변경 등 <strong class="text-amber-600">새로운 환경</strong>에 소프트웨어를 맞추는 작업입니다.</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500 relative card-hover">
+                        <div class="absolute -top-3 -right-2 bg-emerald-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-md animate-bounce">빈도 1위!</div>
+                        <h4 class="font-bold text-slate-800 mb-1">완전형 (기능 개선)</h4>
+                        <span class="text-[10px] font-bold text-emerald-500 mb-3 block">Perfective Maintenance</span>
+                        <p class="text-xs text-slate-600">본래 기능에 새로운 기능을 <strong>추가</strong>하거나 성능을 <strong>향상</strong>시키는 작업으로, <strong class="text-emerald-700">가장 많은 비용과 노력</strong>이 소요됩니다.</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500 card-hover">
+                        <h4 class="font-bold text-slate-800 mb-1">예방형 (예방 조치)</h4>
+                        <span class="text-[10px] font-bold text-blue-500 mb-3 block">Preventive Maintenance</span>
+                        <p class="text-xs text-slate-600">미래에 발생할지 모르는 오류를 대비하여 미리 코드를 재구성(리팩토링)하거나 구조를 개선하는 작업입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 잡학 상식: 법칙 모음 -->
+        <section class="bg-gradient-to-r from-indigo-900 to-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-xl text-white">
+            <h3 class="font-black text-xl mb-4 flex items-center gap-2"><span>📚</span> SW 공학의 주요 법칙 (보너스 암기)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <h4 class="font-bold text-yellow-300 mb-1">브룩스의 법칙 (Brooks's Law)</h4>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        "지연되고 있는 소프트웨어 프로젝트에 새로운 인력을 추가하면 프로젝트는 <strong class="text-white">더욱 지연된다.</strong>" (새로운 인력의 교육 시간 및 소통 비용 발생 때문)
+                    </p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <h4 class="font-bold text-blue-300 mb-1">보엠 (Boehm)</h4>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        <strong class="text-white">나선형(Spiral) 모델</strong>의 제안자. 소프트웨어 개발의 '위험 분석'을 가장 중요시함. (계획수립 ➔ 위험분석 ➔ 개발/검증 ➔ 고객평가)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-24 py-8 bg-slate-900 text-slate-400 text-center text-sm border-t-4 border-rose-500">
+        <p>정보처리기사 완벽 대비 가이드 2편 - 소프트웨어 테스트, 품질 및 형상 관리</p>
+    </footer>
+
+</body>
+</html>

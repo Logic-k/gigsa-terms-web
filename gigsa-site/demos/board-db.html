@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데이터베이스 고득점 마스터보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .scale-up {
+            transition: transform 0.2s ease-in-out;
+        }
+        .scale-up:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🗄️</span>
+                <span class="font-black text-xl tracking-tighter text-slate-800">DB<span class="text-emerald-600"> ADVANCED</span></span>
+            </div>
+            <div class="hidden lg:flex space-x-6 font-bold text-sm text-slate-500">
+                <a href="#relational-terms" class="hover:text-emerald-600 transition">RDB 용어</a>
+                <a href="#keys" class="hover:text-emerald-600 transition">키 & 무결성</a>
+                <a href="#algebra" class="hover:text-emerald-600 transition">관계대수</a>
+                <a href="#dependency" class="hover:text-emerald-600 transition">함수적 종속</a>
+                <a href="#transaction" class="hover:text-emerald-600 transition">트랜잭션 & 절차형</a>
+                <a href="#locking" class="hover:text-emerald-600 transition">로킹 & 파티셔닝</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-24">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">데이터베이스 고득점 <br><span class="text-emerald-600">핵심 마스터보드</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium text-lg">
+                시험에 반드시 나오는 관계형 데이터베이스의 제약조건(키, 무결성), 함수적 종속, 관계대수, 로킹 메커니즘을 시각적으로 정복합니다.
+            </p>
+        </header>
+
+        <section id="relational-terms" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-emerald-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-emerald-500">📌</span> 관계형 데이터베이스(RDB) 구조와 핵심 용어
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">가장 기본적이지만 자주 헷갈리는 테이블의 구성 요소와 용어들입니다.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-10"></div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <table class="w-full text-center border-collapse border border-slate-300 shadow-sm bg-white">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-300">
+                                    <th class="p-3 border-r border-slate-300 text-blue-700">학번 (속성)</th>
+                                    <th class="p-3 border-r border-slate-300 text-blue-700">이름 (속성)</th>
+                                    <th class="p-3 text-blue-700">학과 (속성)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-200 hover:bg-slate-50 relative group">
+                                    <td class="p-3 border-r border-slate-200">101</td>
+                                    <td class="p-3 border-r border-slate-200">홍길동</td>
+                                    <td class="p-3">컴퓨터공학</td>
+                                    <td class="absolute -left-12 top-1/2 -translate-y-1/2 text-rose-500 font-black text-xs opacity-0 group-hover:opacity-100 transition">튜플 ➔</td>
+                                </tr>
+                                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="p-3 border-r border-slate-200">102</td>
+                                    <td class="p-3 border-r border-slate-200">김철수</td>
+                                    <td class="p-3">경영학</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="flex justify-between mt-4 px-4 text-xs font-bold text-slate-500">
+                            <div class="text-rose-600">튜플(Tuple) = 행(Row)</div>
+                            <div class="text-blue-600">속성(Attribute) = 열(Column)</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-rose-50 p-4 rounded-xl border border-rose-100 flex items-start gap-3">
+                            <span class="bg-rose-500 text-white font-black px-2 py-1 rounded text-xs shrink-0">행(Row)</span>
+                            <div>
+                                <h4 class="font-bold text-rose-800 text-sm">튜플 (Tuple) = 레코드</h4>
+                                <p class="text-xs text-rose-600 mt-1">튜플의 수 = <strong class="text-rose-800 text-sm">카디널리티 (Cardinality)</strong>, 기수, 대응수</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-start gap-3">
+                            <span class="bg-blue-500 text-white font-black px-2 py-1 rounded text-xs shrink-0">열(Col)</span>
+                            <div>
+                                <h4 class="font-bold text-blue-800 text-sm">속성 (Attribute) = 필드</h4>
+                                <p class="text-xs text-blue-600 mt-1">속성의 수 = <strong class="text-blue-800 text-sm">디그리 (Degree)</strong>, 차수</p>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start gap-3">
+                            <span class="bg-amber-500 text-white font-black px-2 py-1 rounded text-xs shrink-0">값(Val)</span>
+                            <div>
+                                <h4 class="font-bold text-amber-800 text-sm">도메인 (Domain)</h4>
+                                <p class="text-xs text-amber-600 mt-1">하나의 속성이 가질 수 있는 <strong>원자값들의 집합</strong> (예: 성별의 도메인은 '남', '여')</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm flex gap-4 items-center">
+                    <span class="text-xl">💡</span>
+                    <div>
+                        <strong class="text-slate-800 block mb-1">논리적 관점 vs 물리적 관점 매핑</strong>
+                        <span class="text-slate-600 text-xs">논리적 설계 단계의 <strong>개체(Entity)</strong>는 물리적 설계에서 <strong>테이블(Table)</strong>이 되고, <strong>속성(Attribute)</strong>은 <strong>컬럼(Column)</strong>이 되며, <strong>식별자(Identifier)</strong>는 <strong>기본키(Primary Key)</strong>가 됩니다.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="keys" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-emerald-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-emerald-500">🔑</span> 키(Key)의 종류와 데이터 무결성
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">데이터를 유일하게 식별하고, 정확성을 보장하기 위한 제약 조건입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Key Hierarchy -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 border-b pb-2">키(Key)의 포함 관계</h3>
+                    
+                    <div class="relative bg-slate-100 rounded-2xl p-6 border-2 border-slate-300 text-center min-h-[250px] flex flex-col justify-center items-center">
+                        <span class="absolute top-2 left-4 font-bold text-slate-500 text-sm">슈퍼키 (유일성 O, 최소성 X)</span>
+                        
+                        <div class="bg-blue-100 border-2 border-blue-400 rounded-xl p-6 w-11/12 relative flex flex-col items-center">
+                            <span class="absolute top-2 left-4 font-bold text-blue-700 text-sm">후보키 (유일성 O, 최소성 O)</span>
+                            
+                            <div class="flex gap-4 w-full justify-center mt-6">
+                                <div class="bg-emerald-500 text-white font-bold p-4 rounded-lg w-5/12 shadow-md">
+                                    기본키 (PK)<br>
+                                    <span class="text-[10px] font-normal">선택된 단 1개의 키<br>(NULL 불가)</span>
+                                </div>
+                                <div class="bg-slate-400 text-white font-bold p-4 rounded-lg w-5/12 shadow-md">
+                                    대체키<br>
+                                    <span class="text-[10px] font-normal">선택받지 못한<br>나머지 후보키들</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-600">
+                        * <strong>외래키(Foreign Key)</strong>: 다른 릴레이션의 기본키를 참조하는 속성. 테이블 간의 관계를 연결합니다.
+                    </div>
+                </div>
+
+                <!-- Integrity Rules -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 border-b pb-2">데이터 무결성 3원칙</h3>
+                    
+                    <div class="bg-white p-5 rounded-2xl border-l-8 border-emerald-500 shadow-sm flex gap-4 items-start scale-up">
+                        <div class="text-3xl">🛡️</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">개체 무결성 (Entity Integrity)</h4>
+                            <p class="text-sm text-slate-600 mt-1">테이블의 <strong>기본키(PK)</strong>는 절대 NULL값을 가질 수 없으며, 중복된 값을 가질 수 없습니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border-l-8 border-blue-500 shadow-sm flex gap-4 items-start scale-up">
+                        <div class="text-3xl">🔗</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">참조 무결성 (Referential Integrity)</h4>
+                            <p class="text-sm text-slate-600 mt-1"><strong>외래키(FK)</strong>의 값은 참조하는 테이블의 기본키 값과 반드시 일치하거나 완전히 NULL이어야 합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border-l-8 border-amber-500 shadow-sm flex gap-4 items-start scale-up">
+                        <div class="text-3xl">📝</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">도메인 무결성 (Domain Integrity)</h4>
+                            <p class="text-sm text-slate-600 mt-1">특정 속성의 값은 그 속성이 정의된 <strong>도메인(범위, 데이터 타입)</strong>에 속한 값이어야 합니다. (예: 성별은 '남/여'만 가능)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="algebra" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-emerald-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-emerald-500">🧮</span> 관계대수와 관계해석
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">원하는 데이터를 찾기 위한 '절차적' 기법(대수)과 '비절차적' 기법(해석)입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 순수 관계 연산자 -->
+                <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-lg text-white">
+                    <h3 class="font-black text-xl text-emerald-400 mb-2">순수 관계 연산자 (관계 대수)</h3>
+                    <p class="text-xs text-slate-400 mb-6">"어떻게(How)" 데이터를 구할 것인가를 연산자의 나열로 기술하는 <strong>절차적 언어</strong></p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <span class="text-2xl font-black text-blue-400 w-8 text-center">σ</span>
+                            <div>
+                                <div class="font-bold text-slate-200">Select (셀렉트)</div>
+                                <div class="text-[10px] text-slate-400">조건을 만족하는 <strong>수평적 부분 집합 (행, 튜플)</strong> 구하기</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <span class="text-2xl font-black text-rose-400 w-8 text-center">π</span>
+                            <div>
+                                <div class="font-bold text-slate-200">Project (프로젝트)</div>
+                                <div class="text-[10px] text-slate-400">주어진 속성들만 추출하는 <strong>수직적 부분 집합 (열, 속성)</strong> 구하기</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <span class="text-2xl font-black text-amber-400 w-8 text-center">⋈</span>
+                            <div>
+                                <div class="font-bold text-slate-200">Join (조인)</div>
+                                <div class="text-[10px] text-slate-400">공통 속성을 이용해 두 개의 릴레이션을 <strong>하나로 합치기</strong></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <span class="text-2xl font-black text-emerald-400 w-8 text-center">÷</span>
+                            <div>
+                                <div class="font-bold text-slate-200">Division (디비전)</div>
+                                <div class="text-[10px] text-slate-400">B 릴레이션의 모든 조건을 만족하는 A 릴레이션의 튜플 반환</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- 일반 집합 연산자 -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                        <h3 class="font-black text-lg text-slate-800 mb-4 border-b pb-2">일반 집합 연산자</h3>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="bg-slate-50 p-2 rounded border font-bold flex gap-2 items-center"><span class="text-blue-500 font-serif text-lg">∪</span> 합집합</div>
+                            <div class="bg-slate-50 p-2 rounded border font-bold flex gap-2 items-center"><span class="text-blue-500 font-serif text-lg">∩</span> 교집합</div>
+                            <div class="bg-slate-50 p-2 rounded border font-bold flex gap-2 items-center"><span class="text-blue-500 font-serif text-lg">−</span> 차집합</div>
+                            <div class="bg-slate-50 p-2 rounded border font-bold flex gap-2 items-center"><span class="text-blue-500 font-serif text-lg">×</span> 교차곱</div>
+                        </div>
+                    </div>
+
+                    <!-- 관계 해석 -->
+                    <div class="bg-indigo-50 rounded-3xl p-6 border border-indigo-100 shadow-sm relative">
+                        <div class="absolute -top-3 -right-2 bg-indigo-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-md">비교 필수!</div>
+                        <h3 class="font-black text-lg text-indigo-900 mb-2">관계 해석 (Relational Calculus)</h3>
+                        <p class="text-xs text-indigo-700 leading-relaxed">
+                            원하는 데이터가 "무엇(What)"인지만 선언하고 "어떻게(How)" 구하는지는 시스템에 맡기는 <strong>비절차적 언어</strong>입니다. 튜플 관계해석과 도메인 관계해석이 있으며, 제안자는 <strong>E.F. Codd (코드)</strong> 입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dependency" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-emerald-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-emerald-500">🔗</span> 함수적 종속 (Functional Dependency)
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">X의 값을 알면 Y의 값을 무조건 알 수 있을 때, "Y는 X에 함수적으로 종속된다" (X &rarr; Y) 라고 합니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 완전 함수적 종속 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm card-hover">
+                    <h3 class="font-black text-lg text-slate-800 mb-4 text-center">완전 함수적 종속</h3>
+                    
+                    <div class="flex items-center justify-center gap-2 mb-4 bg-slate-50 py-4 rounded-xl">
+                        <div class="border-2 border-blue-400 p-2 rounded text-xs font-bold text-blue-700 bg-white shadow-sm flex flex-col gap-1">
+                            <span>학번</span>
+                            <span class="border-t border-blue-200">과목</span>
+                        </div>
+                        <div class="text-blue-500 font-black">➔</div>
+                        <div class="border-2 border-slate-300 p-2 rounded text-xs font-bold text-slate-700 bg-white shadow-sm">
+                            성적
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-slate-600 leading-relaxed">기본키가 복합키(학번+과목)일 때, 종속자(성적)가 기본키의 <strong>'전체'</strong>에 종속되는 상태입니다. (정상적인 상태)</p>
+                </div>
+
+                <!-- 부분 함수적 종속 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm card-hover">
+                    <h3 class="font-black text-lg text-slate-800 mb-4 text-center">부분 함수적 종속</h3>
+                    
+                    <div class="flex items-center justify-center gap-2 mb-4 bg-slate-50 py-4 rounded-xl">
+                        <div class="border-2 border-rose-400 p-2 rounded text-xs font-bold text-rose-700 bg-white shadow-sm flex flex-col gap-1">
+                            <span class="bg-rose-100">학번</span>
+                            <span class="border-t border-rose-200">과목</span>
+                        </div>
+                        <div class="text-rose-500 font-black">➔</div>
+                        <div class="border-2 border-slate-300 p-2 rounded text-xs font-bold text-slate-700 bg-white shadow-sm">
+                            이름
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-slate-600 leading-relaxed">종속자(이름)가 복합키의 <strong>'일부분(학번)'</strong>에만 종속되는 상태입니다. <br><span class="text-rose-500 font-bold">(제2정규화에서 제거 대상)</span></p>
+                </div>
+
+                <!-- 이행적 함수적 종속 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm card-hover">
+                    <h3 class="font-black text-lg text-slate-800 mb-4 text-center">이행적 함수적 종속</h3>
+                    
+                    <div class="flex items-center justify-center gap-2 mb-4 bg-slate-50 py-4 rounded-xl">
+                        <div class="border-2 border-amber-400 p-2 rounded text-[10px] font-bold text-amber-700 bg-white shadow-sm">학번</div>
+                        <div class="text-amber-500 font-black text-sm">➔</div>
+                        <div class="border-2 border-amber-400 p-2 rounded text-[10px] font-bold text-amber-700 bg-white shadow-sm">학과</div>
+                        <div class="text-amber-500 font-black text-sm">➔</div>
+                        <div class="border-2 border-slate-300 p-2 rounded text-[10px] font-bold text-slate-700 bg-white shadow-sm">등록금</div>
+                    </div>
+                    
+                    <p class="text-xs text-slate-600 leading-relaxed">A &rarr; B 이고 B &rarr; C 일 때, A &rarr; C 가 성립하는 '한다리 건너 아는' 상태입니다. <br><span class="text-amber-600 font-bold">(제3정규화에서 제거 대상)</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="transaction" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-emerald-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-emerald-500">🔄</span> 트랜잭션 상태 및 절차형 DB
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">데이터베이스의 논리적 작업 단위(트랜잭션)의 생명주기와 절차적 프로그래밍 모듈입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Transaction States -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                    <h3 class="font-black text-xl mb-6 text-slate-800">트랜잭션 상태 전이도</h3>
+                    
+                    <div class="relative w-full h-[200px] flex items-center justify-center text-sm font-bold">
+                        <!-- Active -->
+                        <div class="absolute top-1/2 left-4 -translate-y-1/2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full border border-blue-300 z-10">활동 (Active)</div>
+                        
+                        <!-- Partially Committed -->
+                        <div class="absolute top-4 left-1/2 -translate-x-1/2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full border border-emerald-300 z-10">부분 완료</div>
+                        <!-- Committed -->
+                        <div class="absolute top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-full shadow-md z-10">완료 (Committed)</div>
+                        
+                        <!-- Failed -->
+                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-rose-50 text-rose-700 px-4 py-2 rounded-full border border-rose-300 z-10">실패 (Failed)</div>
+                        <!-- Aborted -->
+                        <div class="absolute bottom-4 right-4 bg-rose-500 text-white px-4 py-2 rounded-full shadow-md z-10">철회 (Aborted)</div>
+                        
+                        <!-- Lines using CSS positioning and borders -->
+                        <div class="absolute w-1/4 h-[100px] border-t-2 border-r-2 border-slate-300 rounded-tr-xl left-[20%] top-[40px] -z-0"></div>
+                        <div class="absolute w-1/4 h-[100px] border-b-2 border-r-2 border-slate-300 rounded-br-xl left-[20%] bottom-[40px] -z-0"></div>
+                        
+                        <div class="absolute w-12 h-0 border-t-2 border-slate-300 right-[35%] top-[50px] -z-0 after:content-[''] after:absolute after:-right-2 after:-top-1.5 after:border-l-[6px] after:border-l-slate-300 after:border-y-[6px] after:border-y-transparent"></div>
+                        
+                        <div class="absolute w-12 h-0 border-t-2 border-slate-300 right-[35%] bottom-[50px] -z-0 after:content-[''] after:absolute after:-right-2 after:-top-1.5 after:border-l-[6px] border-l-slate-300 after:border-y-[6px] after:border-y-transparent"></div>
+                        
+                        <!-- Fail link from Partially Committed -->
+                        <div class="absolute w-0 h-16 border-l-2 border-dashed border-slate-300 left-[50%] top-[70px] -z-0 after:content-[''] after:absolute after:-bottom-2 after:-left-1.5 after:border-t-[6px] after:border-t-slate-300 after:border-x-[6px] after:border-x-transparent"></div>
+                    </div>
+                </div>
+
+                <!-- Procedural DB -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col justify-center">
+                    <h3 class="font-black text-xl mb-4 text-slate-800">절차형 데이터베이스 (Procedural DB)</h3>
+                    <p class="text-xs text-slate-500 mb-6">SQL에 흐름 제어(조건, 반복문)를 추가하여 DBMS 서버 내에서 직접 실행되도록 구성한 프로그램 모듈입니다.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex gap-3">
+                            <span class="text-xl">⚡</span>
+                            <div>
+                                <h4 class="font-bold text-slate-700 text-sm">트리거 (Trigger)</h4>
+                                <p class="text-[11px] text-slate-500">INSERT, UPDATE 등의 데이터 갱신 이벤트 발생 시 <strong>자동으로 호출되어 실행</strong>되는 프로그램.</p>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex gap-3">
+                            <span class="text-xl">📦</span>
+                            <div>
+                                <h4 class="font-bold text-slate-700 text-sm">저장 프로시저 (Stored Procedure)</h4>
+                                <p class="text-[11px] text-slate-500">여러 쿼리를 하나로 묶어 모듈화하고, 필요할 때 <strong>CALL 명령어로 직접 호출</strong>하여 일괄(Batch) 처리.</p>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex gap-3">
+                            <span class="text-xl">🔁</span>
+                            <div>
+                                <h4 class="font-bold text-slate-700 text-sm">사용자 정의 함수 (UDF)</h4>
+                                <p class="text-[11px] text-slate-500">프로시저와 비슷하지만 <strong>반드시 Return 문을 통해 단일 값을 반환</strong>하며, 주로 SELECT문 내부에서 사용.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="locking" class="scroll-mt-24 space-y-8">
+            <div class="border-b-2 border-emerald-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-emerald-500">🔒</span> 로킹 메커니즘 & 파티셔닝
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">동시성 제어를 위한 로킹(Locking)과 대용량 데이터 관리를 위한 파티션 기술입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Locking Simulator -->
+                <div class="bg-slate-900 rounded-3xl p-8 text-white shadow-xl flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-blue-500"></div>
+                    
+                    <h3 class="font-black text-xl mb-2 text-emerald-400">인터랙티브 로킹 시뮬레이터</h3>
+                    <p class="text-xs text-slate-400 mb-8">로킹(Locking) 단위의 크기를 조절해보며 데이터베이스 성능의 상관관계를 확인하세요.</p>
+
+                    <div class="mb-6 relative">
+                        <input type="range" id="lock-slider" min="1" max="100" value="50" oninput="updateLocking()">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-2 font-bold uppercase">
+                            <span>작음 (레코드/행)</span>
+                            <span>로킹 단위 크기</span>
+                            <span>큼 (데이터베이스)</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm font-bold mb-1">
+                                <span class="text-blue-300">병행성 (동시성) 수준</span>
+                                <span id="val-concurrency" class="text-blue-300">보통</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2">
+                                <div id="bar-concurrency" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                            </div>
+                            <p id="desc-concurrency" class="text-[10px] text-slate-400 mt-1">로킹 단위가 작으면 여러 트랜잭션이 동시에 작업하기 좋습니다.</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between text-sm font-bold mb-1">
+                                <span class="text-rose-300">오버헤드 (관리 비용)</span>
+                                <span id="val-overhead" class="text-rose-300">보통</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2">
+                                <div id="bar-overhead" class="bg-rose-500 h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                            </div>
+                            <p id="desc-overhead" class="text-[10px] text-slate-400 mt-1">로킹 단위가 작을수록 관리해야 할 락(Lock)의 수가 많아져 시스템 부담이 커집니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <strong class="text-white text-sm block mb-1">시험 핵심 요약 📝</strong>
+                        <p id="lock-conclusion" class="text-xs text-emerald-300 font-bold">
+                            로킹 단위가 작아지면 병행성은 증가하지만, 관리 오버헤드도 증가합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Partitioning -->
+                <div class="bg-slate-100 rounded-3xl p-8 border border-slate-200">
+                    <h3 class="font-black text-xl mb-6 text-slate-800">파티션(Partition)의 종류</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-blue-500 flex gap-4 items-center">
+                            <div class="font-black text-blue-500 text-lg w-16 text-center">Range</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">범위 분할</h4>
+                                <p class="text-xs text-slate-500">지정한 <strong>범위</strong>를 기준으로 분할 (예: 2023년 데이터, 2024년 데이터)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-emerald-500 flex gap-4 items-center">
+                            <div class="font-black text-emerald-500 text-lg w-16 text-center">List</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">목록 분할</h4>
+                                <p class="text-xs text-slate-500">특정 <strong>값의 목록</strong>을 명시하여 분할 (예: 서울, 부산, 대구 등 지역별)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-amber-500 flex gap-4 items-center">
+                            <div class="font-black text-amber-500 text-lg w-16 text-center">Hash</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">해시 분할</h4>
+                                <p class="text-xs text-slate-500">해시 함수의 결과값에 따라 <strong>균등하게</strong> 분할. 특정 데이터가 어디 있는지 예측 불가.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-rose-500 flex gap-4 items-center">
+                            <div class="font-black text-rose-500 text-sm w-16 text-center leading-tight">Composite</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">조합 분할</h4>
+                                <p class="text-[11px] text-slate-500">위의 분할 기법을 <strong>2개 이상 결합</strong> (예: 연도별 Range 후 다시 지역별 List)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Migration (ETL) -->
+            <div class="mt-8 bg-slate-900 rounded-3xl p-8 text-white shadow-lg flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                <div class="md:w-1/3 z-10">
+                    <h3 class="font-black text-2xl mb-2 text-emerald-400">데이터 전환 <br>(Data Migration)</h3>
+                    <p class="text-sm text-slate-300">기존 시스템의 데이터를 새로운 시스템의 목적에 맞게 변환하여 적재하는 일련의 과정(ETL)입니다.</p>
+                </div>
+                <div class="md:w-2/3 flex flex-col sm:flex-row gap-4 w-full z-10">
+                    <div class="flex-1 bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                        <div class="text-2xl font-black text-emerald-500 mb-1">E</div>
+                        <div class="font-bold text-slate-200 text-sm">추출 (Extraction)</div>
+                        <div class="text-[10px] text-slate-400 mt-1">기존 원천 시스템에서 필요한 데이터 획득</div>
+                    </div>
+                    <div class="flex-1 bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                        <div class="text-2xl font-black text-blue-500 mb-1">T</div>
+                        <div class="font-bold text-slate-200 text-sm">변환 (Transformation)</div>
+                        <div class="text-[10px] text-slate-400 mt-1">목적 시스템 구조에 맞게 매핑 및 데이터 정제</div>
+                    </div>
+                    <div class="flex-1 bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                        <div class="text-2xl font-black text-rose-500 mb-1">L</div>
+                        <div class="font-bold text-slate-200 text-sm">적재 (Loading)</div>
+                        <div class="text-[10px] text-slate-400 mt-1">변환된 데이터를 새로운 DB 시스템에 삽입</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-6xl mx-auto mt-24 py-8 border-t border-slate-200 text-center text-slate-500 text-sm">
+        <p>정보처리기사 완벽 대비 가이드 - 데이터베이스 고급 개념 총망라</p>
+    </footer>
+
+    <script>
+        function updateLocking() {
+            const val = document.getElementById('lock-slider').value;
+            // val is 1 (Smallest unit) to 100 (Largest unit)
+            
+            // Concurrency is high when unit is small
+            const concurrencyVal = 100 - val;
+            const overheadVal = 100 - val;
+
+            const barConcurrency = document.getElementById('bar-concurrency');
+            const barOverhead = document.getElementById('bar-overhead');
+            
+            barConcurrency.style.width = Math.max(5, concurrencyVal) + '%';
+            barOverhead.style.width = Math.max(5, overheadVal) + '%';
+
+            const getLevelText = (v) => {
+                if (v > 75) return "매우 높음";
+                if (v > 40) return "보통";
+                return "낮음";
+            };
+
+            document.getElementById('val-concurrency').innerText = getLevelText(concurrencyVal);
+            document.getElementById('val-overhead').innerText = getLevelText(overheadVal);
+
+            const conclusion = document.getElementById('lock-conclusion');
+            if (val < 33) {
+                conclusion.innerText = "단위가 작음(Row) ➔ 병행성 최고! 하지만 관리할 락이 너무 많아 오버헤드 폭발!";
+                conclusion.className = "text-xs font-bold text-rose-300";
+            } else if (val < 66) {
+                conclusion.innerText = "단위가 적절함(Table) ➔ 병행성과 오버헤드가 적당히 타협된 상태입니다.";
+                conclusion.className = "text-xs font-bold text-blue-300";
+            } else {
+                conclusion.innerText = "단위가 큼(DB) ➔ 관리 오버헤드는 거의 없지만, 아무도 동시에 작업할 수 없어 병행성 최악!";
+                conclusion.className = "text-xs font-bold text-amber-300";
+            }
+        }
+        
+        // Initial setup
+        updateLocking();
+    </script>
+</body>
+</html>

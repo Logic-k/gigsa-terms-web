@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>꿈라 CBT 오답·기억 노트 — 과목별 정리</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1c2333;--sub:#5b6478;--line:#e3e7f0;--blue:#2f5fd0;--blue-bg:#eef3fe;--red:#c9403f;--red-bg:#fdeeee;--green:#2c8a5b;--green-bg:#eaf6f0;--amber:#b47409;--amber-bg:#fdf5e4;--purple:#7048b6;--purple-bg:#f3eefb;--teal:#0f7f8b;--teal-bg:#e8f6f8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:14.5px}
+header{background:linear-gradient(120deg,#1d2c56,#0f7f8b);color:#fff;padding:22px 16px;text-align:center}
+header h1{font-size:20px}
+header p{opacity:.85;font-size:12.5px;margin-top:5px}
+.wrap{max-width:900px;margin:0 auto;padding:14px 12px 70px}
+.tools{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0 6px}
+#q{width:100%;padding:11px 14px;border:2px solid var(--blue);border-radius:11px;font-size:15px;font-family:inherit}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+.tabs button{flex:0 0 auto;border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:6px 13px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;white-space:nowrap}
+.tabs button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.tabs button .n{opacity:.75;font-weight:600;font-size:11.5px}
+#stat{font-size:12px;color:var(--sub);margin:8px 2px 2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:10px 0;box-shadow:0 1px 4px rgba(20,30,60,.04)}
+.card h3{font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.sb{font-size:11px;font-weight:800;padding:2px 9px;border-radius:12px;flex-shrink:0}
+.s1{background:var(--blue-bg);color:var(--blue)}.s2{background:var(--green-bg);color:var(--green)}.s3{background:var(--purple-bg);color:var(--purple)}.s4{background:var(--amber-bg);color:var(--amber)}.s5{background:var(--red-bg);color:var(--red)}
+.card ul{margin:2px 0 4px 18px}
+.card li{margin:2.5px 0;font-size:13.8px}
+.kw{margin-top:7px}
+.kw span{display:inline-block;background:#f0f3fa;border-radius:7px;padding:1px 8px;font-size:11.5px;color:var(--sub);margin:2px 3px 0 0}
+.src{font-size:10.5px;color:#a8b0c2;margin-top:5px}
+.none{text-align:center;color:var(--sub);padding:40px 0}
+mark{background:#ffe9a8;border-radius:3px;padding:0 1px}
+</style>
+</head>
+<body>
+<header>
+  <h1>꿈라 CBT 오답 · 기억 노트</h1>
+  <p>캡처 93장 판독 · 과목별 분류 · 검색 가능 — 카드 하나 = 캡처 하나</p>
+</header>
+<div class="wrap">
+  <div class="tools">
+    <input id="q" type="text" placeholder="🔍 검색 (예: 결합도, 트리거, HRN, Smurf…)">
+    <div class="tabs" id="tabs"></div>
+    <div id="stat"></div>
+  </div>
+  <div id="list"></div>
+</div>
+<script>
+const SUBJ={1:"1과목 설계",2:"2과목 개발",3:"3과목 DB",4:"4과목 언어·OS·NW",5:"5과목 보안·관리"};
+const SRC={"00":"S0811_113151","01":"S0811_113245","02":"S0811_113309","03":"S0811_113503","04":"S0811_114301","05":"S0811_114929","06":"S0811_120953","07":"S0811_121308","08":"S0811_121526","09":"S0811_122248","10":"S0811_122712","11":"S0811_122845","12":"S0811_122915","13":"S0811_124120","14":"S0811_124413","15":"S0811_125924","16":"S0811_130231","17":"S0811_130441","18":"S0811_130509","19":"S0811_131428","20":"S0811_131457","21":"S0811_131514","22":"S0811_131531","23":"S0811_131611","24":"S0811_131647","25":"S0811_131731","26":"S0811_131804","27":"S0811_131825","28":"S0811_131841","29":"S0811_131853","30":"S0811_131905","31":"S0811_131933","32":"M0811_175153","33":"M0811_175220","34":"M0811_175321","35":"M0811_175410","36":"M0811_175452","37":"M0811_175513","38":"M0811_175533","39":"M0811_175618","40":"M0811_190402","41":"M0811_190508","42":"M0811_190543","43":"M0811_190642","44":"M0811_190829","45":"M0811_192150","46":"M0811_192220","47":"M0811_194311","48":"M0811_194536","49":"M0811_202925","50":"M0811_203053","51":"M0811_203201","52":"M0811_203218","53":"M0811_203344","54":"M0811_203412","55":"M0811_203601","56":"M0811_203717","57":"M0811_204634","58":"M0811_204847","59":"M0811_204941","60":"M0811_205115","61":"M0811_205214","62":"M0811_205225","63":"M0811_205254","64":"M0811_205408","65":"M0811_205452","66":"M0811_205641","67":"M0811_205813","68":"M0811_205822","69":"M0811_205847","70":"M0811_205949","71":"M0811_210025","72":"M0811_210112","73":"M0811_210200","74":"M0811_210249","75":"M0811_210319","76":"M0811_210447","77":"M0811_210509","78":"M0811_210551","79":"M0811_210926","80":"M0811_210956","81":"M0811_211014","82":"M0811_211056","83":"M0811_211117","84":"M0811_211243","85":"M0811_211342","86":"M0811_211604","87":"M0811_211613","88":"M0811_211624","89":"M0811_211654","90":"M0811_211727","91":"M0811_211750","92":"M0811_211838"};
+const D=[
+{f:"00",s:1,t:"UML 정적/동적 다이어그램 구분",c:"정적 다이어그램: 클래스, 객체, 컴포넌트, 배치, 패키지, 복합 구조 — 구조를 표현 ·동적 다이어그램: 유스케이스, 순차, 통신, 상태, 활동, 타이밍 — 행위·시간 흐름을 표현 ·암기: '시간 흐름·메시지 순서'가 들어가면 동적",k:["UML","정적","동적","순차","타이밍"]},
+{f:"01",s:1,t:"SOLID 객체지향 설계 원칙",c:"SRP(단일 책임): 클래스는 하나의 변경 이유만 ·OCP(개방-폐쇄): 확장에 열려, 변경에 닫혀 ·LSP(리스코프 치환): 하위형은 상위형으로 치환 가능 ·DIP(의존 역전): 구체가 아닌 추상에 의존 — ISP(인터페이스 분리)와 섞은 보기가 함정",k:["SOLID","SRP","OCP","LSP","DIP","ISP"]},
+{f:"02",s:1,t:"GoF 디자인 패턴 분류",c:"Observer는 상태 변화를 구독자에게 알리는 행위(Behavioral) 패턴 ·생성 5: Abstract Factory·Builder·Factory Method·Prototype·Singleton ·구조 7: Adapter·Bridge·Composite·Decorator·Facade·Flyweight·Proxy ·행위 11: Observer·Strategy·Command·Iterator·State·Template Method 등",k:["GoF","디자인패턴","Observer","생성","구조","행위"]},
+{f:"03",s:1,t:"아키텍처 설계 과정 순서",c:"올바른 순서: 설계 목표 설정 → 시스템 타입 결정 → 아키텍처 패턴(스타일) 선택 → 서브시스템·인터페이스 정의 → 검토(표준화)로 마무리 — 정의보다 검토가 먼저 오면 오답",k:["아키텍처","설계 절차","패턴 선택"]},
+{f:"04",s:2,t:"테스트 드라이버/스텁/슈트 구분",c:"Test Driver: 상향식 통합에서 하위 모듈을 호출·파라미터 전달·결과 수집하는 가상 상위 모듈 ·Test Stub: 하향식 통합에서 없는 하위 모듈을 흉내내 가짜 결과 반환 ·Test Suite: 테스트 케이스의 묶음 ·테스트 케이스는 입력+기대 결과의 명세일 뿐 가상 모듈이 아님",k:["드라이버","스텁","슈트","통합테스트"]},
+{f:"05",s:4,t:"프로그래밍 언어 선택 고려사항",c:"고려사항 O: 컴파일러 가용성(대상 환경에서 사용 가능 여부), 이식성·표준 준수, 개발자의 능력·친숙도 ·'컴파일러의 독창성'은 고려사항이 아님(함정)",k:["언어 선택","컴파일러 가용성","이식성"]},
+{f:"06",s:1,t:"NS 차트 특징",c:"박스 중첩으로 구조적 프로그래밍을 표현 ·화살표·GOTO 사용 안 함 ·순차(연속)·선택·반복 제어 구조를 박스로 표현, 논리 명확해 코드 변환 용이",k:["NS차트","GOTO","제어구조"]},
+{f:"07",s:2,t:"화이트박스/블랙박스 기법 구분",c:"화이트박스: 기초 경로, 조건, 분기, 루프, 데이터 흐름, 제어 구조 검사 ·블랙박스: 동치 분할, 경계값 분석, 원인-결과 그래프, 오류 추측 ·코드 내부를 보면 화이트, 입출력만 보면 블랙",k:["화이트박스","블랙박스","기초경로","동치분할"]},
+{f:"08",s:2,t:"ISO/IEC 25000 (SQuaRE)",c:"SQuaRE = ISO/IEC 25000: 기존 9126(품질 특성)과 14598(평가 절차)을 통합한 품질 평가 표준 ·2501n: 품질 모델 분과 ·2502n: 품질 측정 분과",k:["SQuaRE","ISO 25000","9126","14598"]},
+{f:"09",s:3,t:"데이터베이스 키 종류",c:"슈퍼키: 유일성만 만족(최소성 없을 수 있음) ·후보키: 유일성+최소성 모두 만족 ·기본키: 후보키 중 대표 ·외래키: 다른 릴레이션의 기본키를 참조해 관계 표현",k:["슈퍼키","후보키","기본키","외래키"]},
+{f:"10",s:3,t:"뷰(View) 개념과 갱신 제약",c:"물리 저장 없는 가상 테이블 ·집계 함수·DISTINCT·GROUP BY·조인·서브쿼리 포함 뷰는 삽입/수정/삭제 제한 ·장점: 보안(권한 분리), 복잡한 쿼리를 뷰로 만들어 재사용",k:["뷰","가상 테이블","갱신 제약"]},
+{f:"11",s:3,t:"SELECT문과 관계대수 대응",c:"SELECT 절(컬럼) = Projection(π) ·WHERE 절(조건) = Selection(σ) ·FROM 절 = 대상 테이블 — 컬럼·테이블·조건 대상을 바꿔치기한 보기를 주의",k:["SELECT","WHERE","Projection","Selection"]},
+{f:"12",s:3,t:"정규화 단계별 제거 대상",c:"2NF: 부분 함수 종속 제거 ·3NF: 이행 함수 종속(A→B→C) 제거 ·BCNF: 결정자가 후보키가 아닌 함수 종속 제거 ·4NF: 다치 종속(MVD) 제거 — 단계와 제거 대상을 바꿔치기하는 게 단골 함정",k:["정규화","이행 종속","부분 종속","BCNF","다치 종속"]},
+{f:"13",s:3,t:"분산 DB 구성요소와 투명성",c:"구성: 분산 처리기 + 분산 데이터베이스 + 통신 네트워크 ·위치/중복/병행/장애 투명성 4가지 ·단점: 설계 어렵고 개발·처리 비용 증가",k:["분산DB","투명성","분산 처리기"]},
+{f:"14",s:3,t:"병행 제어의 목적과 기법",c:"목적: 공유 최대화 · 응답시간 최소화 · 일관성 유지 ·기법: 로킹(공유/배타 락), 2PL(확장→축소 2단계, 직렬성 보장), 타임스탬프(시간 순서 부여)",k:["병행제어","로킹","2PL","타임스탬프"]},
+{f:"15",s:4,t:"IPv4 vs IPv6 비교",c:"헤더: IPv6는 고정 40 octet, IPv4는 가변(20~60B) ·주소: 32bit vs 128bit ·IPv6는 SLAAC 자동설정, IPv4는 DHCP 의존 ·IPv6는 Broadcast 없음(Multicast/Anycast로 대체)",k:["IPv4","IPv6","40 octet","SLAAC"]},
+{f:"16",s:4,t:"OSI 계층별 대표 프로토콜",c:"응용(7): HTTP·FTP·SMTP·DNS ·전송(4): TCP·UDP ·네트워크(3): IP·ICMP·ARP ·데이터링크(2): HDLC·PPP·LLC·MAC·Ethernet — PPP는 점대점 데이터링크, LLC는 데이터링크의 논리 링크 제어 부계층",k:["OSI","PPP","LLC","HDLC","계층별 프로토콜"]},
+{f:"17",s:4,t:"ICMP·ARP·RARP·IGMP 구분",c:"ICMP: IP 오류·진단 메시지(ping·traceroute) ·ARP: IP→MAC ·RARP: MAC→IP ·IGMP: 멀티캐스트 그룹 관리 ·PPP는 데이터링크 프로토콜이지 오류 전송용이 아님",k:["ICMP","ARP","RARP","IGMP","ping"]},
+{f:"18",s:1,t:"응집도·결합도 순서",c:"응집도(낮→높): 우연적 < 논리적 < 시간적 < 절차적 < 통신(교환)적 < 순차적 < 기능적 ·결합도(낮→높): 자료 < 스탬프 < 제어 < 외부 < 공통 < 내용 ·좋은 모듈 = 응집도 높게 + 결합도 낮게 ('응높결낮')",k:["응집도","결합도","기능적","자료","내용"]},
+{f:"19",s:4,t:"쉘 vs 커널의 역할",c:"쉘: 명령 해석, 사용자-커널 인터페이스, 스크립트, 환경 변수, 초기화 파일(.profile·.bashrc) ·커널: 프로세스·메모리·파일 시스템·장치 등 자원 관리 — '자원 관리'의 주체는 커널이지 쉘이 아님(함정)",k:["쉘","커널","bashrc","자원 관리"]},
+{f:"20",s:5,t:"HACMP · 페일오버 · 스턱스넷",c:"HACMP: IBM AIX의 고가용성 클러스터 솔루션 ·페일오버: 노드 장애 시 다른 노드가 자동 인계 ·스턱스넷: 산업 제어 시스템(SCADA)을 노린 공격 웜(2010) ·루팅: 안드로이드에서 root 권한 획득",k:["HACMP","고가용성","페일오버","스턱스넷"]},
+{f:"21",s:5,t:"Switch Jamming (MAC Flooding)",c:"위조 MAC 패킷으로 스위치의 CAM 테이블을 넘치게 해 더미 허브처럼 만들어 스니핑하는 공격 ·CAM 테이블: MAC↔포트 매핑 테이블 ·스니핑: 흘러다니는 패킷을 엿보는 수동 공격",k:["Switch Jamming","MAC Flooding","CAM","스니핑"]},
+{f:"22",s:5,t:"스토리지 DAS/NAS/SAN",c:"DAS: 서버 직접 연결 — 단순·고성능·공유 어려움 ·NAS: 네트워크 파일 서버 — 다중 서버 공유 ·SAN: 전용 고속 네트워크로 블록 단위 공유 ·NFC는 스토리지가 아니라 근거리 무선 통신(함정)",k:["DAS","NAS","SAN","NFC"]},
+{f:"23",s:5,t:"V 모델",c:"각 개발 단계와 검증 단계를 V자로 짝짓는 모델(Perry 제안) ·요구분석↔인수 테스트 / 시스템 설계↔시스템 테스트 / 상세 설계↔단위 테스트 ·폭포수 모델의 변형으로 작업·결과의 검증에 초점",k:["V모델","Perry","검증","인수테스트"]},
+{f:"24",s:5,t:"DoS 공격 4종 구분",c:"Smurf: 출발지 IP를 피해자로 위조한 ICMP를 브로드캐스트 → 응답 폭주 ·Ping of Death: 거대 ICMP 패킷 조각 → 재조립 시 오버플로 ·SYN Flooding: SYN만 보내고 ACK 안 함 → half-open 큐 고갈 ·Land: 출발지=목적지 동일 위조 → 무한 루프",k:["Smurf","Ping of Death","SYN Flooding","Land"]},
+{f:"25",s:5,t:"신기술: Scrapy · Li-fi · SBAS",c:"Scrapy: Python 기반 오픈소스 웹 크롤링 프레임워크 ·Li-fi: 빛(LED)을 이용한 근거리 무선 통신 ·SBAS: 위성 기반 GPS 보강 시스템",k:["Scrapy","Li-fi","SBAS","크롤링"]},
+{f:"26",s:5,t:"입력 검증 취약점 3종",c:"SQL Injection: SQL 쿼리에 외부 입력 삽입해 DB 조작 ·XSS: 외부 입력이 브라우저에서 스크립트로 실행 ·자원 삽입(Resource Injection): 외부 입력으로 시스템 자원을 식별·접근하게 만들어 권한 상승·정보 노출",k:["SQL Injection","XSS","자원 삽입"]},
+{f:"27",s:4,t:"NTFS vs FAT32",c:"NTFS: ACL 권한·EFS 암호화·저널링·대용량(16TB+)·자동 압축 지원, 저용량에선 다소 느림 ·FAT32: 권한·암호화·저널링 없음, 최대 파일 4GB, 저용량에서 빠름 ·저널링: 변경 내역 기록으로 장애 복구 지원",k:["NTFS","FAT32","저널링","EFS"]},
+{f:"28",s:5,t:"대칭키 알고리즘 스펙",c:"DES: 64bit 블록·56bit 키·16라운드 Feistel — 무차별 대입에 약해 대체됨 ·3DES: DES 3회, 키 168bit ·AES: 128bit 블록, 키 128/192/256 ·SEED(KISA)·ARIA(국정원 등): 128bit 블록 국산",k:["DES","3DES","AES","SEED","ARIA","Feistel"]},
+{f:"29",s:4,t:"umask 계산",c:"실제 권한 = 기본 권한 − umask (파일 기본 666, 디렉토리 777) ·umask 022 → 파일 644, 디렉토리 755 ·755는 '결과 권한'이지 umask 값이 아님(함정)",k:["umask","022","644","755"]},
+{f:"30",s:4,t:"리눅스 로그 파일 4종",c:"wtmp: 로그인/로그아웃 이력(last) ·utmp: 현재 로그인 사용자(who) ·btmp: 로그인 실패 기록(lastb) ·lastlog: 사용자별 마지막 로그인 시각",k:["wtmp","utmp","btmp","lastlog"]},
+{f:"31",s:4,t:"DPI와 페이로드",c:"DPI(Deep Packet Inspection): 패킷의 페이로드까지 분석해 트래픽 식별·제어 — IDS/IPS·QoS·DLP에 활용 ·페이로드: 헤더를 제외한 실제 데이터 부분",k:["DPI","페이로드","패킷 분석"]},
+{f:"32",s:1,t:"요구사항 검토 3기법",c:"워크스루: 명세서 사전 배포 → 짧은 회의로 오류 조기 검출 ·인스펙션: 체크리스트 활용 공식 검토 ·동료 검토: 작성자가 설명하고 동료가 의견 제시(비공식)",k:["워크스루","인스펙션","동료검토"]},
+{f:"33",s:1,t:"코드 설계 방식",c:"순차 코드: 일련번호 순서대로 ·블록 코드: 구분으로 블록을 나눈 뒤 그 안에서 일련번호(구분+일련번호) ·표의 숫자 코드: 길이·넓이·부피 등 물리적 수치를 그대로 코드로",k:["순차 코드","블록 코드","표의 숫자"]},
+{f:"34",s:1,t:"DFD 구성 4요소",c:"Process(처리) · Data Flow(자료 흐름) · Data Store(자료 저장소) · Terminator(단말, 외부 엔티티) ·자료 사전(DD)은 DFD의 자료를 정의하는 보조 도구이지 4요소가 아님",k:["DFD","Terminator","자료 사전"]},
+{f:"35",s:1,t:"UML 표기 기호",c:"《 》 기메(guillemet): 스테레오타입 표기 ·{ } 중괄호: 제약(constraint) 표기 ·[ ] 대괄호: 가드 조건 표기",k:["스테레오타입","기메","가드 조건"]},
+{f:"36",s:1,t:"GoF 분류 총정리",c:"생성 5: Singleton·Factory Method·Abstract Factory·Builder·Prototype ·구조 7: Adapter·Bridge·Composite·Decorator·Facade·Flyweight·Proxy ·행위 11: Observer·Visitor·Command·Iterator·Strategy·Template Method·State·Mediator·Memento·Chain of Responsibility·Interpreter",k:["GoF","생성 5","구조 7","행위 11"]},
+{f:"37",s:1,t:"자료 사전 기호",c:"= 정의(is composed of) ·( ) 생략(optional) ·{ } 반복(iteration) ·[ | ] 선택(selection) ·** 주석",k:["자료 사전","기호","반복","선택"]},
+{f:"38",s:1,t:"미들웨어 종류",c:"TP monitor: 트랜잭션의 올바른 처리를 감시·제어(Tuxedo·CICS) ·RPC: 원격 프로시저 호출 ·ORB: CORBA 기반 객체 요청 브로커",k:["TP모니터","RPC","ORB","CORBA"]},
+{f:"39",s:1,t:"UML 구조 vs 행위 다이어그램",c:"구조: Class·Object·Component·Deployment·Composite Structure·Package ·행위: Use Case·Activity·State·Sequence·Communication·Timing·Interaction Overview ·Activity 다이어그램은 작업 흐름을 표현하는 행위 다이어그램",k:["UML","구조","행위","Activity"]},
+{f:"40",s:1,t:"럼바우 3모형 순서",c:"객체 모형(1단계): 객체 다이어그램으로 정적 구조 ·동적 모형(2단계): 상태 다이어그램으로 시간 흐름 ·기능 모형(3단계): DFD로 데이터 처리 흐름 ·순서 암기: 객→동→기",k:["럼바우","객동기","상태도","DFD"]},
+{f:"41",s:1,t:"객체지향 관계: 집단화=part-of",c:"집단화(Aggregation): part-of 관계, 부분-전체(자동차-바퀴) ·일반화(Generalization): is-a 관계, 상속 ·연관(Association): has-a 일반적 연결 ·추상화: 공통 특징 추출 ·캡슐화: 데이터+메소드 묶어 은닉",k:["Aggregation","part-of","is-a","일반화"]},
+{f:"42",s:1,t:"CASE 도구의 기능",c:"기능 O: 그래픽(다이어그램) 지원, 생명주기 전 단계 연결, 다양한 개발 모형 지원 ·'언어 번역'은 컴파일러의 기능이지 CASE의 기능이 아님(함정)",k:["CASE","그래픽 지원","언어번역"]},
+{f:"43",s:1,t:"HIPO는 하향식",c:"HIPO: 입력→처리→출력 흐름의 하향식(Top-down) 문서화 도구 — '상향식'이라 하면 오답 ·차트 3종: 가시적 도표·총체적 도표·세부적 도표 ·기능과 자료의 의존 관계를 동시 표현, 보기 쉬움",k:["HIPO","하향식","가시적 도표"]},
+{f:"44",s:1,t:"객체지향 분석 방법론 4인방",c:"Coad-Yourdon: E-R 다이어그램 기반, 객체 식별→구조 식별→주체 정의→속성·관계 정의→서비스 정의 ·Booch: 미시·거시 구분 ·Jacobson: Use Case 중심 ·Wirfs-Brock: 책임 주도 설계(CRC 카드)",k:["Coad-Yourdon","Booch","Jacobson","Wirfs-Brock"]},
+{f:"45",s:2,t:"정렬 시간복잡도",c:"O(n log n): 합병·퀵(평균)·힙 ·O(n²): 선택·삽입·버블·셸(평균) ·합병정렬: 분할 정복으로 나눠 정렬 후 병합하는 안정 정렬",k:["정렬","시간복잡도","합병","퀵","힙"]},
+{f:"46",s:2,t:"화이트/블랙박스 기법 재정리",c:"White Box: 기초 경로·조건·루프·데이터 흐름 검사 ·Black Box: 동치 분할·경계값·원인-결과·비교 검사 ·Base Path Testing: 독립적 논리 경로를 찾아 검사(화이트박스)",k:["화이트박스","블랙박스","Base Path"]},
+{f:"47",s:2,t:"개발자 관점 품질 특성",c:"품질 항목: 정확성·무결성·사용성·신뢰성·효율성·이식성·재사용성·상호운용성 ·간결성(KISS)은 코딩 원칙이지 품질 측정 항목이 아님(함정) ·무결성 = 비인가 접근으로부터 보호",k:["품질특성","무결성","KISS"]},
+{f:"48",s:2,t:"인터페이스 구현 검증 도구",c:"xUnit(단위 테스트) · STAF(분산 환경 데몬) · FitNesse(위키 기반) · NTAF(NHN) · Selenium(웹) · watir(Ruby) — 목록에 없는 것 고르기 단골",k:["xUnit","STAF","FitNesse","NTAF","Selenium","watir"]},
+{f:"49",s:3,t:"반정규화 방법",c:"방법: 테이블 분할/병합 · 중복 테이블 추가 · 중복 칼럼 추가 · 파생 칼럼 추가 ·중복 테이블 유형: 집계 테이블(미리 계산한 합계·평균 저장) · 진행 테이블 · 특정 부분 테이블",k:["반정규화","집계 테이블","파생 칼럼"]},
+{f:"50",s:2,t:"ISO 9126 하위 특성",c:"기능성 하위: 적합성·정확성·상호운용성·보안성·준수성 ·학습성·이해성은 기능성이 아니라 '사용성'의 하위 특성(함정)",k:["ISO 9126","기능성","사용성","학습성"]},
+{f:"51",s:2,t:"트리 차수·단말 노드",c:"차수(degree): 한 노드가 가진 자식의 최대 수 ·단말(terminal/leaf) 노드: 자식이 없는 노드 ·차수와 단말 노드 수를 각각 따로 세는 것이 핵심",k:["트리","차수","단말 노드"]},
+{f:"52",s:2,t:"트리 용어 재확인",c:"트리 차수 = 노드 차수 중 최댓값 ·단말 노드 = 잎 노드 ·이진 트리 = 모든 노드 자식 최대 2개",k:["트리","이진 트리","차수"]},
+{f:"53",s:2,t:"DRM 기술 요소",c:"요소: 암호화·키 관리·식별(DOI)·정책 관리·인증·인터페이스·크랙 방지·저작권 표현 ·방화벽은 네트워크 보안 기술로 DRM 요소가 아님(함정)",k:["DRM","크랙 방지","키 관리","방화벽"]},
+{f:"54",s:2,t:"Pareto · Brooks · Boehm 법칙",c:"Pareto: 20:80 — 결함의 80%는 20% 모듈에 집중(결함 집중) ·Brooks: 지연 프로젝트에 인력 추가 → 더 지연 ·Boehm: 결함은 빨리 발견할수록 수정 비용 절감",k:["파레토","Brooks","Boehm","결함 집중"]},
+{f:"55",s:2,t:"알파·베타 검사",c:"알파: 개발자 장소, 개발자가 지켜보는 통제된 환경 ·베타: 사용자 장소, 개발자 없이 자유롭게 ·동치 분할: 입력을 동치 클래스로 나누는 블랙박스 기법",k:["알파","베타","인수 테스트","동치분할"]},
+{f:"56",s:2,t:"Stub과 Driver",c:"Stub: 하향식 통합에서 하위 모듈 대신하는 더미 ·Driver: 상향식 통합에서 상위 모듈 대신하는 더미 ·'하향식=Stub, 상향식=Driver' — 방향과 더미 위치가 반대",k:["스텁","드라이버","하향식","상향식"]},
+{f:"57",s:3,t:"데이터 무결성 3종류",c:"개체 무결성: 기본키 NULL·중복 불가 ·참조 무결성: 외래키는 참조 릴레이션의 기본키와 일관 ·도메인 무결성: 속성은 정해진 도메인 범위의 값만",k:["개체 무결성","참조 무결성","도메인"]},
+{f:"58",s:3,t:"DB 설계 순서와 단계별 작업",c:"순서: 요구사항 분석 → 개념적 → 논리적 → 물리적 ·논리적: 논리 구조 매핑, 트랜잭션 인터페이스 설계, 스키마 평가·정제 ·물리적: 레코드 집중 분석, 저장 구조·접근 경로 설계",k:["DB 설계","논리적 설계","물리적 설계"]},
+{f:"59",s:3,t:"관계 데이터 모델 용어",c:"도메인: 속성이 가질 수 있는 원자값의 집합 ·튜플=행, 애트리뷰트=열 ·차수(Degree)=속성 수, 카디널리티=튜플 수",k:["도메인","차수","카디널리티"]},
+{f:"60",s:3,t:"관계대수 연산 구분",c:"순수 관계 연산: Select σ · Project π · Join ⋈ · Division ÷ ·일반 집합 연산: 합집합 ∪ · 교집합 ∩ · 차집합 − · 카티션곱 × ·조인: 공통 속성으로 두 릴레이션 결합",k:["관계대수","조인","순수 관계 연산"]},
+{f:"61",s:3,t:"분산 DB 4대 투명성",c:"위치·중복·병행·장애 4가지 ·장애 투명성: 일부 장애에도 무결성 보장 ·위치 투명성: 물리적 위치 몰라도 접근",k:["투명성","장애","위치"]},
+{f:"62",s:3,t:"투명성 정의 매칭",c:"'특정 지역 장애에도 데이터 무결성 보장' = 장애 투명성 ·병행: 동시 트랜잭션에도 결과 일관성 ·위치: 위치를 알 필요 없음 ·중복: 중복 저장돼도 하나처럼 인식",k:["장애 투명성","병행 투명성","중복 투명성"]},
+{f:"63",s:3,t:"트리거와 절차형 SQL",c:"트리거: INSERT/UPDATE/DELETE 이벤트 시 자동 실행 ·절차형 SQL 3종: 트리거 · 프로시저 · 사용자 정의 함수 ·ROLLBACK: 트랜잭션 취소",k:["트리거","프로시저","ROLLBACK"]},
+{f:"64",s:3,t:"DCL과 DDL 구분",c:"DCL: GRANT·REVOKE·COMMIT·ROLLBACK — 보안·무결성·병행 제어 담당 ·DDL: 데이터 구조 정의 ·'옳지 않은 것' 부정형 발문 먼저 확인하는 습관",k:["DCL","DDL","GRANT","REVOKE"]},
+{f:"65",s:3,t:"로킹 단위와 오버헤드·공유도",c:"로킹 단위 크면: 로크 수↓ 오버헤드↓ 공유도(병행성)↓ ·작으면: 로크 수↑ 오버헤드↑ 공유도↑ — 시소 관계",k:["로킹 단위","오버헤드","공유도"]},
+{f:"66",s:4,t:"IPv6 핵심 특징",c:"128bit 주소 · IPSec 기본 포함 · 헤더 단순화 · SLAAC 자동구성 · QoS 지원 · 점보그램(최대 4GB 대용량 패킷) 지원",k:["IPv6","IPSec","점보그램","SLAAC"]},
+{f:"67",s:1,t:"결합도·응집도 개념",c:"결합도: 모듈 사이의 의존 정도(낮을수록 좋음) ·응집도: 모듈 내부 요소들의 관련 정도(높을수록 좋음) ·좋은 설계 = 결합도↓ 응집도↑",k:["결합도","응집도","모듈 독립성"]},
+{f:"68",s:1,t:"결합도 약→강 순서",c:"자료 < 스탬프 < 제어 < 외부 < 공통 < 내용 (약→강) ·내용 결합도가 가장 나쁨, 자료 결합도가 가장 좋음",k:["결합도 순서","자료","내용"]},
+{f:"69",s:4,t:"교착상태 해결 4가지",c:"예방(Prevention) · 회피(Avoidance — 은행가 알고리즘) · 탐지(Detection) · 회복(Recovery) ·은행가: 자원 할당 전 안전 상태 검사(다익스트라)",k:["교착상태","은행가","예방","회피"]},
+{f:"70",s:4,t:"UNIX 구조",c:"커널(자원 관리 핵심부) + 쉘(명령 해석) + 유틸리티(도구) ·쉘 종류: sh·bash·csh·ksh·zsh",k:["UNIX","커널","쉘","유틸리티"]},
+{f:"71",s:4,t:"교착상태 발생 4조건",c:"상호배제 · 점유와 대기 · 비선점 · 환형 대기 — 4가지 동시 만족 시 발생 ·'선점'은 교착을 깨는 방향이므로 발생 조건이 아님(함정)",k:["교착상태","상점비환","비선점"]},
+{f:"72",s:4,t:"전송 계층 vs 세션/표현 계층",c:"전송(L4): 종단 간 신뢰성, 오류 검출·복구, 흐름 제어(TCP/UDP) ·세션: 대화 제어·동기화 ·표현: 인코딩·압축·암호화 ·암기: 물데네전세표응",k:["전송 계층","세션","표현","OSI"]},
+{f:"73",s:4,t:"IPv6 주소 체계 3종",c:"Unicast(1:1) · Multicast(1:N 그룹) · Anycast(가장 가까운 하나에 전달) ·브로드캐스트는 폐지됨 — IPv4와의 결정적 차이",k:["유니캐스트","멀티캐스트","애니캐스트"]},
+{f:"74",s:4,t:"프로세스 5상태",c:"New · Ready · Running · Blocked(대기: 입출력 등 사건 대기) · Terminated ·목록에 없는 상태를 끼워 넣는 부정형 문제 주의",k:["프로세스 상태","Ready","Blocked"]},
+{f:"75",s:4,t:"스레드: 커널 vs 사용자",c:"커널 스레드: OS(커널)가 직접 관리·스케줄링 ·사용자 스레드: 라이브러리가 관리, OS는 인식 못 함 ·스레드는 자원 공유로 문맥 교환 비용이 프로세스보다 낮음",k:["스레드","커널 스레드","사용자 스레드"]},
+{f:"76",s:4,t:"HRN 스케줄링",c:"우선순위 = (대기시간+서비스시간) ÷ 서비스시간, 값이 클수록 우선 ·SJF의 기아(Starvation) 문제를 보완 — 오래 기다리면 자동으로 순위 상승",k:["HRN","기아","SJF","우선순위"]},
+{f:"77",s:4,t:"IEEE 802.11 시리즈",c:"802.11e: QoS 강화 MAC 지원 표준 ·802.11i: 보안 강화(WPA2) 표준 ·802.11a/b/g: 속도·주파수 물리 계층 규정",k:["802.11e","QoS","802.11i","무선랜"]},
+{f:"78",s:4,t:"스크립트 언어 vs 컴파일 언어",c:"스크립트(인터프리터): JavaScript·Python·Ruby·PHP·Perl ·컴파일: C·C++·Cobol·Fortran ·Cobol은 컴파일 언어 — 스크립트로 분류하면 오답(함정)",k:["스크립트 언어","컴파일","Cobol","Python"]},
+{f:"79",s:5,t:"Putnam 모형과 비용 산정 도구",c:"Putnam: Rayleigh-Norden 곡선 노력 분포 기반, 대형 프로젝트에 적합 — 자동화 도구 SLIM ·COCOMO: Boehm, LOC 기반 ·FP: Albrecht, 기능 점수 기반",k:["Putnam","SLIM","COCOMO","FP"]},
+{f:"80",s:5,t:"스택가드(버퍼 오버플로 방어)",c:"복귀 주소와 변수 사이에 카나리(canary) 값을 두고 변경되면 오버플로로 판단해 중단 ·관련 방어: ASLR(주소 랜덤화)·DEP/NX(실행 방지)·StackShield·ProPolice",k:["스택가드","카나리","ASLR","DEP"]},
+{f:"81",s:5,t:"백도어 탐지 방법",c:"열린 포트 확인(netstat) ·파일 무결성 검사(tripwire) ·SetUID/GID 파일 검사 ·로그 분석 — 백도어는 재침입용 비밀 통로로 포트를 열어둠",k:["백도어","netstat","tripwire","SetUID"]},
+{f:"82",s:5,t:"DoS·피싱 공격 추가 구분",c:"Smurfing: ICMP 브로드캐스트 증폭 ·Fraggle: Smurf와 같지만 UDP 이용 ·TearDrop: IP 단편화 오프셋 조작 ·Smishing: SMS 피싱 / Qshing: QR 코드 피싱",k:["Fraggle","TearDrop","Smishing","Qshing"]},
+{f:"83",s:5,t:"CMM 5단계",c:"초기 → 관리(반복) → 정의 → 정량적 관리 → 최적화 ·'계획 단계'는 CMM 레벨에 없음(함정) ·CMMI는 CMM의 통합·발전판",k:["CMM","5단계","정량적 관리"]},
+{f:"84",s:5,t:"COCOMO 3유형 경계",c:"Organic(조직형): 5만 라인 이하, 업무 자료 처리 ·Semi-detached(반분리형): 30만 라인 이하, 컴파일러·DBMS ·Embedded(내장형): 30만 초과, 하드웨어 제어 — 5만/30만 경계 암기",k:["COCOMO","Organic","Embedded","5만 라인"]},
+{f:"85",s:5,t:"PICONET · SCATTERNET · WI-SUN",c:"PICONET: 블루투스·UWB 기반 소규모 무선 네트워크(최대 8대) ·SCATTERNET: 여러 피코넷의 결합망 ·NFC: 10cm 근거리 통신 ·WI-SUN: 스마트 그리드용 무선통신",k:["피코넷","스캐터넷","WI-SUN","NFC"]},
+{f:"86",s:5,t:"하둡(Hadoop) 정의",c:"대용량 데이터를 여러 컴퓨터에 분산 저장(HDFS)하고 분산 처리(MapReduce)하는 자바 기반 오픈소스 빅데이터 프레임워크",k:["하둡","HDFS","MapReduce"]},
+{f:"87",s:5,t:"하둡 핵심 컴포넌트",c:"HDFS(분산 파일 시스템) · MapReduce(분산 처리) · YARN(자원 관리) ·맴리스터는 저항 기억 소자(하드웨어)로 하둡과 무관",k:["HDFS","YARN","맴리스터"]},
+{f:"88",s:5,t:"하둡 문제의 오답 보기들",c:"비컨(Beacon): 저전력 블루투스 근거리 위치 인식 ·포스퀘어: 위치 기반 SNS ·맴리스터: 메모리+레지스터 저항 기억 소자 — 전부 빅데이터 분산 처리와 무관",k:["비컨","포스퀘어","맴리스터"]},
+{f:"89",s:5,t:"RSA와 암호 분류",c:"RSA: 큰 수의 소인수분해 어려움 기반 공개키 암호(1977) ·공개키: RSA·ECC·DSA·Diffie-Hellman ·대칭키: DES·3DES·AES·SEED·ARIA·IDEA ·PKI: 공개키 인증서 발급·관리 기반 구조",k:["RSA","소인수분해","공개키","PKI"]},
+{f:"90",s:4,t:"라우팅 프로토콜 분류",c:"RIP: 거리 벡터, 최대 15홉(16=무한), 30초 갱신 ·거리 벡터: RIP·IGRP / 링크 상태: OSPF·IS-IS ·EIGRP: Cisco 하이브리드 ·BGP: AS 간 경로 벡터(외부)",k:["RIP","OSPF","BGP","15홉","거리 벡터"]},
+{f:"91",s:5,t:"테일러링 내부/외부 기준",c:"내부: 목표 환경·요구사항·프로젝트 규모·보유 기술·구성원 능력·납기/비용 ·외부: 법적 제약·보안성·국제 표준(ISO·CMMI) — '법·표준'이 보이면 외부",k:["테일러링","내부 기준","외부 기준"]},
+{f:"92",s:5,t:"보안 3요소 CIA",c:"기밀성: 인가된 자만 열람 ·무결성: 인가된 자만 수정(비인가 변조 방지) ·가용성: 필요할 때 접근 보장 ·추가 요소: 인증·부인방지·접근제어",k:["CIA","기밀성","무결성","가용성"]}
+];
+const tabs=document.getElementById('tabs'),list=document.getElementById('list'),q=document.getElementById('q'),stat=document.getElementById('stat');
+let cur=0;
+function counts(){const c={0:D.length};for(const d of D)c[d.s]=(c[d.s]||0)+1;return c}
+function renderTabs(){const c=counts();let h=`<button class="${cur===0?'on':''}" data-s="0">전체 <span class="n">${c[0]}</span></button>`;
+for(let s=1;s<=5;s++)h+=`<button class="${cur===s?'on':''}" data-s="${s}">${SUBJ[s]} <span class="n">${c[s]||0}</span></button>`;tabs.innerHTML=h}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function hl(t,w){if(!w)return esc(t);const i=t.toLowerCase().indexOf(w.toLowerCase());if(i<0)return esc(t);return esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+w.length))+'</mark>'+esc(t.slice(i+w.length))}
+function render(){const w=q.value.trim();let items=D.filter(d=>(cur===0||d.s===cur));
+if(w)items=items.filter(d=>(d.t+' '+d.c+' '+d.k.join(' ')).toLowerCase().includes(w.toLowerCase()));
+stat.textContent=`${items.length}개 카드${w?` — "${w}" 검색 결과`:''}`;
+if(!items.length){list.innerHTML='<p class="none">검색 결과가 없습니다</p>';return}
+list.innerHTML=items.map(d=>{
+ const bullets=d.c.split(' ·').map(x=>x.replace(/^·/,'').trim()).filter(Boolean);
+ return `<div class="card"><h3><span class="sb s${d.s}">${SUBJ[d.s].split(' ')[0]}</span>${hl(d.t,w)}</h3>
+ <ul>${bullets.map(b=>'<li>'+hl(b,w)+'</li>').join('')}</ul>
+ <div class="kw">${d.k.map(x=>'<span>'+esc(x)+'</span>').join('')}</div>
+ <div class="src">원본 캡처: ${SRC[d.f]||d.f}</div></div>`}).join('')}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=+b.dataset.s;renderTabs();render();window.scrollTo({top:0})});
+q.addEventListener('input',render);
+renderTabs();render();
+</script>
+</body>
+</html>

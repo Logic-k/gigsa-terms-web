@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소프트웨어 설계 & 요구사항 마스터보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Rumbaugh Flip Cards */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .group:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* UML Line Styles (No SVG) */
+        .uml-line-container { position: relative; width: 150px; height: 2px; margin: 0 16px; display: flex; align-items: center; justify-content: center; }
+        .uml-solid { width: 100%; height: 2px; background-color: #334155; }
+        .uml-dashed { width: 100%; height: 2px; border-top: 2px dashed #334155; }
+        
+        .arrow-empty-triangle { position: absolute; right: -8px; width: 0; height: 0; border-left: 12px solid #334155; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+        .arrow-empty-triangle::after { content: ''; position: absolute; right: 2px; top: -4px; border-left: 8px solid white; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+        
+        .arrow-open { position: absolute; right: -2px; width: 10px; height: 10px; border-top: 2px solid #334155; border-right: 2px solid #334155; transform: rotate(45deg); }
+        
+        .diamond-empty { position: absolute; left: -6px; width: 12px; height: 12px; border: 2px solid #334155; background: white; transform: rotate(45deg); }
+        .diamond-filled { position: absolute; left: -6px; width: 12px; height: 12px; background: #334155; transform: rotate(45deg); }
+
+        /* Pipe and Filter Animation */
+        .pipe-container { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 600px; margin: 0 auto; position: relative; padding: 20px 0; }
+        .pipe-filter { background: #3b82f6; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; z-index: 10; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .pipe-line { position: absolute; height: 8px; background: #cbd5e1; width: 100%; top: 50%; transform: translateY(-50%); z-index: 1; border-radius: 4px; }
+        .data-packet { position: absolute; width: 16px; height: 16px; background: #f59e0b; border-radius: 50%; z-index: 5; top: 50%; transform: translateY(-50%); animation: moveData 3s linear infinite; box-shadow: 0 0 10px rgba(245, 158, 11, 0.8); }
+        
+        @keyframes moveData {
+            0% { left: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        /* N-S Chart Mockup */
+        .ns-box { border: 2px solid #475569; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; background: white; }
+        .ns-cond { position: relative; border: 2px solid #475569; overflow: hidden; background: white; }
+        .ns-cond::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-bottom: 2px solid #475569; transform: skewY(15deg); transform-origin: top left; z-index: 1; }
+        .ns-cond::after { content: ''; position: absolute; top: 0; right: 0; width: 100%; height: 100%; border-bottom: 2px solid #475569; transform: skewY(-15deg); transform-origin: top right; z-index: 1; }
+        .ns-text { position: relative; z-index: 10; text-align: center; padding: 8px; font-weight: bold; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">📐</span>
+                <span class="font-black text-xl tracking-tighter text-slate-800">SW<span class="text-indigo-600"> DESIGN</span></span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-bold text-sm text-slate-500">
+                <a href="#rumbaugh" class="hover:text-indigo-600 transition">럼바우 기법</a>
+                <a href="#uml" class="hover:text-indigo-600 transition">UML 관계</a>
+                <a href="#arch" class="hover:text-indigo-600 transition">설계 도구 & 구조</a>
+                <a href="#req-design" class="hover:text-indigo-600 transition">요구사항 & 설계원리</a>
+                <a href="#method-case" class="hover:text-indigo-600 transition">방법론 & CASE</a>
+                <a href="#pattern-comp" class="hover:text-indigo-600 transition">패턴 & 컴포넌트</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12 space-y-24">
+        
+        <header class="text-center space-y-4">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">요구사항 및 소프트웨어 설계 <br><span class="text-indigo-600">핵심 마스터보드</span></h1>
+            <p class="text-slate-500 max-w-2xl mx-auto font-medium text-lg">
+                정보처리기사 필기/실기 1과목에 무조건 나오는 다이어그램, 아키텍처, 분석 기법을 시각적으로 정리했습니다.
+            </p>
+        </header>
+
+        <section id="rumbaugh" class="scroll-mt-24">
+            <div class="mb-8 border-b-2 border-indigo-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-indigo-500">1️⃣</span> 럼바우(Rumbaugh) 객체지향 분석 기법
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">모든 소프트웨어 구성 요소를 그래픽 표기법으로 모델링합니다. <strong class="text-indigo-600">암기법: 객-동-기</strong></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Object Model -->
+                <div class="group perspective-1000 h-64 cursor-pointer">
+                    <div class="flip-card-inner relative w-full h-full transform-style-3d">
+                        <!-- Front -->
+                        <div class="absolute w-full h-full backface-hidden bg-white border-2 border-slate-200 rounded-3xl p-6 flex flex-col justify-center items-center shadow-sm">
+                            <span class="text-5xl mb-4">📦</span>
+                            <h3 class="text-2xl font-black text-slate-800">객체 모델링</h3>
+                            <p class="text-sm font-bold text-slate-400 mt-2">Object Modeling</p>
+                            <span class="mt-4 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">마우스를 올려보세요</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-indigo-600 rounded-3xl p-6 text-white flex flex-col justify-center items-center text-center shadow-lg">
+                            <h3 class="text-xl font-black mb-3">객체 모델링 (가장 중요!)</h3>
+                            <p class="text-sm text-indigo-100 leading-relaxed mb-4">정보 시스템을 구성하는 <strong class="text-white">객체(Object)</strong>, 속성, 연산 및 객체 간의 관계를 규정합니다.</p>
+                            <div class="w-full bg-white/20 p-2 rounded-lg font-bold text-sm">
+                                📌 도구: <span class="text-yellow-300">객체 다이어그램 (객체도)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Model -->
+                <div class="group perspective-1000 h-64 cursor-pointer">
+                    <div class="flip-card-inner relative w-full h-full transform-style-3d">
+                        <!-- Front -->
+                        <div class="absolute w-full h-full backface-hidden bg-white border-2 border-slate-200 rounded-3xl p-6 flex flex-col justify-center items-center shadow-sm">
+                            <span class="text-5xl mb-4">⏱️</span>
+                            <h3 class="text-2xl font-black text-slate-800">동적 모델링</h3>
+                            <p class="text-sm font-bold text-slate-400 mt-2">Dynamic Modeling</p>
+                            <span class="mt-4 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold">마우스를 올려보세요</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-emerald-500 rounded-3xl p-6 text-white flex flex-col justify-center items-center text-center shadow-lg">
+                            <h3 class="text-xl font-black mb-3">동적 모델링</h3>
+                            <p class="text-sm text-emerald-100 leading-relaxed mb-4">상태(State)와 사건(Event)을 중심으로 시스템의 <strong class="text-white">제어 흐름, 상호 작용</strong>을 나타냅니다.</p>
+                            <div class="w-full bg-white/20 p-2 rounded-lg font-bold text-sm">
+                                📌 도구: <span class="text-yellow-200">상태 다이어그램 (상태도)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Functional Model -->
+                <div class="group perspective-1000 h-64 cursor-pointer">
+                    <div class="flip-card-inner relative w-full h-full transform-style-3d">
+                        <!-- Front -->
+                        <div class="absolute w-full h-full backface-hidden bg-white border-2 border-slate-200 rounded-3xl p-6 flex flex-col justify-center items-center shadow-sm">
+                            <span class="text-5xl mb-4">⚙️</span>
+                            <h3 class="text-2xl font-black text-slate-800">기능 모델링</h3>
+                            <p class="text-sm font-bold text-slate-400 mt-2">Functional Modeling</p>
+                            <span class="mt-4 px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-xs font-bold">마우스를 올려보세요</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-rose-500 rounded-3xl p-6 text-white flex flex-col justify-center items-center text-center shadow-lg">
+                            <h3 class="text-xl font-black mb-3">기능 모델링</h3>
+                            <p class="text-sm text-rose-100 leading-relaxed mb-4">데이터 값이 어떤 과정을 거쳐 어떻게 변하는지 <strong class="text-white">데이터 흐름</strong>을 중심으로 처리 과정을 묘사합니다.</p>
+                            <div class="w-full bg-white/20 p-2 rounded-lg font-bold text-sm">
+                                📌 도구: <span class="text-yellow-200">자료 흐름도 (DFD)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="uml" class="scroll-mt-24">
+            <div class="mb-8 border-b-2 border-indigo-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-indigo-500">2️⃣</span> UML 클래스 간의 관계 (Relationships)
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">선 모양(실선/점선)과 화살표 모양(빈 화살표/마름모 등)을 정확히 암기해야 합니다.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+                    
+                    <!-- Left Column -->
+                    <div class="p-8 space-y-10">
+                        <!-- 연관 관계 -->
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg mb-4 flex items-center gap-2 text-slate-800">
+                                연관 관계 (Association) <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold">실선 + 화살표</span>
+                            </h3>
+                            <div class="flex items-center justify-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">사람 (Person)</div>
+                                <div class="uml-line-container">
+                                    <div class="uml-solid"></div>
+                                    <div class="arrow-open"></div>
+                                </div>
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">차 (Car)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-3">2개 이상의 사물이 서로 관련되어 있는 상태. (사람이 차를 '소유'함)</p>
+                        </div>
+
+                        <!-- 의존 관계 -->
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg mb-4 flex items-center gap-2 text-slate-800">
+                                의존 관계 (Dependency) <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold">점선 + 화살표</span>
+                            </h3>
+                            <div class="flex items-center justify-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">고객 (Customer)</div>
+                                <div class="uml-line-container">
+                                    <div class="uml-dashed"></div>
+                                    <div class="arrow-open"></div>
+                                </div>
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">영수증 (Receipt)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-3">한 사물의 명세가 바뀌면 다른 사물에 영향을 줌. 보통 '일시적인 사용' 관계 (고객이 물건을 살 때만 영수증 발생)</p>
+                        </div>
+
+                        <!-- 일반화 관계 -->
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg mb-4 flex items-center gap-2 text-slate-800">
+                                일반화 관계 (Generalization) <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold">실선 + 빈 삼각형</span>
+                            </h3>
+                            <div class="flex items-center justify-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">고양이 (Cat)</div>
+                                <div class="uml-line-container">
+                                    <div class="uml-solid"></div>
+                                    <div class="arrow-empty-triangle"></div>
+                                </div>
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">동물 (Animal)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-3">객체지향의 **상속(Inheritance)**. 'is a' 관계. 하위 사물이 상위 사물을 가리킴.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="p-8 space-y-10">
+                        <!-- 실체화 관계 -->
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg mb-4 flex items-center gap-2 text-slate-800">
+                                실체화 관계 (Realization) <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold">점선 + 빈 삼각형</span>
+                            </h3>
+                            <div class="flex items-center justify-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">비행기 (Airplane)</div>
+                                <div class="uml-line-container">
+                                    <div class="uml-dashed"></div>
+                                    <div class="arrow-empty-triangle"></div>
+                                </div>
+                                <div class="px-4 py-2 bg-white border-2 border-indigo-500 rounded-lg font-bold text-indigo-700 text-sm shadow-sm">«interface»<br>날 수 있는 (Flyable)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-3">사물이 할 수 있거나 해야 하는 기능(인터페이스)을 그룹으로 묶어 실제로 구현하는 관계.</p>
+                        </div>
+
+                        <!-- 집합 관계 -->
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg mb-4 flex items-center gap-2 text-slate-800">
+                                집합 관계 (Aggregation) <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold">실선 + 빈 마름모</span>
+                            </h3>
+                            <div class="flex items-center justify-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">모니터 (Monitor)</div>
+                                <div class="uml-line-container">
+                                    <div class="uml-solid"></div>
+                                    <div class="diamond-empty"></div>
+                                </div>
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">컴퓨터 (Computer)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-3">전체(컴퓨터)와 부분(모니터)의 관계. 독립적이라 컴퓨터가 없어져도 모니터는 남아있음.</p>
+                        </div>
+
+                        <!-- 합성 관계 -->
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg mb-4 flex items-center gap-2 text-slate-800">
+                                합성 관계 (Composition) <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold">실선 + 꽉 찬 마름모</span>
+                            </h3>
+                            <div class="flex items-center justify-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">엔진 (Engine)</div>
+                                <div class="uml-line-container">
+                                    <div class="uml-solid"></div>
+                                    <div class="diamond-filled"></div>
+                                </div>
+                                <div class="px-4 py-2 bg-white border-2 border-slate-300 rounded-lg font-bold text-sm shadow-sm">자동차 (Car)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-3">집합보다 강한 결합. 전체가 소멸하면 부분도 소멸. (자동차가 폐차되면 엔진도 끝)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="arch" class="scroll-mt-24 space-y-12">
+            
+            <!-- Pipe-Filter Architecture -->
+            <div>
+                <div class="mb-6 border-b-2 border-indigo-100 pb-4">
+                    <h2 class="text-3xl font-black flex items-center gap-2">
+                        <span class="text-indigo-500">3️⃣</span> 파이프-필터 아키텍처 (Pipe-Filter)
+                    </h2>
+                    <p class="text-slate-500 mt-2 font-medium">데이터 스트림 절차의 각 단계를 필터(Filter)로 캡슐화하고 파이프(Pipe)로 연결하는 구조입니다.</p>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl p-10 overflow-hidden shadow-lg border border-slate-800">
+                    <div class="pipe-container">
+                        <div class="pipe-line"></div>
+                        <div class="data-packet"></div>
+                        <div class="data-packet" style="animation-delay: 1s;"></div>
+                        <div class="data-packet" style="animation-delay: 2s;"></div>
+                        
+                        <div class="text-slate-400 font-bold text-sm z-10 flex flex-col items-center gap-2">
+                            <span class="text-2xl">📥</span> Data In
+                        </div>
+                        <div class="pipe-filter text-center">
+                            Filter 1<br><span class="text-xs font-normal text-blue-200">데이터 전처리</span>
+                        </div>
+                        <div class="pipe-filter text-center bg-indigo-500">
+                            Filter 2<br><span class="text-xs font-normal text-indigo-200">데이터 변환</span>
+                        </div>
+                        <div class="pipe-filter text-center bg-violet-500">
+                            Filter 3<br><span class="text-xs font-normal text-violet-200">결과 추출</span>
+                        </div>
+                        <div class="text-slate-400 font-bold text-sm z-10 flex flex-col items-center gap-2">
+                            <span class="text-2xl">📤</span> Data Out
+                        </div>
+                    </div>
+                    <div class="mt-8 text-center text-slate-300 text-sm bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <strong class="text-white">특징:</strong> 재사용성이 좋고, 확장이 쉽습니다. UNIX의 파이프라인(|)이 가장 대표적인 예시입니다. <br>단점으로는 데이터 변환 오버헤드가 발생할 수 있습니다.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                <!-- MVC -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">📱 MVC 아키텍처</h3>
+                    <p class="text-sm text-slate-500 mb-4">사용자 인터페이스와 비즈니스 로직을 분리하여 서로 영향 없이 개발할 수 있는 구조입니다.</p>
+                    <ul class="space-y-3 text-sm">
+                        <li class="p-3 bg-blue-50 text-blue-800 rounded-xl border border-blue-100"><strong class="text-blue-900">M (Model):</strong> 데이터와 비즈니스 로직 처리</li>
+                        <li class="p-3 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100"><strong class="text-emerald-900">V (View):</strong> 사용자에게 보여지는 UI 화면</li>
+                        <li class="p-3 bg-amber-50 text-amber-800 rounded-xl border border-amber-100"><strong class="text-amber-900">C (Controller):</strong> Model과 View 사이의 제어(라우팅) 담당</li>
+                    </ul>
+                </div>
+                <!-- Layered -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">🥞 계층형 (Layered) 아키텍처</h3>
+                    <p class="text-sm text-slate-500 mb-4">시스템을 계층으로 나누어 구성하며, 하위 계층은 상위 계층에 서비스를 제공합니다. (예: OSI 7계층)</p>
+                    <div class="space-y-1">
+                        <div class="bg-slate-700 text-white text-center p-2 rounded-t-lg font-bold text-xs">프레젠테이션 계층 (UI)</div>
+                        <div class="bg-slate-500 text-white text-center p-2 font-bold text-xs">비즈니스 로직 계층</div>
+                        <div class="bg-slate-300 text-slate-800 text-center p-2 rounded-b-lg font-bold text-xs">데이터 접근 계층 (DB)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HIPO & N-S Chart -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- HIPO -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h3 class="text-2xl font-black text-slate-800 mb-2">HIPO (Hierarchy IPO)</h3>
+                    <p class="text-sm text-slate-500 mb-6">하향식 소프트웨어 개발을 위한 문서화 도구입니다.</p>
+                    
+                    <div class="flex-grow flex flex-col justify-center items-center gap-2">
+                        <div class="px-6 py-2 bg-indigo-100 text-indigo-800 font-bold rounded-lg border border-indigo-200">가시적 도표 (Visual Table of Contents)</div>
+                        <div class="w-1 h-6 bg-slate-300"></div>
+                        <div class="px-6 py-2 bg-indigo-100 text-indigo-800 font-bold rounded-lg border border-indigo-200">총체적 도표 (Overview Diagram)</div>
+                        <div class="w-1 h-6 bg-slate-300"></div>
+                        <div class="px-6 py-2 bg-indigo-100 text-indigo-800 font-bold rounded-lg border border-indigo-200">세부적 도표 (Detail Diagram)</div>
+                    </div>
+                    
+                    <div class="mt-6 bg-slate-50 p-4 rounded-xl text-sm text-slate-600 border border-slate-100">
+                        <strong class="text-indigo-600">입력(Input) - 처리(Process) - 출력(Output)</strong>의 기능을 표현하며, 시스템의 분석 및 설계, 문서화에 사용됩니다.
+                    </div>
+                </div>
+
+                <!-- N-S Chart -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h3 class="text-2xl font-black text-slate-800 mb-2">N-S Chart (나시-슈나이더만 차트)</h3>
+                    <p class="text-sm text-slate-500 mb-6">논리의 기술에 중점을 둔 도형식 표현 방법 (박스 다이어그램)</p>
+                    
+                    <div class="flex-grow flex flex-col justify-center">
+                        <div class="w-full max-w-xs mx-auto border-[3px] border-slate-700 bg-slate-50 rounded-lg overflow-hidden flex flex-col">
+                            <div class="ns-box p-3 border-b-2">초기화 (Initialize)</div>
+                            <div class="ns-cond h-12 flex items-start justify-center">
+                                <span class="ns-text text-slate-700">Condition (x > 10?)</span>
+                                <div class="absolute bottom-1 left-4 text-xs font-black z-10 text-emerald-600">True</div>
+                                <div class="absolute bottom-1 right-4 text-xs font-black z-10 text-red-600">False</div>
+                            </div>
+                            <div class="flex w-full">
+                                <div class="w-1/2 ns-box p-3 border-r-2 border-t-2 h-16 bg-emerald-50">실행 A</div>
+                                <div class="w-1/2 ns-box p-3 border-t-2 h-16 bg-red-50">실행 B</div>
+                            </div>
+                            <div class="ns-box p-3 border-t-[3px]">반복 (Loop until 완료)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 bg-slate-50 p-4 rounded-xl text-sm text-slate-600 border border-slate-100">
+                        <strong class="text-indigo-600">GOTO문을 사용할 수 없으며</strong>, 순차, 선택, 다중 선택, 반복 등의 제어 논리 구조를 도형으로 표현합니다.
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section: Requirements & Design Principles -->
+        <section id="req-design" class="scroll-mt-24 space-y-12">
+            
+            <div class="border-b-2 border-indigo-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-indigo-500">4️⃣</span> 요구사항 명세 & 소프트웨어 설계 원리
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">요구사항을 어떻게 기록할 것인가(명세)와, 좋은 소프트웨어를 만들기 위한 4가지 설계 원칙 및 모듈화 평가 기준(결합도/응집도)입니다.</p>
+            </div>
+
+            <!-- 요구사항 명세 기법 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 정형 명세 -->
+                <div class="bg-slate-900 rounded-3xl p-8 border border-slate-700 shadow-lg text-white card-hover">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-3xl">📐</span>
+                        <h3 class="text-xl font-black text-white">정형 명세 기법 (Formal)</h3>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-300">
+                        <li class="flex items-start gap-2"><span class="text-indigo-400">▪</span> <strong>기반:</strong> 수학적 원리, 논리, 기호</li>
+                        <li class="flex items-start gap-2"><span class="text-indigo-400">▪</span> <strong>장점:</strong> 요구사항을 정확하고 간결하게 표현 가능, 결과의 일관성 보장, 모호성 없음.</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400">▪</span> <strong>단점:</strong> 기호를 알아야 하므로 작성과 이해가 어려움. (사용자와의 의사소통에 불리)</li>
+                    </ul>
+                    <div class="mt-6 bg-slate-800 p-4 rounded-xl border border-slate-600">
+                        <span class="text-xs font-bold text-slate-400 block mb-1">대표 기법/도구</span>
+                        <span class="font-mono text-indigo-300 font-bold">Z-스키마, Petri-Nets, VDM, CSP</span>
+                    </div>
+                </div>
+
+                <!-- 비정형 명세 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm card-hover">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-3xl">📝</span>
+                        <h3 class="text-xl font-black text-slate-800">비정형 명세 기법 (Informal)</h3>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-indigo-500">▪</span> <strong>기반:</strong> 자연어(일반 텍스트), 다이어그램(그림)</li>
+                        <li class="flex items-start gap-2"><span class="text-indigo-500">▪</span> <strong>장점:</strong> 특별한 기호를 배우지 않아도 되므로 사용자와 개발자 간의 의사소통이 매우 쉬움.</li>
+                        <li class="flex items-start gap-2"><span class="text-red-500">▪</span> <strong>단점:</strong> 자연어의 특성상 내용이 모호해질 수 있고, 작성자에 따라 일관성이 떨어질 수 있음.</li>
+                    </ul>
+                    <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-400 block mb-1">대표 기법/도구</span>
+                        <span class="font-mono text-indigo-600 font-bold">Use Case (유스케이스), FSM (상태 기계), 결정표</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 소프트웨어 설계 기본 원리 -->
+            <div class="bg-indigo-50 rounded-3xl p-8 border border-indigo-100">
+                <h3 class="font-black text-indigo-900 text-xl mb-6">🧠 소프트웨어 설계의 4가지 기본 원리</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-indigo-50 card-hover">
+                        <h4 class="font-bold text-indigo-700 mb-2">1. 추상화 (Abstraction)</h4>
+                        <p class="text-xs text-slate-600">복잡한 문제에서 핵심적이고 공통적인 속성만 추출하여 단순화하는 기법.<br><strong class="text-slate-800 mt-1 block">종류: 과정, 데이터, 제어 추상화</strong></p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-indigo-50 card-hover">
+                        <h4 class="font-bold text-indigo-700 mb-2">2. 정보 은닉 (Info Hiding)</h4>
+                        <p class="text-xs text-slate-600">모듈 내부에 포함된 절차나 자료 구조를 숨겨서, 다른 모듈이 접근하거나 변경하지 못하게 하는 기법. (결합도 감소 목적)</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-indigo-50 card-hover">
+                        <h4 class="font-bold text-indigo-700 mb-2">3. 단계적 분해</h4>
+                        <p class="text-xs text-slate-600">하향식 설계(Top-Down) 전략으로, 큰 문제를 점차적으로 구체화하고 쪼개어 작은 문제로 분할하는 기법.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-indigo-50 card-hover">
+                        <h4 class="font-bold text-indigo-700 mb-2">4. 모듈화 (Modularity)</h4>
+                        <p class="text-xs text-slate-600">소프트웨어를 독립적인 기능을 수행하는 '모듈'로 나누는 것. 시스템의 성능 최적화와 유지보수에 직결됨.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 결합도 & 응집도 (매우 중요) -->
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm overflow-hidden">
+                <h3 class="font-black text-slate-800 text-xl mb-2 flex items-center gap-2">🔗 모듈화의 평가 기준: 결합도와 응집도 (필수 출제!)</h3>
+                <p class="text-sm text-slate-500 mb-8">좋은 소프트웨어 설계는 <strong class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded">"결합도는 약하게, 응집도는 강하게(결약응강)"</strong> 만드는 것입니다.</p>
+
+                <div class="space-y-12">
+                    <!-- 결합도 -->
+                    <div>
+                        <h4 class="font-bold text-slate-700 mb-4 flex justify-between items-end">
+                            <span>결합도 (Coupling) - <span class="text-xs font-normal text-slate-500">모듈과 모듈 간의 상호 의존 정도</span></span>
+                            <span class="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded font-bold">약할수록 품질 높음</span>
+                        </h4>
+                        
+                        <div class="relative w-full h-3 bg-gradient-to-r from-blue-400 via-amber-400 to-red-500 rounded-full mb-8">
+                            <div class="absolute left-0 -top-6 text-[10px] font-bold text-blue-600">약함 (Good)</div>
+                            <div class="absolute right-0 -top-6 text-[10px] font-bold text-red-600">강함 (Bad)</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-center">
+                            <div class="bg-blue-50 border border-blue-100 p-2 rounded-lg card-hover">
+                                <div class="font-black text-blue-700 mb-1">자료</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">가장 이상적.<br>단순 값만 전달</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">스탬프</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">배열, 객체 등<br>자료구조 전달</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">제어</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">제어 신호(Flag)를<br>전달하여 통제</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">외부</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">외부 데이터나<br>포맷을 공유</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">공통</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">전역 변수(Global)<br>공동 사용</div>
+                            </div>
+                            <div class="bg-red-50 border border-red-100 p-2 rounded-lg card-hover">
+                                <div class="font-black text-red-600 mb-1">내용</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">다른 모듈의<br>내부 기능 직접 참조</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3 text-sm font-black text-indigo-400 tracking-widest border-t border-slate-100 pt-2">암기법: <span class="text-indigo-600">자-스-제-외-공-내</span> (좋은순 ➔ 나쁜순)</div>
+                    </div>
+
+                    <!-- 응집도 -->
+                    <div>
+                        <h4 class="font-bold text-slate-700 mb-4 flex justify-between items-end">
+                            <span>응집도 (Cohesion) - <span class="text-xs font-normal text-slate-500">모듈 내부의 요소들이 서로 뭉쳐있는 정도</span></span>
+                            <span class="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded font-bold">강할수록 품질 높음</span>
+                        </h4>
+                        
+                        <div class="relative w-full h-3 bg-gradient-to-r from-red-500 via-amber-400 to-emerald-500 rounded-full mb-8">
+                            <div class="absolute left-0 -top-6 text-[10px] font-bold text-red-600">약함 (Bad)</div>
+                            <div class="absolute right-0 -top-6 text-[10px] font-bold text-emerald-600">강함 (Good)</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-7 gap-2 text-center">
+                            <div class="bg-red-50 border border-red-100 p-2 rounded-lg card-hover">
+                                <div class="font-black text-red-600 mb-1">우연적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">아무 관련 없는<br>기능들 모임</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">논리적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">유사한 성격,<br>논리적 묶음</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">시간적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">특정 시간에<br>동시 실행됨</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">절차적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">기능들이 순차적<br>절차를 가짐</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">통신적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">동일한 입/출력<br>데이터 사용</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg card-hover">
+                                <div class="font-black text-slate-700 mb-1">순차적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">출력값이 다음<br>기능의 입력값</div>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-lg card-hover">
+                                <div class="font-black text-emerald-600 mb-1">기능적</div>
+                                <div class="text-[10px] text-slate-500 leading-tight">가장 이상적.<br>단일 기능 수행</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3 text-sm font-black text-indigo-400 tracking-widest border-t border-slate-100 pt-2">암기법: <span class="text-indigo-600">우-논-시-절-통-순-기</span> (나쁜순 ➔ 좋은순)</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="method-case" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-indigo-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-indigo-500">5️⃣</span> 소프트웨어 개발 방법론 & CASE
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">소프트웨어를 어떻게 만들 것인가(방법론)와, 그것을 돕는 자동화 도구(CASE)입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 개발 방법론 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">🔄 주요 개발 방법론</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <strong class="text-indigo-700 block mb-1">폭포수 (Waterfall) 모델</strong>
+                            <span class="text-slate-600">이전 단계로 돌아갈 수 없다는 전제 하에 각 단계를 확실히 매듭짓고 다음 단계로 넘어가는 고전적 방법론.</span>
+                        </li>
+                        <li class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <strong class="text-emerald-700 block mb-1">애자일 (Agile) 방법론</strong>
+                            <span class="text-slate-600">변화에 유연하게 대응하며 일정한 주기(Sprint)로 끊임없이 프로토타입을 만들어내는 가볍고 빠른 방법론. (스크럼, XP 등)</span>
+                        </li>
+                        <li class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <strong class="text-amber-700 block mb-1">나선형 (Spiral) 모델 (보엠 제안)</strong>
+                            <span class="text-slate-600">계획 ➔ <strong class="text-rose-500">위험 분석</strong> ➔ 개발 ➔ 평가를 나선형으로 반복하며 위험을 최소화하는 대규모 프로젝트용 모델.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- CASE 도구 -->
+                <div class="bg-indigo-900 rounded-3xl p-8 border border-indigo-800 shadow-lg text-white h-full flex flex-col">
+                    <h3 class="text-xl font-black mb-4 flex items-center gap-2">🛠️ CASE 도구 (Computer-Aided Software Engineering)</h3>
+                    <p class="text-indigo-200 text-sm mb-6">소프트웨어 개발 과정의 일부 또는 전체를 <strong>자동화</strong>하여 개발 생산성과 품질을 높이는 도구입니다.</p>
+                    
+                    <div class="space-y-4 text-sm flex-grow">
+                        <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700">
+                            <strong class="text-indigo-300 block mb-1">상위(Upper) CASE</strong>
+                            <span class="text-indigo-100">개발 전반부(요구분석, 설계) 지원. 모델링, UI 설계 등을 돕습니다.</span>
+                        </div>
+                        <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700">
+                            <strong class="text-indigo-300 block mb-1">하위(Lower) CASE</strong>
+                            <span class="text-indigo-100">개발 후반부(코드 작성, 테스트, 문서화) 지원. 소스 코드 생성 등을 돕습니다.</span>
+                        </div>
+                        <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700">
+                            <strong class="text-indigo-300 block mb-1">통합(Integral) CASE</strong>
+                            <span class="text-indigo-100">소프트웨어 생명주기 전체 과정을 연결하고 자동화하는 도구.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pattern-comp" class="scroll-mt-24 space-y-12">
+            <div class="border-b-2 border-indigo-100 pb-4">
+                <h2 class="text-3xl font-black flex items-center gap-2">
+                    <span class="text-indigo-500">6️⃣</span> 디자인 패턴, 프레임워크 & 컴포넌트
+                </h2>
+                <p class="text-slate-500 mt-2 font-medium">효율적인 재사용과 유지보수를 위한 3가지 핵심 요소입니다.</p>
+            </div>
+
+            <!-- Framework vs Component -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl border-l-8 border-blue-500 shadow-sm">
+                    <h3 class="font-black text-slate-800 text-lg mb-2">프레임워크 (Framework)</h3>
+                    <p class="text-sm text-slate-600 mb-3">소프트웨어 개발을 수월하게 하기 위한 소프트웨어 환경(뼈대)입니다.</p>
+                    <div class="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg border border-blue-100">
+                        <strong>핵심 특징 (IoC):</strong> 제어의 역전. 개발자가 짠 코드를 프레임워크가 주도적으로 호출하고 제어합니다. (예: Spring, Django)
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border-l-8 border-emerald-500 shadow-sm">
+                    <h3 class="font-black text-slate-800 text-lg mb-2">컴포넌트 (Component)</h3>
+                    <p class="text-sm text-slate-600 mb-3">독립적인 기능을 수행하는 소프트웨어 모듈입니다. (레고 블록 조립과 유사)</p>
+                    <div class="bg-emerald-50 text-emerald-800 text-xs p-3 rounded-lg border border-emerald-100">
+                        <strong>핵심 특징:</strong> 내부 구현은 캡슐화되어 숨겨져 있으며, 외부와는 <strong>'인터페이스(Interface)'</strong>를 통해서만 통신하여 부품을 쉽게 교체할 수 있습니다.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Design Patterns (GoF) -->
+            <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-lg text-white">
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
+                    <h3 class="text-2xl font-black">GoF 디자인 패턴 23개 암기 꿀팁</h3>
+                    <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full font-bold">자주 발생하는 문제를 해결하는 검증된 설계 템플릿</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 생성 패턴 -->
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                        <div class="text-lg font-black text-blue-400 mb-2">생성 패턴 (5개)</div>
+                        <p class="text-[11px] text-slate-400 mb-4">객체의 생성 과정을 캡슐화합니다.</p>
+                        <ul class="text-sm text-slate-300 space-y-1">
+                            <li><span class="text-white font-bold">추</span>상 팩토리 (Abstract Factory)</li>
+                            <li><span class="text-white font-bold">빌</span>더 (Builder)</li>
+                            <li><span class="text-white font-bold">팩</span>토리 메서드 (Factory Method)</li>
+                            <li><span class="text-white font-bold">프</span>로토타입 (Prototype)</li>
+                            <li><span class="text-white font-bold">싱</span>글톤 (Singleton)</li>
+                        </ul>
+                        <div class="mt-4 text-center font-black text-blue-300 bg-blue-900/30 py-2 rounded">추·빌·팩·프·싱</div>
+                    </div>
+
+                    <!-- 구조 패턴 -->
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                        <div class="text-lg font-black text-emerald-400 mb-2">구조 패턴 (7개)</div>
+                        <p class="text-[11px] text-slate-400 mb-4">클래스나 객체를 조합해 더 큰 구조를 만듭니다.</p>
+                        <ul class="text-sm text-slate-300 space-y-1">
+                            <li><span class="text-white font-bold">어</span>댑터 (Adapter)</li>
+                            <li><span class="text-white font-bold">브</span>리지 (Bridge)</li>
+                            <li><span class="text-white font-bold">컴</span>포지트 (Composite)</li>
+                            <li><span class="text-white font-bold">데</span>코레이터 (Decorator)</li>
+                            <li><span class="text-white font-bold">퍼</span>사드 (Facade)</li>
+                            <li><span class="text-white font-bold">플</span>라이웨이트 (Flyweight)</li>
+                            <li><span class="text-white font-bold">프</span>록시 (Proxy)</li>
+                        </ul>
+                        <div class="mt-4 text-center font-black text-emerald-300 bg-emerald-900/30 py-2 rounded">어·브·컴·데·퍼·플·프</div>
+                    </div>
+
+                    <!-- 행위 패턴 -->
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                        <div class="text-lg font-black text-amber-400 mb-2">행위 패턴 (11개)</div>
+                        <p class="text-[11px] text-slate-400 mb-4">객체 간의 상호작용과 책임 분배를 정의합니다.</p>
+                        <div class="text-xs text-slate-300 leading-relaxed font-medium">
+                            템플릿 메서드, 옵저버, 상태(State), 전략(Strategy), 커맨드(Command), 책임 연쇄, 메멘토, 방문자(Visitor), 중재자(Mediator), 반복자(Iterator), 인터프리터
+                        </div>
+                        <div class="mt-3 p-3 bg-amber-900/30 text-amber-200 text-xs rounded border border-amber-900/50">
+                            <strong>💡 출제 포인트:</strong> 옵저버(상태 변화 알림), 전략(알고리즘 교체), 상태(상태에 따른 행위 변화) 패턴이 객관식 설명으로 가장 많이 출제됩니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-24 py-8 bg-slate-900 text-slate-400 text-center text-sm border-t-4 border-indigo-500">
+        <p>정보처리기사 완벽 대비 가이드 1편 - 요구사항 확인 및 소프트웨어 설계</p>
+    </footer>
+
+</body>
+</html>

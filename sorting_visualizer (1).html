@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정렬 알고리즘 시각화</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #array-container {
+            height: 400px;
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            width: 30px;
+            background-color: #3b82f6; /* blue-500 */
+            transition: height 0.2s ease, background-color 0.2s ease;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            color: white;
+            font-size: 0.8rem;
+            padding-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .bar.comparing { background-color: #ef4444; /* red-500 */ }
+        .bar.swapping { background-color: #f59e0b; /* amber-500 */ }
+        .bar.sorted { background-color: #10b981; /* green-500 */ }
+
+        #array-container.card-view {
+            align-items: center;
+            align-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .card {
+            width: 45px;
+            height: 45px;
+            background-color: white;
+            border: 2px solid #3b82f6; /* blue-500 */
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1f2937; /* gray-800 */
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+        
+        .card.comparing {
+            background-color: #fee2e2; /* red-100 */
+            border-color: #ef4444; /* red-500 */
+        }
+        
+        .card.swapping {
+            background-color: #fef3c7; /* amber-100 */
+            border-color: #f59e0b; /* amber-500 */
+            transform: scale(1.15); 
+        }
+        
+        .card.sorted {
+            background-color: #d1fae5; /* green-100 */
+            border-color: #10b981; /* green-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col items-center min-h-screen p-4">
+    <div class="w-full max-w-6xl">
+        <header class="bg-white rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-2xl font-bold text-gray-800">정렬 시각화</h1>
+            
+            <div class="flex flex-wrap items-center gap-4">
+                <!-- HTML 내에 슬라이더 요소가 존재하도록 수정했습니다. -->
+                <div class="flex items-center gap-2">
+                    <label for="size-slider" class="text-sm font-medium text-gray-700">데이터 크기:</label>
+                    <input type="range" id="size-slider" min="5" max="50" value="20" class="w-24">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <label for="speed-slider" class="text-sm font-medium text-gray-700">정렬 속도:</label>
+                    <input type="range" id="speed-slider" min="10" max="1000" value="800" class="w-24">
+                </div>
+
+                <button id="generate-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded shadow">
+                    새 데이터 생성
+                </button>
+            </div>
+            
+            <div class="flex items-center mt-4 md:mt-0 bg-gray-200 rounded-lg p-1">
+                <button id="view-bar-btn" class="px-3 py-1 rounded shadow bg-white text-blue-600 font-bold text-sm transition-colors">막대 그래프</button>
+                <button id="view-card-btn" class="px-3 py-1 rounded text-gray-500 font-bold text-sm hover:text-gray-800 transition-colors">숫자 카드</button>
+            </div>
+        </header>
+
+        <div class="flex flex-wrap justify-center gap-3 mb-6">
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="bubble">버블 정렬</button>
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="selection">선택 정렬</button>
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="insertion">삽입 정렬</button>
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="quick">퀵 정렬</button>
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="shell">셸 정렬</button>
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="merge">병합 정렬</button>
+            <button class="sort-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors" data-algo="radix">기수 정렬</button>
+        </div>
+
+        <div id="array-container"></div>
+        
+        <div id="message-box" class="mt-4 text-center text-lg font-medium text-gray-700 h-8">
+            알고리즘을 선택하여 정렬을 시작해보세요!
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('array-container');
+        const sizeSlider = document.getElementById('size-slider');
+        const speedSlider = document.getElementById('speed-slider');
+        const generateBtn = document.getElementById('generate-btn');
+        const sortBtns = document.querySelectorAll('.sort-btn');
+        const messageBox = document.getElementById('message-box');
+        
+        const viewBarBtn = document.getElementById('view-bar-btn');
+        const viewCardBtn = document.getElementById('view-card-btn');
+
+        let array = [];
+        let isSorting = false;
+        let viewMode = 'bar'; 
+        
+        let delay = speedSlider.max - speedSlider.value + parseInt(speedSlider.min); 
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        speedSlider.addEventListener('input', function() {
+            delay = this.max - this.value + parseInt(this.min);
+        });
+
+        function setViewMode(mode) {
+            if (isSorting) return;
+            viewMode = mode;
+            
+            if (mode === 'bar') {
+                viewBarBtn.classList.add('shadow', 'bg-white', 'text-blue-600');
+                viewBarBtn.classList.remove('text-gray-500', 'hover:text-gray-800');
+                
+                viewCardBtn.classList.remove('shadow', 'bg-white', 'text-blue-600');
+                viewCardBtn.classList.add('text-gray-500', 'hover:text-gray-800');
+                
+                container.classList.remove('card-view');
+            } else {
+                viewCardBtn.classList.add('shadow', 'bg-white', 'text-blue-600');
+                viewCardBtn.classList.remove('text-gray-500', 'hover:text-gray-800');
+                
+                viewBarBtn.classList.remove('shadow', 'bg-white', 'text-blue-600');
+                viewBarBtn.classList.add('text-gray-500', 'hover:text-gray-800');
+
+                container.classList.add('card-view');
+            }
+            generateArray();
+        }
+        
+        viewBarBtn.addEventListener('click', () => setViewMode('bar'));
+        viewCardBtn.addEventListener('click', () => setViewMode('card'));
+
+        sizeSlider.addEventListener('input', generateArray);
+        generateBtn.addEventListener('click', generateArray);
+        
+        function updateNode(index, value) {
+            const el = document.getElementById(`bar-${index}`);
+            if (viewMode === 'bar') {
+                el.style.height = `${value}%`;
+                el.innerText = sizeSlider.value <= 20 ? value : '';
+            } else {
+                el.style.height = ''; 
+                el.innerText = value; 
+            }
+        }
+
+        function generateArray() {
+            if (isSorting) return; 
+
+            const size = sizeSlider.value;
+            container.innerHTML = '';
+            array = [];
+            messageBox.textContent = "새로운 데이터가 준비되었습니다. 정렬 방식을 선택하세요.";
+
+            for (let i = 0; i < size; i++) {
+                const value = Math.floor(Math.random() * 90) + 10;
+                array.push(value);
+
+                const el = document.createElement('div');
+                el.className = viewMode === 'bar' ? 'bar' : 'card';
+                el.id = `bar-${i}`;
+                
+                container.appendChild(el);
+                updateNode(i, value);
+            }
+        }
+
+        function toggleUI(disabled) {
+            isSorting = disabled;
+            generateBtn.disabled = disabled;
+            sizeSlider.disabled = disabled;
+            viewBarBtn.disabled = disabled;
+            viewCardBtn.disabled = disabled;
+            sortBtns.forEach(btn => btn.disabled = disabled);
+            
+            const btnOpacity = disabled ? '0.5' : '1';
+            viewBarBtn.style.opacity = btnOpacity;
+            viewCardBtn.style.opacity = btnOpacity;
+            
+            if (disabled) {
+                sortBtns.forEach(btn => btn.classList.replace('bg-blue-600', 'bg-gray-400'));
+                sortBtns.forEach(btn => btn.classList.replace('hover:bg-blue-700', 'hover:bg-gray-400'));
+                sortBtns.forEach(btn => btn.classList.remove('hover:bg-blue-700'));
+            } else {
+                sortBtns.forEach(btn => btn.classList.replace('bg-gray-400', 'bg-blue-600'));
+                sortBtns.forEach(btn => btn.classList.replace('hover:bg-gray-400', 'hover:bg-blue-700'));
+            }
+        }
+
+        async function swapBars(i, j) {
+            const bar1 = document.getElementById(`bar-${i}`);
+            const bar2 = document.getElementById(`bar-${j}`);
+            
+            bar1.classList.add('swapping');
+            bar2.classList.add('swapping');
+            await sleep(delay);
+            
+            let tempValue = array[i];
+            array[i] = array[j];
+            array[j] = tempValue;
+
+            updateNode(i, array[i]);
+            updateNode(j, array[j]);
+
+            bar1.classList.remove('swapping');
+            bar2.classList.remove('swapping');
+        }
+        
+        async function bubbleSort() {
+            messageBox.innerHTML = "<strong>버블 정렬:</strong> 인접한 두 요소를 비교하여 큰 값을 계속 뒤로 밀어냅니다.";
+            const n = array.length;
+            for (let i = 0; i < n - 1; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    const bar1 = document.getElementById(`bar-${j}`);
+                    const bar2 = document.getElementById(`bar-${j + 1}`);
+
+                    bar1.classList.add('comparing');
+                    bar2.classList.add('comparing');
+                    await sleep(delay);
+
+                    if (array[j] > array[j + 1]) {
+                        await swapBars(j, j + 1);
+                    }
+
+                    bar1.classList.remove('comparing');
+                    bar2.classList.remove('comparing');
+                }
+                document.getElementById(`bar-${n - i - 1}`).classList.add('sorted');
+            }
+            document.getElementById(`bar-0`).classList.add('sorted');
+        }
+
+        async function selectionSort() {
+            messageBox.innerHTML = "<strong>선택 정렬:</strong> 전체 데이터 중 가장 작은 값을 찾아 맨 앞으로 이동시킵니다.";
+            const n = array.length;
+            for (let i = 0; i < n; i++) {
+                let minIdx = i;
+                const minBarInitial = document.getElementById(`bar-${minIdx}`);
+                minBarInitial.classList.add('comparing');
+
+                for (let j = i + 1; j < n; j++) {
+                    const currBar = document.getElementById(`bar-${j}`);
+                    currBar.style.borderColor = '#d946ef'; 
+                    if(viewMode === 'bar') currBar.style.backgroundColor = '#d946ef';
+                    
+                    await sleep(delay / 2);
+
+                    if (array[j] < array[minIdx]) {
+                        document.getElementById(`bar-${minIdx}`).classList.remove('comparing');
+                        minIdx = j;
+                        document.getElementById(`bar-${minIdx}`).classList.add('comparing');
+                    }
+                    currBar.style.borderColor = '';
+                    currBar.style.backgroundColor = '';
+                }
+
+                if (minIdx !== i) {
+                    await swapBars(i, minIdx);
+                }
+                
+                document.getElementById(`bar-${minIdx}`).classList.remove('comparing');
+                document.getElementById(`bar-${i}`).classList.add('sorted');
+            }
+        }
+
+        async function insertionSort() {
+             messageBox.innerHTML = "<strong>삽입 정렬:</strong> 현재 요소를 정렬된 부분과 비교하여 알맞은 위치에 삽입합니다.";
+            const n = array.length;
+            document.getElementById(`bar-0`).classList.add('sorted');
+
+            for (let i = 1; i < n; i++) {
+                let key = array[i];
+                let j = i - 1;
+                
+                const keyBar = document.getElementById(`bar-${i}`);
+                keyBar.classList.add('swapping'); 
+                await sleep(delay);
+
+                while (j >= 0 && array[j] > key) {
+                    const currBar = document.getElementById(`bar-${j}`);
+                    const nextBar = document.getElementById(`bar-${j + 1}`);
+                    
+                    currBar.classList.add('comparing');
+                    await sleep(delay);
+                    
+                    array[j + 1] = array[j];
+                    updateNode(j + 1, array[j + 1]); 
+                    
+                    currBar.classList.remove('comparing');
+                    nextBar.classList.add('sorted'); 
+                    j = j - 1;
+                }
+                
+                array[j + 1] = key;
+                updateNode(j + 1, key); 
+                
+                keyBar.classList.remove('swapping');
+                for(let k=0; k<=i; k++){
+                     document.getElementById(`bar-${k}`).classList.add('sorted');
+                }
+                await sleep(delay);
+            }
+        }
+
+        async function quickSort(start, end) {
+            if (start >= end) {
+                if (start === end) document.getElementById(`bar-${start}`).classList.add('sorted');
+                return;
+            }
+
+            let pivotIdx = await partition(start, end);
+            document.getElementById(`bar-${pivotIdx}`).classList.add('sorted');
+
+            await quickSort(start, pivotIdx - 1);
+            await quickSort(pivotIdx + 1, end);
+        }
+
+        async function partition(start, end) {
+            let pivotValue = array[end];
+            let pivotIdx = start;
+            
+            const pivotBar = document.getElementById(`bar-${end}`);
+            if(viewMode === 'bar') pivotBar.style.backgroundColor = '#eab308';
+            else pivotBar.style.borderColor = '#eab308';
+            
+            for (let i = start; i < end; i++) {
+                const currBar = document.getElementById(`bar-${i}`);
+                currBar.classList.add('comparing');
+                await sleep(delay);
+
+                if (array[i] < pivotValue) {
+                    await swapBars(i, pivotIdx);
+                    document.getElementById(`bar-${pivotIdx}`).classList.remove('comparing');
+                    pivotIdx++;
+                } else {
+                     currBar.classList.remove('comparing');
+                }
+            }
+            
+            await swapBars(pivotIdx, end);
+            pivotBar.style.backgroundColor = ''; 
+            pivotBar.style.borderColor = ''; 
+            return pivotIdx;
+        }
+        
+        async function runQuickSort() {
+            messageBox.innerHTML = "<strong>퀵 정렬:</strong> 기준(Pivot)을 정해 작은 값은 왼쪽, 큰 값은 오른쪽으로 나눕니다.";
+            await quickSort(0, array.length - 1);
+            
+            for(let i=0; i<array.length; i++) {
+                document.getElementById(`bar-${i}`).classList.add('sorted');
+            }
+        }
+
+        async function shellSort() {
+            messageBox.innerHTML = "<strong>셸 정렬:</strong> 일정한 간격(Gap)만큼 떨어진 요소들을 그룹화하여 삽입 정렬을 수행합니다.";
+            const n = array.length;
+            
+            for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+                for (let i = gap; i < n; i++) {
+                    let temp = array[i];
+                    let j;
+                    
+                    const currentBar = document.getElementById(`bar-${i}`);
+                    currentBar.classList.add('swapping'); 
+                    await sleep(delay);
+
+                    for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
+                        const compareBar = document.getElementById(`bar-${j - gap}`);
+                        compareBar.classList.add('comparing');
+                        await sleep(delay);
+
+                        array[j] = array[j - gap];
+                        updateNode(j, array[j]); 
+                        
+                        compareBar.classList.remove('comparing');
+                    }
+                    
+                    array[j] = temp;
+                    updateNode(j, temp); 
+                    
+                    currentBar.classList.remove('swapping');
+                }
+            }
+            
+            for(let i=0; i<n; i++) {
+                document.getElementById(`bar-${i}`).classList.add('sorted');
+            }
+        }
+
+        async function mergeSort(start, end) {
+            if (start >= end) return;
+
+            const mid = Math.floor((start + end) / 2);
+            await mergeSort(start, mid);
+            await mergeSort(mid + 1, end);
+            await merge(start, mid, end);
+        }
+
+        async function merge(start, mid, end) {
+            let leftIdx = start;
+            let rightIdx = mid + 1;
+            let tempArray = [];
+            
+            while (leftIdx <= mid && rightIdx <= end) {
+                document.getElementById(`bar-${leftIdx}`).classList.add('comparing');
+                document.getElementById(`bar-${rightIdx}`).classList.add('comparing');
+                await sleep(delay);
+
+                if (array[leftIdx] <= array[rightIdx]) {
+                    tempArray.push(array[leftIdx]);
+                    document.getElementById(`bar-${leftIdx}`).classList.remove('comparing');
+                    leftIdx++;
+                } else {
+                    tempArray.push(array[rightIdx]);
+                    document.getElementById(`bar-${rightIdx}`).classList.remove('comparing');
+                    rightIdx++;
+                }
+            }
+            
+            while (leftIdx <= mid) {
+                document.getElementById(`bar-${leftIdx}`).classList.remove('comparing');
+                tempArray.push(array[leftIdx]);
+                leftIdx++;
+            }
+            while (rightIdx <= end) {
+                document.getElementById(`bar-${rightIdx}`).classList.remove('comparing');
+                tempArray.push(array[rightIdx]);
+                rightIdx++;
+            }
+            
+            for (let i = start; i <= end; i++) {
+                array[i] = tempArray[i - start];
+                const bar = document.getElementById(`bar-${i}`);
+                bar.classList.add('swapping'); 
+                
+                updateNode(i, array[i]); 
+                
+                await sleep(delay);
+                bar.classList.remove('swapping');
+            }
+        }
+
+        async function runMergeSort() {
+            messageBox.innerHTML = "<strong>병합 정렬:</strong> 데이터를 절반씩 쪼갠 다음, 크기를 비교하며 다시 합칩니다.";
+            await mergeSort(0, array.length - 1);
+            
+            for(let i=0; i<array.length; i++) {
+                document.getElementById(`bar-${i}`).classList.add('sorted');
+            }
+        }
+
+        async function radixSort() {
+            messageBox.innerHTML = "<strong>기수 정렬:</strong> 낮은 자릿수부터 높은 자릿수까지 차례대로 정렬하는 방식입니다.";
+            const n = array.length;
+            if (n === 0) return;
+
+            let maxVal = Math.max(...array);
+
+            for (let exp = 1; Math.floor(maxVal / exp) > 0; exp *= 10) {
+                await countingSortForRadix(exp);
+            }
+            
+            for(let i=0; i<n; i++) {
+                document.getElementById(`bar-${i}`).classList.add('sorted');
+            }
+        }
+
+        async function countingSortForRadix(exp) {
+            const n = array.length;
+            let output = new Array(n).fill(0);
+            let count = new Array(10).fill(0);
+
+            for (let i = 0; i < n; i++) {
+                const bar = document.getElementById(`bar-${i}`);
+                if(viewMode === 'bar') bar.style.backgroundColor = '#8b5cf6';
+                else bar.style.borderColor = '#8b5cf6';
+                
+                await sleep(delay / 2);
+                
+                let digit = Math.floor(array[i] / exp) % 10;
+                count[digit]++;
+                
+                bar.style.backgroundColor = '';
+                bar.style.borderColor = '';
+            }
+
+            for (let i = 1; i < 10; i++) {
+                count[i] += count[i - 1];
+            }
+
+            for (let i = n - 1; i >= 0; i--) {
+                let digit = Math.floor(array[i] / exp) % 10;
+                output[count[digit] - 1] = array[i];
+                count[digit]--;
+            }
+
+            for (let i = 0; i < n; i++) {
+                array[i] = output[i];
+                const bar = document.getElementById(`bar-${i}`);
+                bar.classList.add('swapping');
+                
+                updateNode(i, array[i]); 
+                
+                await sleep(delay);
+                bar.classList.remove('swapping');
+            }
+        }
+
+        sortBtns.forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const algo = this.dataset.algo;
+                toggleUI(true);
+                
+                for(let i=0; i<array.length; i++) {
+                     document.getElementById(`bar-${i}`).classList.remove('sorted');
+                }
+
+                if (algo === 'bubble') await bubbleSort();
+                else if (algo === 'selection') await selectionSort();
+                else if (algo === 'insertion') await insertionSort();
+                else if (algo === 'shell') await shellSort();
+                else if (algo === 'quick') await runQuickSort();
+                else if (algo === 'merge') await runMergeSort();
+                else if (algo === 'radix') await radixSort();
+
+                messageBox.innerHTML = "✨ 정렬이 완료되었습니다! 다른 알고리즘을 테스트하려면 새 데이터를 생성하세요.";
+                toggleUI(false);
+            });
+        });
+
+        window.onload = generateArray;
+
+    </script>
+</body>
+</html>
