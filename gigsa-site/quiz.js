@@ -23,10 +23,11 @@ const normKeepParen = s => {        // 괄호 안까지 먹는 변형
   return m?norm(m[1]):"";
 };
 /* 답 구분: 쉼표·세미콜론·슬래시·줄바꿈이 우선. 구분자가 없으면 공백으로 나눔.
-   (복합어 보호를 위해 단일 공백은 구분자로 쓰지 않음) */
-const splitAns = s => {
+   단, 정답이 1개뿐인 카드는 복합어("Watering Hole") 보호를 위해 통째로 1토큰. */
+const splitAns = (s,expected) => {
   const str=String(s||"").trim();
   if(!str) return [];
+  if(expected===1) return [str];
   const bySep=str.split(/[,，、;；·\/\n\t]+/).map(x=>x.trim()).filter(Boolean);
   if(bySep.length>1) return bySep;
   return str.split(/\s+/).filter(Boolean);
@@ -88,7 +89,7 @@ if(!ST.__mig){
 }
 
 /* ── 세션 상태 ── */
-let Q={ list:[], i:0, ok:0, ng:0, wrong:[], mode:"due", subj:0, live:false };
+let Q={ list:[], i:0, ok:0, ng:0, wrong:[], missed:new Set(), locked:false, mode:"due", subj:0, live:false };
 
 function dueCards(){ const now=Date.now(); return CARDS.filter(c=>ST[c.id]&&ST[c.id].seen>0&&ST[c.id].due<=now); }
 function newCards(){ return CARDS.filter(c=>!(ST[c.id]&&ST[c.id].seen>0)); }
@@ -147,6 +148,7 @@ function renderHome(){
 
 function renderCard(){
   const c=Q.list[Q.i];
+  Q.locked=false;
   const n=Q.i+1, total=Q.list.length;
   let body="";
   if(c.k==="t"){
@@ -179,7 +181,7 @@ function renderCard(){
 
 function grade(){
   const c=Q.list[Q.i], inp=$("qzans");
-  if(!inp) return;
+  if(!inp||Q.locked) return;
   const raw=inp.value.trim();
   if(!raw){ inp.focus(); return; }
   let correct=false, detail="";
@@ -187,8 +189,8 @@ function grade(){
     correct=c.ans.has(norm(raw))||c.ans.has(normKeepParen(raw)||"");
     detail='정답: <b>'+esc(c.name)+'</b>'+(c.en?' <span class="qzen">'+esc(c.en)+'</span>':'');
   }else{
-    const toks=splitAns(raw).map(x=>({raw:x,n:norm(x)}));
-    const want=c.alias.length===c.items.length?c.alias:c.items.map(x=>[x]);
+    const toks=splitAns(raw,c.items.length).map(x=>({raw:x,n:norm(x)}));
+    const want=c.items.map((x,i)=>[x,...(c.alias[i]||[])]);
     const used=new Array(toks.length).fill(false);
     const res=want.map((cand,idx)=>{
       const norms=cand.map(norm);
@@ -214,9 +216,11 @@ function mark(c,correct,skipped,raw,detail){
   const r=rec(c.id); const now=Date.now();
   r.seen++; if(correct) r.ok++; else r.ng++;
   if(correct){ r.lv=Math.min(r.lv+1,3); r.due=now+INT[r.lv]; }
-  else{ r.lv=0; r.due=now; Q.wrong.push(c.id); }
+  else{ r.lv=0; r.due=now; Q.wrong.push(c.id); Q.missed.add(c.id); }
   save();
   if(correct) Q.ok++; else Q.ng++;
+  Q.locked=true;
+  ["qzans","qzgo","qzskip"].forEach(id=>{ const b=$(id); if(b) b.disabled=true; });
 
   let fb;
   if(correct){
@@ -250,21 +254,20 @@ function next(){
 function renderDone(){
   const tot=Q.ok+Q.ng;
   const acc=tot?Math.round(Q.ok/tot*100):0;
+  /* 이 세션에서 틀렸고 아직 lv0(자동 재출제에서도 못 맞춘)인 카드만 다시 풀기 */
+  const stillWrong=[...Q.missed].map(id=>BYID.get(id)).filter(c=>c&&ST[c.id]&&ST[c.id].lv===0);
   $("qzcard").innerHTML =
     '<div class="qzdone">'+
     '<div class="qzscore">'+Q.ok+' / '+tot+' <span>정답률 '+acc+'%</span></div>'+
     '<div class="qzmemo">오답은 오늘 복습 큐에 유지되고, 맞은 카드는 다음 복습일에 다시 나옵니다.</div>'+
     '<div class="qzact">'+
     '<button class="qzb primary" id="qzagain">홈으로</button>'+
-    (Q.ng?'<button class="qzb" id="qzretry">오답만 다시 ('+Q.ng+'개)</button>':'')+
+    (stillWrong.length?'<button class="qzb" id="qzretry">오답만 다시 ('+stillWrong.length+'개)</button>':'')+
     '</div></div>';
   $("qzagain").addEventListener("click",()=>{ Q.live=false; renderHome(); $("qzcard").innerHTML=""; $("qzhome").hidden=false; });
   const rt=$("qzretry");
   if(rt) rt.addEventListener("click",()=>{
-    const ids=[]; const tot=Q.ok+Q.ng;
-    /* 방금 세션에서 틀린 카드만 재구성 */
-    CARDS.forEach(c=>{ const r=ST[c.id]; if(r&&r.seen>0&&r.due<=Date.now()&&r.lv===0) ids.push(c); });
-    Q={list:ids.slice(0,40),i:0,ok:0,ng:0,wrong:[],mode:Q.mode,subj:Q.subj,live:true};
+    Q={list:stillWrong.slice(0,40),i:0,ok:0,ng:0,wrong:[],missed:new Set(),locked:false,mode:Q.mode,subj:Q.subj,live:true};
     $("qzhome").hidden=true; renderCard();
   });
 }
@@ -282,7 +285,7 @@ function start(mode){
     $("qzcard").innerHTML='<div class="empty">풀 카드가 없습니다.<br>복습할 카드가 도착하거나 새 카드 모드를 이용해 보세요.</div>';
     return;
   }
-  Q={list,i:0,ok:0,ng:0,wrong:[],mode,subj:Q.subj,live:true};
+  Q={list,i:0,ok:0,ng:0,wrong:[],missed:new Set(),locked:false,mode,subj:Q.subj,live:true};
   $("qzhome").hidden=true;
   renderCard();
 }
