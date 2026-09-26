@@ -70,7 +70,9 @@ function build(){
     '<div class="thf-s">'+f.steps.map((s,i)=>
       '<span class="thf-c'+(s.indexOf("→")>=0?' alt':'')+'">'+esc(s)+'</span>'+
       (i<f.steps.length-1?'<span class="thf-a">→</span>':'')).join("")+
-    '</div>'+(f.note?'<div class="thf-n">'+esc(f.note)+'</div>':'')+'</div>').join("")+'</div>';
+    '</div>'+(f.alt?'<div class="thf-s thf-b"><span class="thf-l">↳ 추가 전이</span>'+
+      f.alt.map(a=>'<span class="thf-c alt">'+esc(a)+'</span>').join("")+'</div>':'')+
+    (f.note?'<div class="thf-n">'+esc(f.note)+'</div>':'')+'</div>').join("")+'</div>';
 
   /* 코드·SQL */
   h+=sec("code","⌨️","코드·SQL 공략","'출력값을 쓰시오' 문제는 이해가 아니라 추적 — 변수표를 그려 한 줄씩 따라가는 연습이 전부입니다.");

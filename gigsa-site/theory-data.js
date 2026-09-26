@@ -116,7 +116,7 @@ units:[
    ["DML","SELECT · INSERT · UPDATE · DELETE — DELETE는 롤백 가능, TRUNCATE는 DDL이라 불가"],
    ["DCL","GRANT 권한 TO 사용자 [WITH GRANT OPTION] / REVOKE 권한 FROM 사용자"],
    ["TCL","COMMIT(확정) · ROLLBACK(취소) · SAVEPOINT(중간 지점)"],
-   ["SELECT 골격","SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY 실행 순서","WHERE는 그룹핑 전 조건, HAVING은 그룹핑 후 조건"],
+   ["SELECT 골격","작성 순서 SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY / 실제 실행 순서 FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY","WHERE는 그룹핑 전 조건, HAVING은 그룹핑 후 조건"],
    ["JOIN","INNER(교집합) · LEFT/RIGHT OUTER(한쪽 유지+NULL) · CROSS(모든 조합) · SELF"],
    ["서브쿼리","WHERE 절 중첩 / SELECT 절 스칼라(단일값만) / FROM 절 인라인뷰(테이블처럼)"],
    ["집계·그룹","COUNT(*)는 NULL 포함 행 수, COUNT(컬럼)은 NULL 제외 · GROUP BY에 HAVING 조건"],
@@ -210,18 +210,18 @@ mne:[
 ],
 
 /* ── 흐름도/절차 정리 ──
-   t: 주제, steps: 단계 칩 (분기는 "|"로 나눔), note: 설명 */
+   t: 주제, steps: 메인 경로 칩, alt: 분기·추가 전이 칩(선택), note: 설명 */
 flow:[
  {t:"요구사항 개발",steps:["도출","분석","명세","확인"],note:"「도분명확」 — 도출한 요구를 분석하고 문서로 명세한 뒤 이해관계자와 확인"},
  {t:"폭포수 생명주기",steps:["계획","요구 분석","설계","구현","테스트","유지보수"],note:"이전 단계로 못 돌아가는 것이 단점 — 프로토타입·나선·애자일이 이를 보완"},
  {t:"테스트 레벨",steps:["단위","통합","시스템","인수"],note:"V 모델의 오른쪽 절반. 단위는 개발자가, 인수는 사용자·고객이 수행"},
- {t:"프로세스 상태 전이",steps:["생성","준비","실행","완료","실행→대기(I/O)","대기→준비(I/O 완료)","실행→준비(선점)"],note:"선점 스케줄링(RR 등)은 실행 중 강제로 준비로 되돌림"},
- {t:"트랜잭션 상태",steps:["활동","부분 완료","완료","활동→실패→철회"],note:"부분 완료=마지막 연산 끝, 아직 커밋 전. 철회는 모든 변경 롤백"},
+ {t:"프로세스 상태 전이",steps:["생성","준비","실행","완료"],alt:["실행 → 대기 (I/O 요청)","대기 → 준비 (I/O 완료)","실행 → 준비 (선점)"],note:"선점 스케줄링(RR 등)은 실행 중 강제로 준비로 되돌림"},
+ {t:"트랜잭션 상태",steps:["활동","부분 완료","완료"],alt:["활동 → 실패","실패 → 철회 (롤백)"],note:"부분 완료=마지막 연산 끝, 아직 커밋 전. 철회는 모든 변경 롤백"},
  {t:"정규화 진행",steps:["비정규형","1NF 원자값","2NF 부분종속 제거","3NF 이행종속 제거","BCNF 결정자=후보키","4NF·5NF"],note:"「도부이결다조」 — 실기는 BCNF까지가 주력"},
  {t:"형상관리",steps:["식별","통제","감사","기록"],note:"「식통감기」 — 대상을 찾고 변경을 통제하고 감사 후 기록"},
  {t:"서브넷 계산 절차",steps:["prefix 확인","호스트 비트 = 32 − prefix","블록 크기 = 2^호스트비트","해당 옥텟 변화 단위 = 256 − 마스크값","범위: 첫=네트워크 주소, 끝=브로드캐스트","사용 가능 호스트 = 첫+1 ~ 끝−1"],note:"예: /26 → 호스트 6비트 → 블록 64개씩. FLSM으로 n개 나누면 prefix += ⌈log2 n⌉"},
  {t:"코드 출력값 추적",steps:["변수표 만들기","한 줄씩 값 갱신","반복문은 바깥→안쪽 전부","함수·재귀는 호출 스택","종료 조건 먼저 확인","출력 서식 그대로 적기"],note:"'이해'가 아니라 '따라가기' — 손으로 쓰는 연습만이 답입니다"},
- {t:"TCP 연결/해제",steps:["SYN","SYN + ACK","ACK","데이터 전송","FIN","FIN + ACK","ACK"],note:"3-way handshake로 연결, 4-way(FIN)로 종료"}
+ {t:"TCP 연결/해제",steps:["연결①SYN","②SYN+ACK","③ACK","데이터 전송","종료①FIN","②ACK","③FIN","④ACK"],note:"연결은 3-way(SYN→SYN+ACK→ACK), 종료는 4-way(FIN→ACK→FIN→ACK) — 상대방의 FIN에도 ACK를 따로 보냅니다"}
 ],
 
 /* ── 코드·SQL 공략 ── */
@@ -234,7 +234,7 @@ code:[
   trap:["오버라이딩(재정의) vs 오버로딩(매개변수 차이) 혼동","private 멤버는 자식도 직접 접근 불가","finally는 예외 여부와 무관하게 실행","참조형 == 는 주소 비교 — 문자열은 equals"]},
  {lang:"Python",share:"매회 1~2문항",color:"s2",
   pat:["리스트 슬라이싱 a[1:4](끝 미포함) · a[::-1](역순) · a[-1](마지막)","append(요소 추가) vs extend(이어붙이기)","딕셔너리·집합 조작","리스트 컴프리헨션","f-string 출력 형식","range·enumerate 순회"],
-  trap:["10/3=3.33 실수 vs 10//3=3 정수 vs 10%3=1","'abc'*2 → abcabc 문자열 반복","기본 인자·*args/**kwargs","얕은 복사(=, 슬라이싱)는 원본 공유 주의"]},
+  trap:["10/3=3.33 실수 vs 10//3=3 정수 vs 10%3=1","'abc'*2 → abcabc 문자열 반복","기본 인자·*args/**kwargs","b=a 대입은 별칭 — 한쪽 수정이 다른 쪽에도 반영","a[:]·copy()는 얕은 복사 — 바깥 리스트는 새 객체, 안쪽 요소만 공유"]},
  {lang:"SQL",share:"2~4문항",color:"s5",
   pat:["SELECT 결과 계산(JOIN·WHERE 조합)","GROUP BY + HAVING 그룹 조건","서브쿼리(WHERE 중첩·스칼라·인라인뷰)","JOIN 4종(INNER·OUTER·SELF·CROSS)","CREATE TABLE + 제약조건 직접 작성","GRANT/REVOKE · COMMIT/ROLLBACK"],
   trap:["WHERE는 그룹 전, HAVING은 그룹 후","COUNT(*)=NULL 포함, COUNT(컬럼)=NULL 제외","DELETE는 롤백 가능·TRUNCATE는 DDL이라 불가","INNER 조인 시 매칭 없는 행은 빠짐 — NULL 채우는 건 OUTER"]}
