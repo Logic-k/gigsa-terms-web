@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15161a" media="(prefers-color-scheme: dark)">
-<meta name="description" content="정보처리기사 용어사전 + 실기 필답 훈련 — 1008개 용어·예시·도식, 단답 회상·나열형·코드 출력값 채점, 간격반복 복습, 모의고사">
+<meta name="description" content="정보처리기사 용어사전 + 실기 이론·필답 훈련 — 1008개 용어·예시·도식, 12개 능력단위 이론 요약·암기 두문자·흐름도·3주 플랜, 단답 회상·코드 출력값 채점, 간격반복 복습, 모의고사">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="정처기 용어">
@@ -310,13 +310,14 @@ footer ul,footer ol{padding-left:19px}footer li{margin:5px 0}
 .tab{flex:1;border:0;background:transparent;color:var(--dim);font-weight:800;font-size:13px;
  padding:9px 6px;border-radius:9px;cursor:pointer;min-height:40px}
 .tab.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-body.mapview .dictonly,body.demoview .dictonly,body.quizview .dictonly{display:none!important}
+body.mapview .dictonly,body.demoview .dictonly,body.quizview .dictonly,body.theoryview .dictonly{display:none!important}
 body.mapview .hero,body.mapview #idx,body.mapview #list,body.mapview footer,
 body.demoview .hero,body.demoview #idx,body.demoview #list,body.demoview footer,
-body.quizview .hero,body.quizview #idx,body.quizview #list,body.quizview footer{display:none}
-body.mapview main,body.demoview main,body.quizview main{padding:0;min-width:0}
-body.mapview .shell,body.demoview .shell,body.quizview .shell{max-width:none;display:block;grid-template-columns:1fr}
-body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none}
+body.quizview .hero,body.quizview #idx,body.quizview #list,body.quizview footer,
+body.theoryview .hero,body.theoryview #idx,body.theoryview #list,body.theoryview footer{display:none}
+body.mapview main,body.demoview main,body.quizview main,body.theoryview main{padding:0;min-width:0}
+body.mapview .shell,body.demoview .shell,body.quizview .shell,body.theoryview .shell{max-width:none;display:block;grid-template-columns:1fr}
+body.mapview nav.side,body.demoview nav.side,body.quizview nav.side,body.theoryview nav.side{display:none}
 
 /* ═══ 마인드맵 뷰 (개념 계층 가로 트리) ═══ */
 #mmview[hidden],#demoview[hidden]{display:none}
@@ -513,6 +514,96 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
   .mmpanel{left:auto;right:16px;bottom:16px;width:360px;border-radius:16px;max-height:74%}
   .dmgrid{grid-template-columns:1fr 1fr}
 }
+
+/* ═══ 실기 이론 뷰 ═══ */
+#theoryview[hidden]{display:none}
+#theoryview{display:block;max-width:860px;margin:0 auto;padding:14px max(13px,var(--safeR)) calc(80px + var(--safeB)) max(13px,var(--safeL))}
+.thy-head{background:linear-gradient(135deg,color-mix(in srgb,var(--ac) 12%,var(--panel)),var(--panel));
+ border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin-bottom:12px}
+.thy-title{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.thy-lead{font-size:12.5px;color:var(--dim);margin:6px 0 0;line-height:1.6}
+.thy-lead b{color:var(--ink)}
+.thy-nav{position:sticky;top:var(--hh,104px);z-index:20;display:flex;gap:6px;overflow-x:auto;
+ scrollbar-width:none;background:var(--bg);padding:8px 0 6px;border-bottom:1px solid var(--line)}
+.thy-nav::-webkit-scrollbar{display:none}
+.thy-nav button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--dim);
+ border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:800;cursor:pointer;min-height:34px}
+.thy-nav button:active{background:var(--chip)}
+.thy-sec{margin-top:22px;scroll-margin-top:calc(var(--hh,104px) + 52px)}
+.thy-h{font-size:16px;font-weight:800;margin:0 0 4px;letter-spacing:-.2px}
+.thy-sub{font-size:12px;color:var(--dim2);margin:0 0 10px}
+.thy-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
+.thb{font-size:12px;font-weight:800;color:var(--dim);letter-spacing:.3px;margin-bottom:6px}
+.thb-warn{color:var(--warn);margin-top:10px}
+.thy-ul{margin:0;padding-left:18px;font-size:13px;line-height:1.65}
+.thy-ul li{margin:3px 0}
+.thy-ul.warn li::marker{color:var(--warn)}
+.tht{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);
+ border:1px solid var(--line);border-radius:12px;overflow:hidden;display:block}
+.tht tr{display:flex;border-bottom:1px solid var(--line)}
+.tht tr:last-child{border-bottom:0}
+.tht td{padding:9px 11px;line-height:1.55;display:block;flex:1}
+.tht .thk{flex:0 0 118px;font-weight:800;color:var(--ink);border-right:1px solid var(--line);
+ background:var(--chip);font-size:12.5px}
+.thm{margin-top:4px;font-size:12px;color:var(--ac2);font-weight:600}
+.thy-ov{margin-bottom:0}
+.thy-units{display:flex;flex-direction:column;gap:8px}
+.thu{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.thu.open{border-color:var(--ac)}
+.thu-h{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;
+ padding:11px 12px;cursor:pointer;text-align:left;min-height:48px}
+.thu-n{flex:0 0 26px;height:26px;border-radius:8px;background:var(--ac);color:#fff;
+ display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.thu-ic{font-size:16px}
+.thu-t{font-weight:800;font-size:14px;flex:1;min-width:0}
+.thu-w{font-size:10.5px;color:var(--dim2);background:var(--chip);border-radius:6px;
+ padding:3px 7px;white-space:nowrap;flex-shrink:0}
+.thu-c{color:var(--dim2);transition:transform .15s}
+.thu.open .thu-c{transform:rotate(180deg)}
+.thu-b{display:none;padding:0 12px 13px}
+.thu.open .thu-b{display:block}
+.thu-why{font-size:12.5px;color:var(--dim);background:var(--chip);border-radius:9px;
+ padding:8px 11px;margin:0 0 9px;line-height:1.55}
+.thu-ex{font-size:12px;color:var(--dim2);margin:9px 0 0;line-height:1.55}
+.thu-ex b{color:var(--ac)}
+.thy-mne{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:9px}
+.thm-c{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.thm-t{font-size:12px;font-weight:800;color:var(--dim)}
+.thm-p{font-size:16px;font-weight:800;color:var(--ac);margin:5px 0;letter-spacing:.4px}
+.thm-i{font-size:12.5px;line-height:1.6;color:var(--ink)}
+.thm-d{font-size:11.5px;color:var(--dim2);margin-top:6px;line-height:1.5}
+.thy-flows{display:flex;flex-direction:column;gap:9px}
+.thf{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.thf-t{font-size:13px;font-weight:800;margin-bottom:8px}
+.thf-s{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.thf-c{background:var(--chip);border:1px solid var(--line);border-radius:8px;
+ padding:5px 9px;font-size:12px;font-weight:700}
+.thf-c.alt{background:color-mix(in srgb,var(--ac2) 14%,var(--panel));border-color:var(--ac2);color:var(--ac2)}
+.thf-a{color:var(--dim2);font-size:12px;font-weight:800}
+.thf-b{margin-top:7px}
+.thf-l{font-size:10.5px;font-weight:800;color:var(--ac2);margin-right:2px}
+.thf-n{font-size:11.5px;color:var(--dim2);margin-top:8px;line-height:1.5}
+.thy-code{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:9px}
+.thc{background:var(--panel);border:1px solid var(--line);border-top-width:4px;border-radius:12px;padding:11px 13px}
+.thc.s2{border-top-color:var(--s2)}.thc.s3{border-top-color:var(--s3)}
+.thc.s4{border-top-color:var(--s4)}.thc.s5{border-top-color:var(--s5)}
+.thc-h{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.thc-l{font-size:16px;font-weight:800}
+.thc-s{font-size:11px;color:var(--dim2);font-weight:700}
+.thy-plan{display:flex;flex-direction:column;gap:9px}
+.thp{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.thp-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.thp-p{font-weight:800;font-size:14px;color:var(--ac)}
+.thp-d{font-size:11px;color:var(--dim2);background:var(--chip);border-radius:6px;padding:3px 7px;font-weight:700}
+.thp-g{font-size:12.5px;font-weight:700;color:var(--dim)}
+.thp-t{font-size:12px;color:var(--ac2);margin-top:9px;line-height:1.55;font-weight:600}
+.thy-res{display:flex;flex-direction:column;gap:8px}
+.thr{display:flex;flex-direction:column;gap:3px;background:var(--panel);border:1px solid var(--line);
+ border-radius:12px;padding:11px 13px;text-decoration:none;color:inherit}
+.thr:active{background:var(--chip)}
+.thr-n{font-weight:800;font-size:13.5px;color:var(--ac)}
+.thr-d{font-size:12px;color:var(--dim);line-height:1.55}
+.thy-foot{font-size:11px;color:var(--dim2);margin-top:18px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -520,7 +611,7 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
 <header class="top" id="topbar">
   <div class="r1">
     <button class="ib dictonly" id="menuBtn" aria-label="목차 열기">☰</button>
-    <div class="brand">정보처리기사 용어사전<small id="bsub">필기 5과목 · 실기 필답 훈련</small></div>
+    <div class="brand">정보처리기사 용어사전<small id="bsub">필기 5과목 · 실기 이론·필답 훈련</small></div>
     <button class="ib dictonly" id="bIdx" aria-label="색인">가</button>
     <button class="ib" id="bTheme" aria-label="테마 전환">◐</button>
   </div>
@@ -528,6 +619,7 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
     <button type="button" class="tab on" data-view="dict" role="tab">📖 사전</button>
     <button type="button" class="tab" data-view="map" role="tab">🌳 마인드맵</button>
     <button type="button" class="tab" data-view="demo" role="tab">🧪 실습</button>
+    <button type="button" class="tab" data-view="theory" role="tab">📚 실기 이론</button>
     <button type="button" class="tab" data-view="quiz" role="tab">✏️ 실기 훈련</button>
   </div>
   <div class="r1 dictonly" style="margin-top:7px"><input id="q" placeholder="용어 · 영문 · 약어 검색" autocomplete="off" enterkeyhint="search"></div>
@@ -562,6 +654,7 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
   <div id="list"></div>
   <section id="mmview" hidden></section>
   <section id="demoview" hidden></section>
+  <section id="theoryview" hidden></section>
   <section id="quizview" hidden>
     <div id="qzhome"></div>
     <div id="qzcard"></div>
@@ -606,11 +699,13 @@ body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none
 <script src="ex-data-4.js"></script>
 <script src="ex-data-5.js"></script>
 <script src="demos.js"></script>
+<script src="theory-data.js"></script>
 <script src="quiz-data.js"></script>
 <script src="quiz-code-data.js"></script>
 <script src="newtech-data.js"></script>
 <script src="mindmap.js"></script>
 <script src="app.js"></script>
+<script src="theory.js"></script>
 <script src="quiz.js"></script>
 </body>
 </html>

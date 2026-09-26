@@ -213,19 +213,22 @@ $("bTheme").addEventListener("click",()=>{
 $("fab").addEventListener("click",toTop);
 window.addEventListener("scroll",()=>{ $("fab").classList.toggle("show",window.scrollY>600); },{passive:true});
 
-/* ── 뷰 전환: 사전 · 마인드맵 · 실습 · 훈련 ── */
+/* ── 뷰 전환: 사전 · 마인드맵 · 실습 · 이론 · 훈련 ── */
 let curView="dict";
 function setView(v){
   curView=v;
   document.body.classList.toggle("mapview",v==="map");
   document.body.classList.toggle("demoview",v==="demo");
+  document.body.classList.toggle("theoryview",v==="theory");
   document.body.classList.toggle("quizview",v==="quiz");
   document.querySelectorAll("#tabs .tab").forEach(b=>b.classList.toggle("on",b.dataset.view===v));
-  const mm=$("mmview"), dv=$("demoview"), qv=$("quizview");
-  mm.hidden=(v!=="map"); dv.hidden=(v!=="demo"); qv.hidden=(v!=="quiz");
+  const mm=$("mmview"), dv=$("demoview"), tv=$("theoryview"), qv=$("quizview");
+  mm.hidden=(v!=="map"); dv.hidden=(v!=="demo"); tv.hidden=(v!=="theory"); qv.hidden=(v!=="quiz");
   if(v==="map"){ if(window.Mindmap){ window.Mindmap.init(mm); window.Mindmap.show(); } }
   else if(window.Mindmap){ window.Mindmap.hide(); }
   if(v==="demo" && window.DemoHub){ window.DemoHub.renderList(dv); toTop(); }
+  if(v==="theory" && window.Theory){ window.Theory.show(); toTop(); }
+  else if(window.Theory){ window.Theory.hide(); }
   if(v==="quiz" && window.Quiz){ window.Quiz.show(); toTop(); }
   if(v==="dict") toTop();
   syncHead();
