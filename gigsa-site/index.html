@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15161a" media="(prefers-color-scheme: dark)">
-<meta name="description" content="정보처리기사 필기 5과목 용어사전 — 1008개 용어, 1008개 실무 예시, 464개 도식, 혼동 용어 양방향 연결">
+<meta name="description" content="정보처리기사 용어사전 + 실기 필답 훈련 — 1008개 용어·예시·도식, 단답 회상·나열형·코드 출력값 채점, 간격반복 복습, 모의고사">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="정처기 용어">
@@ -310,12 +310,13 @@ footer ul,footer ol{padding-left:19px}footer li{margin:5px 0}
 .tab{flex:1;border:0;background:transparent;color:var(--dim);font-weight:800;font-size:13px;
  padding:9px 6px;border-radius:9px;cursor:pointer;min-height:40px}
 .tab.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-body.mapview .dictonly,body.demoview .dictonly{display:none!important}
+body.mapview .dictonly,body.demoview .dictonly,body.quizview .dictonly{display:none!important}
 body.mapview .hero,body.mapview #idx,body.mapview #list,body.mapview footer,
-body.demoview .hero,body.demoview #idx,body.demoview #list,body.demoview footer{display:none}
-body.mapview main,body.demoview main{padding:0;min-width:0}
-body.mapview .shell,body.demoview .shell{max-width:none;display:block;grid-template-columns:1fr}
-body.mapview nav.side,body.demoview nav.side{display:none}
+body.demoview .hero,body.demoview #idx,body.demoview #list,body.demoview footer,
+body.quizview .hero,body.quizview #idx,body.quizview #list,body.quizview footer{display:none}
+body.mapview main,body.demoview main,body.quizview main{padding:0;min-width:0}
+body.mapview .shell,body.demoview .shell,body.quizview .shell{max-width:none;display:block;grid-template-columns:1fr}
+body.mapview nav.side,body.demoview nav.side,body.quizview nav.side{display:none}
 
 /* ═══ 마인드맵 뷰 (개념 계층 가로 트리) ═══ */
 #mmview[hidden],#demoview[hidden]{display:none}
@@ -398,6 +399,73 @@ body.mapview nav.side,body.demoview nav.side{display:none}
 .mmdemo{width:100%;border:0;background:var(--ac2);color:#fff;font-weight:800;font-size:14px;
  padding:12px;border-radius:11px;cursor:pointer;min-height:46px}
 
+/* ═══ 훈련(실기 필답) 뷰 ═══ */
+#quizview[hidden]{display:none}
+#quizview{display:block;max-width:760px;margin:0 auto;padding:14px max(13px,var(--safeR)) calc(80px + var(--safeB)) max(13px,var(--safeL))}
+.qzstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.qzs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 8px;text-align:center;
+ font-size:11px;color:var(--dim2)}
+.qzs b{display:block;font-size:19px;color:var(--ink);letter-spacing:-.4px}
+.qzgo{display:flex;flex-direction:column;gap:8px}
+.qzrow{display:flex;gap:8px;flex-wrap:wrap}
+.qzrow .qzb{flex:1;min-width:120px}
+.qzb{border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:12px 14px;
+ font-weight:800;font-size:14px;cursor:pointer;min-height:46px;color:var(--ink)}
+.qzb:active{background:var(--chip)}
+.qzb.primary{background:var(--ac);border-color:var(--ac);color:#fff}
+.qzb.primary:active{filter:brightness(.93)}
+.qzb.ghost{background:transparent;color:var(--dim)}
+.qzb.small{padding:8px 11px;min-height:38px;font-size:12.5px}
+.qzsub{font-size:11.5px;color:var(--dim2);margin:14px 2px 6px}
+.qzsubs{display:flex;gap:6px;flex-wrap:wrap}
+.qzmemo{font-size:12px;color:var(--dim);background:var(--chip);border-radius:10px;padding:10px 12px;margin-top:12px;line-height:1.55}
+.qzbar{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--dim2);
+ font-weight:700;margin-bottom:10px;font-variant-numeric:tabular-nums}
+.qzok{color:var(--good)}.qzno{color:var(--bad)}
+.qzpanel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 15px}
+.qztag{font-size:11px;font-weight:800;color:var(--ac);letter-spacing:.4px;margin-bottom:8px}
+.qzp{font-size:16px;font-weight:700;line-height:1.55;letter-spacing:-.2px}
+.qzseq{display:inline-block;font-size:10.5px;color:var(--ac2);border:1px solid var(--ac2);border-radius:6px;
+ padding:1px 7px;font-weight:800;vertical-align:middle;margin-left:6px}
+.qzh{margin:10px 0 0;font-size:13px;color:var(--dim)}
+.qzh summary{cursor:pointer;font-weight:700;color:var(--ac2);font-size:12.5px;min-height:38px;display:flex;align-items:center}
+.qzh p{margin:7px 0 0;line-height:1.6}
+.qzdu{font-size:15px;font-weight:800;color:var(--warn);letter-spacing:.5px}
+.qzl{display:block;font-size:12.5px;font-weight:700;color:var(--dim);margin:14px 0 7px}
+.qzm{font-weight:500;color:var(--dim2)}
+.qzinp{width:100%;border:1px solid var(--line);border-radius:11px;background:var(--bg);padding:12px 13px;
+ font-size:16px;color:var(--ink);font-family:inherit;resize:vertical}
+.qzinp:focus{outline:2px solid var(--ac);outline-offset:1px}
+.qzact{display:flex;gap:8px;margin-top:12px}
+.qzact .primary{flex:1}
+.qzres{font-size:15px;font-weight:800;margin-top:14px;padding:11px 13px;border-radius:11px}
+.qzres.ok{background:color-mix(in srgb,var(--good) 14%,var(--panel));color:var(--good)}
+.qzres.bad{background:color-mix(in srgb,var(--bad) 12%,var(--panel));color:var(--bad)}
+.qzans-box{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-top:9px;font-size:14px}
+.qzmine{font-size:12.5px;color:var(--bad);margin-bottom:8px;font-weight:700}
+.qzen{font-size:12px;color:var(--dim2);font-weight:500}
+.qzchk{margin:8px 0 0;padding-left:20px}
+.qzchk li{padding:4px 0;font-size:14px}
+.qzchk li.g{color:var(--good)}
+.qzchk li.b{color:var(--bad)}
+.qzwarn{font-size:11.5px;font-weight:700}
+.qznote{font-size:12.5px;color:var(--dim);margin-top:10px;border-top:1px dashed var(--line);padding-top:9px;line-height:1.55}
+.qzdone{text-align:center;padding:26px 8px}
+.qzscore{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.qzscore span{display:block;font-size:13px;color:var(--dim);font-weight:600;margin-top:5px}
+.qzdone .qzact{margin-top:18px;max-width:340px;margin-left:auto;margin-right:auto}
+.qzcode{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 13px;
+ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.55;
+ overflow-x:auto;white-space:pre;margin:0 0 10px;color:var(--ink)}
+.qztime{font-weight:800;color:var(--bad);font-variant-numeric:tabular-nums}
+.qzb.warnb{background:var(--chip);border-color:var(--ac);color:var(--ac)}
+.qzprog{margin:14px 0;border-top:1px dashed var(--line);padding-top:12px}
+.qzpr{display:flex;align-items:center;gap:9px;margin:6px 0;font-size:12px}
+.qzpr span{width:118px;flex-shrink:0;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qzpr .qzptr{flex:1;height:8px;background:var(--chip2);border-radius:99px;overflow:hidden}
+.qzpr .qzptr i{display:block;height:100%;background:var(--ac);border-radius:99px}
+.qzpr em{width:150px;flex-shrink:0;font-style:normal;color:var(--dim2);font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+
 /* ═══ 실습(인터랙티브 데모) 뷰 ═══ */
 #demoview{display:block;padding:18px max(14px,var(--safeL)) 60px}
 .dmintro{max-width:900px;margin:0 auto 18px}
@@ -452,7 +520,7 @@ body.mapview nav.side,body.demoview nav.side{display:none}
 <header class="top" id="topbar">
   <div class="r1">
     <button class="ib dictonly" id="menuBtn" aria-label="목차 열기">☰</button>
-    <div class="brand">정보처리기사 용어사전<small id="bsub">필기 5과목 · 출제기준 기반</small></div>
+    <div class="brand">정보처리기사 용어사전<small id="bsub">필기 5과목 · 실기 필답 훈련</small></div>
     <button class="ib dictonly" id="bIdx" aria-label="색인">가</button>
     <button class="ib" id="bTheme" aria-label="테마 전환">◐</button>
   </div>
@@ -460,6 +528,7 @@ body.mapview nav.side,body.demoview nav.side{display:none}
     <button type="button" class="tab on" data-view="dict" role="tab">📖 사전</button>
     <button type="button" class="tab" data-view="map" role="tab">🌳 마인드맵</button>
     <button type="button" class="tab" data-view="demo" role="tab">🧪 실습</button>
+    <button type="button" class="tab" data-view="quiz" role="tab">✏️ 실기 훈련</button>
   </div>
   <div class="r1 dictonly" style="margin-top:7px"><input id="q" placeholder="용어 · 영문 · 약어 검색" autocomplete="off" enterkeyhint="search"></div>
   <div class="r2 dictonly" id="snav"></div>
@@ -493,6 +562,10 @@ body.mapview nav.side,body.demoview nav.side{display:none}
   <div id="list"></div>
   <section id="mmview" hidden></section>
   <section id="demoview" hidden></section>
+  <section id="quizview" hidden>
+    <div id="qzhome"></div>
+    <div id="qzcard"></div>
+  </section>
 
   <footer>
     <h3>모바일에서 쓰는 방법</h3>
@@ -533,7 +606,11 @@ body.mapview nav.side,body.demoview nav.side{display:none}
 <script src="ex-data-4.js"></script>
 <script src="ex-data-5.js"></script>
 <script src="demos.js"></script>
+<script src="quiz-data.js"></script>
+<script src="quiz-code-data.js"></script>
+<script src="newtech-data.js"></script>
 <script src="mindmap.js"></script>
 <script src="app.js"></script>
+<script src="quiz.js"></script>
 </body>
 </html>
