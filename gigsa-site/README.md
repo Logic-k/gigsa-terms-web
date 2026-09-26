@@ -69,6 +69,9 @@ Android 에서는 페이지 안에 **홈 화면에 추가하고 오프라인으�
 | `dia-data-2.js` | 도식 데이터 — 3·4과목 |
 | `dia-data-3.js` | 도식 데이터 — 5과목 |
 | `ex-data-1~5.js` | **예시 데이터** — 과목별 실무 사례 + 암기 고리 |
+| `theory-data.js` + `theory.js` | **실기 이론 탭** — 12개 능력단위 요약·암기 두문자·흐름도·코드/SQL 공략·3주 플랜 |
+| `quiz.js` + `quiz-data.js` + `quiz-code-data.js` | **실기 훈련 탭** — 단답 회상·나열형·코드/SQL 채점·간격반복·모의고사 |
+| `newtech-data.js` | 신기술 용어 데이터 |
 | `manifest.webmanifest` | 앱 이름 · 아이콘 · 시작 화면 |
 | `sw.js` | 오프라인 캐시 (서비스 워커) |
 | `icon-*.png` | 홈 화면 아이콘 |
